@@ -20,7 +20,7 @@ Using "Tiles" and "Regions" you can build a screen.
 
 ### MAIN DEMO ###
 - v0.01 Initial Commit
-- ![image description](docs/imgs/move_dude_move.png)
+- ![image description](docs/imgs/move_dude_move.gif)
 
 
 ### MAIN STRUCTS ###
