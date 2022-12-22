@@ -18,6 +18,11 @@ Using "Tiles" and "Regions" you can build a screen.
 - Now click OPEN on the main screen again. 
 - From now on if you SAVE these settings you'll just have to "Load" than "Open" in the future
 
+### MAIN DEMO ###
+- v0.01 Initial Commit
+- ![image description](docs/imgs/move_dude_move.png)
+
+
 ### MAIN STRUCTS ###
 - Screen
 Think old computers with all their talk of "column count" and you have a good idea on how this will work.
