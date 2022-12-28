@@ -21,7 +21,8 @@ Using "Tiles" and "Regions" you can build a screen.
 ### MAIN DEMO ###
 - v0.01 Initial Commit
 - ![image description](docs/imgs/move_dude_move.gif)
-
+- v0.03 Better coloring, Now have most "in game" regions defined.
+- ![image description](docs/imgs/v0.0.3.gif)
 
 ### MAIN STRUCTS ###
 - Screen
@@ -44,7 +45,7 @@ profile (aka user info area)
 
 ### What is DONE ###
 1) Can draw to screen
- - with color!
+ - with color (foreground background)
  - icons are in solo file
 2) Can do input
 - nice
@@ -52,14 +53,12 @@ profile (aka user info area)
 4) detect enemy collision
 
 ### TODO ###
-1) Can I find new line that works on both mac and windows?
---- windows wants \r\n ; mac was cool with \n
-2) Build a session struct to contain player, map, and connection object.
-3) Make input it's own class thingy
-4) Read from file maps
-5) Do some actual enemy stuff
+1) Make input it's own class thingy
+2) Read from file maps
+3) Do some actual enemy stuff
 --- can remove it now
 --- want drops
 --- want spawns
-6) Intro screen and map selection
-7) Make better file naming,
+4) Intro screen and map selection
+5) Make better file naming
+6) Switch input section AND info bar section
