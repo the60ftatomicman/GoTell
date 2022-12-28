@@ -21,6 +21,7 @@ const (
 	FgRed                 = "31"
 	FgWhite               = "37"
 	FgYellow              = "33"
+	FgGrey                = "90"
 	//
 	BgBlack               = ";40"
 	BgBlue                = ";44"
@@ -30,6 +31,7 @@ const (
 	BgRed                 = ";41"
 	BgWhite               = ";47"
 	BgYellow              = ";43"
+	BgGrey                = ";100"
 	//
 	Newline               = "\r\n"
 	ClearScreen           = "\033\143"

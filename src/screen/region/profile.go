@@ -8,7 +8,7 @@ import (
 
 const PROFILE_LEFT = 80
 const PROFILE_TOP = 0
-const PROFILE_LINES = 20
+const PROFILE_LINES = 21
 const PROFILE_COLUMNS = 18
 // IMPORTANT LINES IN THE PROFILE FOR WRITING!
 // START INDEX 0
@@ -68,10 +68,10 @@ func (p *Profile)populate()[][]tile.Tile{
 				t = append(t, getBaseRow(0," --- ITEMS --- ",core.FgCyan))
 			}
 			case LINE_VAR_ITEM_1:{
-				t = append(t, getBaseRow(1,"1) "+p.Items[0],core.FgMagenta))
+				t = append(t, getBaseRow(1,"1) "+p.Items[0],core.FgBlack))
 			}
 			case LINE_VAR_ITEM_2:{
-				t = append(t, getBaseRow(1,"2) "+p.Items[1],core.FgMagenta))
+				t = append(t, getBaseRow(1,"2) "+p.Items[1],core.FgBlack))
 			}
 			default:{t = append(t, getBaseRow(0,"",core.FgBlue))}
 		}
@@ -92,9 +92,9 @@ func getBaseRow(colIdx int, extraMsg string,color core.TermCodes ) []tile.Tile {
 
 	for i := 0; i < PROFILE_COLUMNS-2; i++ {
 		if(i >= colIdx && i < endIdx){
-			t = append(t, tile.PROFILE_TEXT(msgArray[i-colIdx],color))
+			t = append(t, tile.GENERIC_TEXT(msgArray[i-colIdx],color,core.BgGrey))
 		}else{
-			t = append(t, tile.BLANK)
+			t = append(t, tile.GENERIC_TEXT(" ",color,core.BgGrey))
 		}
 	}
 	t = append(t, tile.PROFILE_V)

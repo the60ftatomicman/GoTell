@@ -16,6 +16,7 @@ type Session struct {
 	Screen     screen.Screen
 	Level      region.Level
 	Profile    region.Profile
+	Info       region.Info
 	Connection net.Conn
 }
 
@@ -54,6 +55,11 @@ func (s *Session) Initialize(c *net.Conn) {
 		Items: []string{"Boots","Helmet",""},
 	}
 	s.Profile.Initialize([][]tile.Tile{})
+	// --------------
+	s.Info = region.Info{
+		Message: "WASD moves, I for inventory",
+	}
+	s.Info.Initialize([][]tile.Tile{})
 }
 
 func (s *Session) Handle() {
@@ -68,7 +74,7 @@ func (s *Session) Handle() {
 		if quit {
 			break
 		} else {
-			s.Screen.Compile(&s.Level, &s.Profile)
+			s.Screen.Compile(&s.Level, &s.Profile, &s.Info)
 			core.HandleOutputToClient(s.Connection, 0, region.MAP_LINES+1, s.Screen.Get())
 		}
 	}

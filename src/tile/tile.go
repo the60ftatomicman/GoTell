@@ -15,8 +15,14 @@ type Tile struct {
 var BLANK = Tile{
 	Name: "BLANK",
 	Icon: core.Icons(core.ICON_BLANK),
-	Color:     core.TermCodes(core.FgWhite),
+	Color:     core.TermCodes(core.BgBlack),
 	BGColor:   core.TermCodes(core.BgBlack),
+}
+var BLANKW = Tile{
+	Name: "BLANK",
+	Icon: core.Icons(core.ICON_BLANK),
+	Color:     core.TermCodes(core.FgWhite),
+	BGColor:   core.TermCodes(core.FgWhite),
 }
 var WALL = Tile{
 	Name:      "WALL",
@@ -39,13 +45,30 @@ var PROFILE_H = Tile{
 	BGColor:   core.TermCodes(core.BgBlack),
 	Attribute: core.ATTR_SOLID,
 }
+var INFO_V = Tile{
+	Name:      "INFO_V",
+	Icon:      core.Icons(core.ICON_PROFIlE_V),
+	Color:     core.TermCodes(core.FgCyan),
+	BGColor:   core.TermCodes(core.BgBlack),
+	Attribute: core.ATTR_SOLID,
+}
+var INFO_H = Tile{
+	Name:      "INFO_H",
+	Icon:      core.Icons(core.ICON_PROFIlE_H),
+	Color:     core.TermCodes(core.FgCyan),
+	BGColor:   core.TermCodes(core.BgBlack),
+	Attribute: core.ATTR_SOLID,
+}
 
-
-func PROFILE_TEXT(character string, color core.TermCodes) Tile{
+func GENERIC_TEXT(character string, colors ...core.TermCodes) Tile{
+	bgColor := core.TermCodes(core.BgBlack)
+	if(len(colors) > 1){
+		bgColor = core.TermCodes(colors[1])
+	}
 	return Tile{
 		Name: "PROFILE_TEXT",
 		Icon: core.StringToIcon(character),
-		Color: core.TermCodes(color),
-		BGColor: core.TermCodes(core.BgBlack),
+		Color: core.TermCodes(colors[0]),
+		BGColor: bgColor,
 	}
 }
