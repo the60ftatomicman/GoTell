@@ -47,6 +47,11 @@ func (s *Session) Initialize(c *net.Conn) {
 	// --------------
 	s.Profile = region.Profile{
 		Name: "Hero",
+		Class: "Warrior",
+		Health: "100",
+		Mana: "100",
+		Gold: "0",
+		Items: []string{"Boots","Helmet",""},
 	}
 	s.Profile.Initialize([][]tile.Tile{})
 }

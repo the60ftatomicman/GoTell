@@ -45,7 +45,11 @@ func (s *Screen) Compile(regionList ...region.IRegion) {
 	//add buffer
 	for _, line := range s.Buffer {
 		for _, column := range line {
-			s.Raw += core.GenChar(string(column.Icon), column.Color)
+			if (column.BGColor != ""){
+				s.Raw += core.GenChar(string(column.Icon), column.Color,column.BGColor) //TODO -- rename!
+			}else{
+				s.Raw += core.GenChar(string(column.Icon), column.Color)
+			}
 		}
 		s.Raw += string(core.TermCodes(core.Newline))
 	}
