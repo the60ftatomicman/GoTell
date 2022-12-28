@@ -72,3 +72,12 @@ func GENERIC_TEXT(character string, colors ...core.TermCodes) Tile{
 		BGColor: bgColor,
 	}
 }
+
+func GenerateHorizontalDivider(length int,bookend Tile,fill Tile) []Tile {
+	t := []Tile{bookend}
+	for i := 0; i < length; i++ {
+		t = append(t, fill)
+	}
+	t = append(t, bookend)
+	return t
+}

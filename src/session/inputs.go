@@ -11,14 +11,44 @@ import (
 //Input_Buffer = [4]string{"","","",""}
 //var Input_nextIdx int = 0
 
-func handleInput(input string, p *tile.Player, s *screen.Screen) bool {
+func hanleInputStateSwitching(input string, s *Session, inf *region.Info) bool{
+	switch input {
+		case "Q":
+			{
+				return true
+			}
+		case "i":
+			{
+				if s.State != STATE_INVENTORY{
+					s.State = STATE_INVENTORY
+					inf.Message = "Currently [Invetory]: 1-3 (item), switch to (m)oving"
+					inf.Refresh()
+				}
+			}
+		case "m":
+			{
+				if s.State != STATE_MOVING{
+					s.State = STATE_MOVING
+					inf.Message = "Currently [MOVING]: WASD (moves), switch to (i)nventory, (Q)uit"
+					inf.Refresh()
+				}
+			}
+		case "1":
+			{
+				if s.State == STATE_INVENTORY{
+					s.State = STATE_ITEM
+					inf.Message = "Looking at [some item]: (D)rop,(U)se, switch to (i)nventory, switch to (m)oving"
+					inf.Refresh()
+				}
+			}
+	}
+	return false;
+}
+
+func handleInputMoving(input string, p *tile.Player, s *screen.Screen) {
 	p.PrvY = p.Y
 	p.PrvX = p.X
 	switch input {
-	case "Q":
-		{
-			return true
-		}
 	case "w":
 		{
 			if p.Y > 1 {
@@ -60,8 +90,19 @@ func handleInput(input string, p *tile.Player, s *screen.Screen) bool {
 		p.UnderTile = s.Buffer[p.Y][p.X]
 		s.Set(p.Tile, p.X, p.Y)
 	}
+}
 
-	return false
+func handleInputInventory(input string, p *region.Profile,inf *region.Info){
+	switch input {
+		case "1":
+			{
+
+			}
+		case "2":
+			{
+
+			}
+	}
 }
 
 func performCombat(tA *tile.Tile, tB *tile.Tile) *tile.Enemy {
