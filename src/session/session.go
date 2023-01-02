@@ -11,11 +11,6 @@ import (
 	"strings"
 )
 
-const STATE_MOVING = "moving"
-const STATE_INVENTORY = "inventory"
-const STATE_ITEM = "item"
-
-
 type Session struct {
 	Player     tile.Player
 	Screen     screen.Screen
@@ -23,6 +18,7 @@ type Session struct {
 	Profile    region.Profile
 	Info       region.Info
 	State      string //TODO -- ENUM!
+	Enemies    []tile.Enemy
 	Connection net.Conn
 }
 
@@ -39,7 +35,9 @@ func (s *Session) Initialize(c *net.Conn) {
 		Buffer: screen.BlankScreen(),
 		Raw:    "",
 	}
-	/// ---------- Generate Level region
+	// ------------ Generate Enemies
+	s.Enemies = tile.GenerateEnemiesFromFile()
+	// ---------- Generate Level region
 	s.Level = region.Level{}
 	s.Level.Initialize(s.Level.ReadDataFromFile())
 	// ------------ Generate Profile region
@@ -48,28 +46,43 @@ func (s *Session) Initialize(c *net.Conn) {
 	// ------------ Generate Info Region
 	s.Info = region.Info{}
 	s.Info.Initialize([][]tile.Tile{})
+
+}
+
+func (s *Session) updateObjectTiles(playerMoved bool,enemyRemoved bool) {
+	//--Enemies
+	for _,enemy := range s.Enemies {
+		s.Screen.Set(enemy.Tile,enemy.X,enemy.Y)
+	}
+	//--Player
+	if(playerMoved){
+		s.Screen.Set(s.Player.UnderTile, s.Player.PrvX, s.Player.PrvY)
+		s.Player.UnderTile = s.Screen.Buffer[s.Player.Y][s.Player.X]	
+	}
+	s.Screen.Set(s.Player.Tile, s.Player.X, s.Player.Y)
 }
 
 func (s *Session) Handle() {
 	fmt.Printf("Serving %s\n", s.Connection.RemoteAddr().String())
-	//weredude := tile.GenerateEnemy()
-	//s.Screen.Set(weredude.Tile, weredude.X, weredude.Y)
 	for {
 		netData, _    := bufio.NewReader(s.Connection).ReadByte()
 		formattedData := strings.TrimSpace(string(netData))
-		
+		updatePlayer  := false
+		updateEnemy   := false
 		if hanleInputStateSwitching(formattedData, s, &s.Info) {
 			// AKA Quit
 			break
 		} else {
 			switch s.State{
 				case STATE_MOVING:{
-					handleInputMoving(formattedData, &s.Player, &s.Screen)
+					// TODO -- we only need the buffer....
+					updatePlayer,updateEnemy = handleInputMoving(formattedData, &s.Player, &s.Screen)
 				}
 				case STATE_INVENTORY:{
 					handleInputInventory(formattedData, &s.Profile, &s.Info)
 				}
 			}
+			s.updateObjectTiles(updatePlayer,updateEnemy)
 			s.Screen.Compile(&s.Level, &s.Profile, &s.Info)
 			core.HandleOutputToClient(s.Connection, 0, region.INFO_TOP+region.INFO_LINES+1, s.Screen.Get())
 		}

@@ -31,12 +31,12 @@ func (s *Screen) Get() string {
 
 func (s *Screen) Compile(regionList ...region.IRegion) {
 	s.Raw = ""
-	//add map(again just a stop gap, make buffer a series of TILES)
 	for _, r := range regionList {
 		rLeft, rTop, rLines, rColumns, rBuffer := r.Get()
 		for l := 0; l < rLines; l++ {
 			for c := 0; c < rColumns; c++ {
-				if s.Buffer[rTop+l][rLeft+c].Name != "PLAYER" {
+				if s.Buffer[rTop+l][rLeft+c].Name != "PLAYER" && 
+				   s.Buffer[rTop+l][rLeft+c].Name != "ENEMY" {
 					s.Buffer[rTop+l][rLeft+c] = rBuffer[l][c]
 				}
 			}

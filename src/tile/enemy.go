@@ -2,7 +2,7 @@ package tile
 
 import "example/gotell/src/core"
 
-type iEnemy interface {
+type iInteractiveObject interface {
 	Interaction() Tile
 }
 
@@ -19,7 +19,7 @@ func (e *Enemy) Interaction() bool {
 	return true
 }
 
-func GenerateEnemy() Enemy {
+func generateEnemy() Enemy {
 	e := Enemy{
 		X:         12,
 		Y:         12,
@@ -30,9 +30,16 @@ func GenerateEnemy() Enemy {
 	e.Tile = Tile{
 		Name:      "ENEMY",
 		Icon:      "E",
-		Color:     core.TermCodes(core.FgGreen),
+		Color:     core.TermCodes(core.FgRed),
 		Attribute: core.ATTR_FIGHTABLE + core.ATTR_SOLID,
 		Parent:    &e,
 	}
 	return e
+}
+//
+//
+//
+//
+func GenerateEnemiesFromFile() []Enemy{
+	return []Enemy{generateEnemy()}
 }

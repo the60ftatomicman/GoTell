@@ -45,7 +45,7 @@ func hanleInputStateSwitching(input string, s *Session, inf *region.Info) bool{
 	return false;
 }
 
-func handleInputMoving(input string, p *tile.Player, s *screen.Screen) {
+func handleInputMoving(input string, p *tile.Player, s *screen.Screen) (bool,bool){
 	p.PrvY = p.Y
 	p.PrvX = p.X
 	switch input {
@@ -78,18 +78,16 @@ func handleInputMoving(input string, p *tile.Player, s *screen.Screen) {
 	objTile := s.Buffer[p.Y][p.X]
 	objEnemy := performCombat(&p.Tile, &objTile)
 	if objEnemy != nil && objEnemy.Interaction() {
-		s.Set(objEnemy.Tile, objEnemy.X, objEnemy.Y)
+		return true,false
 	}
 	//
 	if preventMovement(&p.Tile, &objTile) {
 		p.X = p.PrvX
 		p.Y = p.PrvY
-		s.Set(p.Tile, p.X, p.Y)
-	} else {
-		s.Set(p.UnderTile, p.PrvX, p.PrvY)
-		p.UnderTile = s.Buffer[p.Y][p.X]
-		s.Set(p.Tile, p.X, p.Y)
+		return false,false
 	}
+	return true,false
+	
 }
 
 func handleInputInventory(input string, p *region.Profile,inf *region.Info){

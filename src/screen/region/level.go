@@ -13,10 +13,12 @@ type Level struct {
 	Name   string
 	Filename string
 	Buffer [][]tile.Tile
+	Objects [][]tile.Tile
 }
 
 func (m *Level) Initialize(b [][]tile.Tile) {
-	m.Buffer = initializeBuffer(MAP_LINES, MAP_COLUMNS, b)
+	m.Buffer  = initializeBuffer(MAP_LINES, MAP_COLUMNS, b)
+	m.Objects = initializeBuffer(MAP_LINES, MAP_COLUMNS, b)
 }
 
 func (m *Level) Get() (int, int, int, int, [][]tile.Tile) {
