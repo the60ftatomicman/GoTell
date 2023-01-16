@@ -6,6 +6,7 @@ import (
 	"example/gotell/src/tile"
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 const SCREEN_WIDTH = 100
@@ -35,8 +36,7 @@ func (s *Screen) Compile(regionList ...region.IRegion) {
 		rLeft, rTop, rLines, rColumns, rBuffer := r.Get()
 		for l := 0; l < rLines; l++ {
 			for c := 0; c < rColumns; c++ {
-				if s.Buffer[rTop+l][rLeft+c].Name != "PLAYER" && 
-				   s.Buffer[rTop+l][rLeft+c].Name != "ENEMY" {
+				if !strings.Contains(s.Buffer[rTop+l][rLeft+c].Attribute,core.ATTR_FOREGROUND) {
 					s.Buffer[rTop+l][rLeft+c] = rBuffer[l][c]
 				}
 			}

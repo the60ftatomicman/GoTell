@@ -15,7 +15,7 @@ const (
 
 // stty -icanon && nc localhost 9002
 func main() {
-	log.Println("Connect via stty -icanon && nc " + HOST + " " + PORT)
+	log.Println("Connect via [ stty -icanon && nc " + HOST + " " + PORT+" ]")
 	listner, err := net.Listen(TYPE, HOST+":"+PORT)
 	if err != nil {
 		fmt.Println(err)

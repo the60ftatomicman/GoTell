@@ -15,13 +15,14 @@ type Enemy struct {
 }
 
 func (e *Enemy) Interaction() bool {
+	//some stuff!
 	e.Tile = e.UnderTile
 	return true
 }
 
 func generateEnemy() Enemy {
 	e := Enemy{
-		X:         12,
+		X:         20,
 		Y:         12,
 		PrvX:      12,
 		Prvy:      12,
@@ -31,7 +32,7 @@ func generateEnemy() Enemy {
 		Name:      "ENEMY",
 		Icon:      "E",
 		Color:     core.TermCodes(core.FgRed),
-		Attribute: core.ATTR_FIGHTABLE + core.ATTR_SOLID,
+		Attribute: core.ATTR_FIGHTABLE + core.ATTR_SOLID + core.ATTR_FOREGROUND,
 		Parent:    &e,
 	}
 	return e

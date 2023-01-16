@@ -2,7 +2,6 @@ package session
 
 import (
 	"example/gotell/src/core"
-	"example/gotell/src/screen"
 	"example/gotell/src/screen/region"
 	"example/gotell/src/tile"
 	"strings"
@@ -45,7 +44,7 @@ func hanleInputStateSwitching(input string, s *Session, inf *region.Info) bool{
 	return false;
 }
 
-func handleInputMoving(input string, p *tile.Player, s *screen.Screen) (bool,bool){
+func handleInputMoving(input string, p *tile.Player, s *Session) (bool,bool){
 	p.PrvY = p.Y
 	p.PrvX = p.X
 	switch input {
@@ -75,13 +74,14 @@ func handleInputMoving(input string, p *tile.Player, s *screen.Screen) (bool,boo
 		}
 	}
 	// Test if we are fighting
-	objTile := s.Buffer[p.Y][p.X]
-	objEnemy := performCombat(&p.Tile, &objTile)
-	if objEnemy != nil && objEnemy.Interaction() {
-		return true,false
+	for idx,enemy := range s.Enemies {
+		if enemy.X == p.X && enemy.Y == p.Y {
+			removeEnemy := s.Enemies[idx].Interaction()
+			return true,removeEnemy
+		}
 	}
-	//
-	if preventMovement(&p.Tile, &objTile) {
+	// -- movement otherwise
+	if preventMovement(&p.Tile, &s.Screen.Buffer[p.Y][p.X]) {
 		p.X = p.PrvX
 		p.Y = p.PrvY
 		return false,false
@@ -101,13 +101,6 @@ func handleInputInventory(input string, p *region.Profile,inf *region.Info){
 
 			}
 	}
-}
-
-func performCombat(tA *tile.Tile, tB *tile.Tile) *tile.Enemy {
-	if strings.Contains(tB.Attribute, core.ATTR_FIGHTABLE) {
-		return tB.Parent
-	}
-	return nil
 }
 
 func preventMovement(tA *tile.Tile, tB *tile.Tile) bool {

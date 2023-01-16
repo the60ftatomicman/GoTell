@@ -8,7 +8,7 @@ type Tile struct {
 	Color             core.TermCodes `default:""`
 	BGColor           core.TermCodes `default:""`
 	Status            string         `default:"OK"`
-	Attribute, Object string         `default:""`
+	Attribute         string         `default:""`
 	Parent            *Enemy         `default:nil`
 }
 

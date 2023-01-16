@@ -24,7 +24,7 @@ func GeneratePlayer() Player {
 			Name:      "PLAYER",
 			Icon:      core.Icons(core.ICON_PLAYER),
 			Color:     core.TermCodes(core.FgGreen),
-			Attribute: core.ATTR_SOLID,
+			Attribute: core.ATTR_SOLID + core.ATTR_FOREGROUND,
 		},
 	}
 }
