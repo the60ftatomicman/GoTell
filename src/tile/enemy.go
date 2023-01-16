@@ -7,7 +7,6 @@ type iInteractiveObject interface {
 }
 
 type Enemy struct {
-	UnderTile        Tile
 	Tile             Tile
 	Status           string
 	Name             string
@@ -15,8 +14,6 @@ type Enemy struct {
 }
 
 func (e *Enemy) Interaction() bool {
-	//some stuff!
-	e.Tile = e.UnderTile
 	return true
 }
 
@@ -26,7 +23,6 @@ func generateEnemy() Enemy {
 		Y:         12,
 		PrvX:      12,
 		Prvy:      12,
-		UnderTile: BLANK,
 	}
 	e.Tile = Tile{
 		Name:      "ENEMY",

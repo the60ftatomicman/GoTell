@@ -59,6 +59,11 @@ var INFO_H = Tile{
 	BGColor:   core.TermCodes(core.BgBlack),
 	Attribute: core.ATTR_SOLID,
 }
+var LADDER = Tile {
+	Name:  "LADDER",
+	Icon:  core.Icons(core.ICON_LADDER),
+	Color: core.TermCodes(core.FgWhite),
+}
 
 func GENERIC_TEXT(character string, colors ...core.TermCodes) Tile{
 	bgColor := core.TermCodes(core.BgBlack)

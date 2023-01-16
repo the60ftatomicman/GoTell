@@ -44,7 +44,7 @@ func hanleInputStateSwitching(input string, s *Session, inf *region.Info) bool{
 	return false;
 }
 
-func handleInputMoving(input string, p *tile.Player, s *Session) (bool,bool){
+func handleInputMoving(input string, p *tile.Player, s *Session) {
 	p.PrvY = p.Y
 	p.PrvX = p.X
 	switch input {
@@ -76,17 +76,22 @@ func handleInputMoving(input string, p *tile.Player, s *Session) (bool,bool){
 	// Test if we are fighting
 	for idx,enemy := range s.Enemies {
 		if enemy.X == p.X && enemy.Y == p.Y {
-			removeEnemy := s.Enemies[idx].Interaction()
-			return true,removeEnemy
+			enemyObj := s.Enemies[idx]
+			removeEnemy := enemyObj.Interaction()
+			if(removeEnemy){
+				 s.Screen.Buffer[p.Y][p.X].Pop()
+				 s.Enemies = append(s.Enemies[:idx], s.Enemies[idx+1:]...)
+			}
 		}
 	}
 	// -- movement otherwise
-	if preventMovement(&p.Tile, &s.Screen.Buffer[p.Y][p.X]) {
+	nextTile := s.Screen.Buffer[p.Y][p.X].Get()
+	if preventMovement(&p.Tile, &nextTile) {
 		p.X = p.PrvX
 		p.Y = p.PrvY
-		return false,false
 	}
-	return true,false
+	s.Screen.Buffer[p.PrvY][p.PrvX].Pop()
+	s.Screen.Buffer[p.Y][p.X].Set(p.Tile);
 	
 }
 

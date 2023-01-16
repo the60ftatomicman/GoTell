@@ -11,15 +11,10 @@ type Player struct {
 
 func GeneratePlayer() Player {
 	return Player{
-		X:    10,
-		Y:    10,
-		PrvX: 10,
-		PrvY: 10,
-		UnderTile: Tile{
-			Name:  "ENTRANCE",
-			Icon:  core.Icons(core.ICON_LADDER),
-			Color: core.TermCodes(core.FgWhite),
-		},
+		X:    1,
+		Y:    5,
+		PrvX: 1,
+		PrvY: 5,
 		Tile: Tile{
 			Name:      "PLAYER",
 			Icon:      core.Icons(core.ICON_PLAYER),

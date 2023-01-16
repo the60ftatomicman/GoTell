@@ -49,31 +49,27 @@ func (s *Session) Initialize(c *net.Conn) {
 
 }
 
-func (s *Session) updateObjectTiles(playerMoved bool,enemyRemoved bool) {
+func (s *Session) initializeObjects() {
 	//--Enemies
-	if(enemyRemoved){
-		for idx,_ := range s.Enemies {
-			s.Screen.Set(s.Enemies[idx].Tile, s.Enemies[idx].X,s.Enemies[idx].Y)
-		}
+	for idx,_ := range s.Enemies {
+		s.Screen.Set(s.Enemies[idx].Tile, s.Enemies[idx].X,s.Enemies[idx].Y)
 	}
 	//--Player
-	if(playerMoved){
-		s.Screen.Set(s.Player.UnderTile, s.Player.PrvX, s.Player.PrvY)
-		s.Player.UnderTile = s.Screen.Buffer[s.Player.Y][s.Player.X]	
-	}
+	//if(playerMoved){
+	//	s.Screen.Set(s.Player.UnderTile, s.Player.PrvX, s.Player.PrvY)
+	//	s.Player.UnderTile = s.Screen.Buffer[s.Player.Y][s.Player.X].Get()
+	//}
 	s.Screen.Set(s.Player.Tile, s.Player.X, s.Player.Y)
 }
 
 func (s *Session) Handle() {
 	fmt.Printf("Serving %s\n", s.Connection.RemoteAddr().String())
-	s.updateObjectTiles(true,true)
+	s.initializeObjects()
 	s.Screen.Compile(&s.Level, &s.Profile, &s.Info)
 	core.HandleOutputToClient(s.Connection, 0, region.INFO_TOP+region.INFO_LINES+1, s.Screen.Get())
 	for {
 		netData, _    := bufio.NewReader(s.Connection).ReadByte()
 		formattedData := strings.TrimSpace(string(netData))
-		updatePlayer  := false
-		updateEnemy   := false
 		if hanleInputStateSwitching(formattedData, s, &s.Info) {
 			// AKA Quit
 			break
@@ -81,13 +77,12 @@ func (s *Session) Handle() {
 			switch s.State{
 				case STATE_MOVING:{
 					// TODO -- we only need the buffer....
-					updatePlayer,updateEnemy = handleInputMoving(formattedData, &s.Player, s)
+					handleInputMoving(formattedData, &s.Player, s)
 				}
 				case STATE_INVENTORY:{
 					handleInputInventory(formattedData, &s.Profile, &s.Info)
 				}
 			}
-			s.updateObjectTiles(updatePlayer,updateEnemy)
 			s.Screen.Compile(&s.Level, &s.Profile, &s.Info)
 			core.HandleOutputToClient(s.Connection, 0, region.INFO_TOP+region.INFO_LINES+1, s.Screen.Get())
 		}
