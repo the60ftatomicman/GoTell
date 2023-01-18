@@ -5,6 +5,7 @@ import "example/gotell/src/tile"
 type IRegion interface {
 	Get() (int, int, int, int, [][]tile.Tile)
 	Initialize(b [][]tile.Tile)
+	Refresh()
 }
 
 func initializeBuffer(lines int, columns int, data [][]tile.Tile) [][]tile.Tile {

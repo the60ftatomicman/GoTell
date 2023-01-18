@@ -64,8 +64,9 @@ func (s *Session) initializeObjects() {
 
 func (s *Session) Handle() {
 	fmt.Printf("Serving %s\n", s.Connection.RemoteAddr().String())
-	s.initializeObjects()
 	s.Screen.Compile(&s.Level, &s.Profile, &s.Info)
+	s.initializeObjects()
+	s.Screen.Refresh()
 	core.HandleOutputToClient(s.Connection, 0, region.INFO_TOP+region.INFO_LINES+1, s.Screen.Get())
 	for {
 		netData, _    := bufio.NewReader(s.Connection).ReadByte()
@@ -83,7 +84,7 @@ func (s *Session) Handle() {
 					handleInputInventory(formattedData, &s.Profile, &s.Info)
 				}
 			}
-			s.Screen.Compile(&s.Level, &s.Profile, &s.Info)
+			s.Screen.Refresh()
 			core.HandleOutputToClient(s.Connection, 0, region.INFO_TOP+region.INFO_LINES+1, s.Screen.Get())
 		}
 	}

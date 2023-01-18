@@ -7,6 +7,7 @@ type Player struct {
 	Tile             Tile
 	Name             string
 	X, Y, PrvX, PrvY int
+	Stats            Stats
 }
 
 func GeneratePlayer() Player {
@@ -15,6 +16,12 @@ func GeneratePlayer() Player {
 		Y:    5,
 		PrvX: 1,
 		PrvY: 5,
+		Stats: Stats{
+			Health: 100,
+			Defense: 1,
+			Offense: 1,
+			Speed:   2,
+		},
 		Tile: Tile{
 			Name:      "PLAYER",
 			Icon:      core.Icons(core.ICON_PLAYER),

@@ -58,6 +58,9 @@ func (p *Profile) ReadDataFromFile() [][]tile.Tile {
 	return [][]tile.Tile{}
 }
 
+func (p *Profile)Refresh(){
+	p.Buffer = initializeBuffer(PROFILE_LINES, PROFILE_COLUMNS, p.compile())
+}
 
 func (p *Profile)compile()[][]tile.Tile{
 	t := [][]tile.Tile{{tile.BLANK}}

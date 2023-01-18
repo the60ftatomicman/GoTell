@@ -4,6 +4,7 @@ import (
 	"example/gotell/src/core"
 	"example/gotell/src/screen/region"
 	"example/gotell/src/tile"
+	"strconv"
 	"strings"
 )
 
@@ -76,12 +77,17 @@ func handleInputMoving(input string, p *tile.Player, s *Session) {
 	// Test if we are fighting
 	for idx,enemy := range s.Enemies {
 		if enemy.X == p.X && enemy.Y == p.Y {
-			enemyObj := s.Enemies[idx]
-			removeEnemy := enemyObj.Interaction()
+			removeEnemy := s.Enemies[idx].Interaction(p)
+			s.Profile.Health = strconv.Itoa(p.Stats.Health)
+			s.Profile.Refresh() // would love to move to generic  session but I imagine this saves cycles
+			s.Info.Message = "Enemy ["+s.Enemies[idx].Name+"] Health ["+strconv.Itoa(s.Enemies[idx].Stats.Health)+"]"
 			if(removeEnemy){
-				 s.Screen.Buffer[p.Y][p.X].Pop()
-				 s.Enemies = append(s.Enemies[:idx], s.Enemies[idx+1:]...)
+				s.Info.Message = "Defeated ["+s.Enemies[idx].Name+"]"
+				s.Screen.Buffer[p.Y][p.X].Pop()
+				s.Enemies = append(s.Enemies[:idx], s.Enemies[idx+1:]...) 
 			}
+			s.Info.Refresh()
+			s.Screen.Compile(&s.Profile,&s.Info)
 		}
 	}
 	// -- movement otherwise

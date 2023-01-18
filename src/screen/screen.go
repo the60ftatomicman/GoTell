@@ -27,7 +27,7 @@ func BlankScreen() [SCREEN_HEIGHT][SCREEN_WIDTH]Cell {
 	return blank
 }
 
-
+//When the regions are modified and we need to make new cells; call this
 func (s *Screen) Compile(regionList ...region.IRegion) {
 	s.Raw = ""
 	for _, r := range regionList {
@@ -40,7 +40,11 @@ func (s *Screen) Compile(regionList ...region.IRegion) {
 			}
 		}
 	}
-	//add buffer
+}
+
+//When we are just updating what our cells look like; call this.
+func (s *Screen) Refresh() {
+	s.Raw = ""
 	for _, line := range s.Buffer {
 		for _, column := range line {
 			if (column.Get().BGColor != ""){

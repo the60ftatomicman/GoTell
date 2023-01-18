@@ -23,11 +23,14 @@ Using "Tiles" and "Regions" you can build a screen.
 - ![image description](docs/imgs/move_dude_move.gif)
 - v0.03 Better coloring, Now have most "in game" regions defined.
 - ![image description](docs/imgs/v0.0.3.gif)
+- v0.04 We have COOOOMBAT now.
 
 ### MAIN STRUCTS ###
 - Screen
 Think old computers with all their talk of "column count" and you have a good idea on how this will work.
-A screen is a collection of TILES and a string which represents what is sent to the users terminal
+A screen is a collection of CELLS and a string which represents what is sent to the users terminal
+- Cells
+An array of "TILES". These help determine Zindex on the screen.
 We the programmer push "tiles" to represent characters we want to display in a column/line and than compile it into the "RAW" string which is the ANSI code needed to be sent to the user terminal
 - Tile
 A tile is a representationo of a single Column/Line cooordinate.

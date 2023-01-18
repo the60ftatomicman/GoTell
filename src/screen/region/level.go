@@ -13,16 +13,18 @@ type Level struct {
 	Name   string
 	Filename string
 	Buffer [][]tile.Tile
-	Objects [][]tile.Tile
 }
 
 func (m *Level) Initialize(b [][]tile.Tile) {
 	m.Buffer  = initializeBuffer(MAP_LINES, MAP_COLUMNS, b)
-	m.Objects = initializeBuffer(MAP_LINES, MAP_COLUMNS, b)
 }
 
 func (m *Level) Get() (int, int, int, int, [][]tile.Tile) {
 	return MAP_LEFT, MAP_TOP, MAP_LINES, MAP_COLUMNS, m.Buffer
+}
+
+func (m *Level) Refresh() () {
+	//TODO -- maybe move some logic into here? Not used in this region tbh
 }
 
 func (m *Level) ReadDataFromFile() [][]tile.Tile {
