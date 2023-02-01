@@ -8,7 +8,7 @@ type IRegion interface {
 	Refresh()
 }
 
-func initializeBuffer(lines int, columns int, data [][]tile.Tile) [][]tile.Tile {
+func initializeBuffer(lines int, columns int, data [][]tile.Tile, defaultTile tile.Tile) [][]tile.Tile {
 	buffer := [][]tile.Tile{}
 	for l := 0; l < lines; l++ {
 		tileLine := []tile.Tile{}
@@ -16,7 +16,7 @@ func initializeBuffer(lines int, columns int, data [][]tile.Tile) [][]tile.Tile 
 			if l < len(data) && c < len(data[l]) {
 				tileLine = append(tileLine, data[l][c])
 			} else {
-				tileLine = append(tileLine, tile.BLANK)
+				tileLine = append(tileLine, defaultTile)
 			}
 		}
 		buffer = append(buffer, tileLine)

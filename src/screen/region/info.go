@@ -24,12 +24,12 @@ func (p *Info) Initialize(b [][]tile.Tile) {
 	p.Message = "Currently [MOVING]: WASD (moves), switch to (i)nventory, (Q)uit"
 	b = p.compile()
 
-	p.Buffer = initializeBuffer(INFO_LINES, INFO_COLUMNS, b)
+	p.Buffer = initializeBuffer(INFO_LINES, INFO_COLUMNS, b,tile.BLANK)
 }
 
 func (p *Info) Refresh() {
 	b := p.compile()
-	p.Buffer = initializeBuffer(INFO_LINES, INFO_COLUMNS, b) // rename to generateBuffer?
+	p.Buffer = initializeBuffer(INFO_LINES, INFO_COLUMNS, b,tile.BLANK) // rename to generateBuffer?
 }
 
 func (p *Info) Get() (int, int, int, int, [][]tile.Tile) {

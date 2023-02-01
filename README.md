@@ -1,6 +1,6 @@
 ### OVERVIEW ###
 This is a game engine which generates ANSI code for a TCP connection over a terminal.
-Using "Tiles" and "Regions" you can build a screen.
+Using "Cells" "Tiles" and "Regions" you can build a screen.
 
 ### HOW TO RUN THIS ###
 1) go run .
@@ -19,11 +19,16 @@ Using "Tiles" and "Regions" you can build a screen.
 - From now on if you SAVE these settings you'll just have to "Load" than "Open" in the future
 
 ### MAIN DEMO ###
-- v0.01 Initial Commit
-- ![image description](docs/imgs/move_dude_move.gif)
-- v0.03 Better coloring, Now have most "in game" regions defined.
+- v0.0.1 Initial Commit
+- ![image description](docs/imgs/v0.0.1.gif)
+- v0.0.3 Better coloring, Now have most "in game" regions defined.
 - ![image description](docs/imgs/v0.0.3.gif)
-- v0.04 We have COOOOMBAT now.
+- v0.0.4 We have COOOOMBAT now.
+- v0.0.5 Fog exist! Health returned on fog.
+-- Stats for players and enemies exist as well
+-- examples of how to update screens now implemented
+-- switched to CELLS which are just stacks of tiles
+- ![image description](docs/imgs/v0.0.5.gif)
 
 ### MAIN STRUCTS ###
 - Screen
@@ -54,6 +59,12 @@ profile (aka user info area)
 - nice
 3) detect wall collision
 4) detect enemy collision
+5) Fog exist
+6) Code is generic RPG in terms of text but the theme has been decided:
+Taking place during the golden age of invention (this is just a fancy way to say steampunk)
+a railroad mogul buys up a town with a mine in hopes to uncover it's treasures.
+You select a class to take on a mission; attempt to conquer the map and return with riches.
+
 
 ### TODO ###
 1) Make input it's own class thingy
@@ -63,5 +74,6 @@ profile (aka user info area)
 --- want drops
 --- want spawns
 4) Intro screen and map selection
-5) Make better file naming
-6) Switch input section AND info bar section
+5) Add FOG wall detection (cannot see through walls)
+6) Begin working on items
+7) Start thinking about town hub interactions.

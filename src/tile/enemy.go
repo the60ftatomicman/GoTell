@@ -18,9 +18,9 @@ func (e *Enemy) Interaction(p *Player) bool {
 	removeEnemy := false
 	if(p.Stats.Speed >= e.Stats.Speed){
 		e.Stats.Health -= statCalc_Battle(p.Stats.Offense,e.Stats.Defense)
-		p.Stats.Health -= statCalc_Battle(e.Stats.Offense,p.Stats.Defense)
+		p.UpdateHealth(statCalc_Battle(e.Stats.Offense,p.Stats.Defense) * -1)
 	}else{
-		p.Stats.Health -= statCalc_Battle(e.Stats.Offense,p.Stats.Defense)
+		p.UpdateHealth(statCalc_Battle(e.Stats.Offense,p.Stats.Defense) * -1)
 		e.Stats.Health -= statCalc_Battle(p.Stats.Offense,p.Stats.Defense)
 	}
 	if (e.Stats.Health <= 0) {
@@ -32,10 +32,10 @@ func (e *Enemy) Interaction(p *Player) bool {
 func generateEnemy() Enemy {
 	e := Enemy{
 		Name:      "Moleman",
-		X:         20,
-		Y:         12,
-		PrvX:      12,
-		Prvy:      12,
+		X:         10,
+		Y:         10,
+		PrvX:      10,
+		Prvy:      10,
 		Stats: Stats{
 			Health: 10,
 			Defense: 0,

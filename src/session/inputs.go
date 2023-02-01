@@ -2,6 +2,7 @@ package session
 
 import (
 	"example/gotell/src/core"
+	"example/gotell/src/screen"
 	"example/gotell/src/screen/region"
 	"example/gotell/src/tile"
 	"strconv"
@@ -96,8 +97,30 @@ func handleInputMoving(input string, p *tile.Player, s *Session) {
 		p.X = p.PrvX
 		p.Y = p.PrvY
 	}
+	// -- now do the player placement
 	s.Screen.Buffer[p.PrvY][p.PrvX].Pop()
 	s.Screen.Buffer[p.Y][p.X].Set(p.Tile);
+	// -- remove any fog
+	fogRange := p.Stats.Vision
+	for c := fogRange * -1; c <= fogRange; c++ {
+		tileX := p.X+c;
+		if(tileX < region.MAP_LEFT){tileX = region.MAP_LEFT}
+		if(tileX > region.MAP_LEFT+region.MAP_COLUMNS){tileX = region.MAP_LEFT+region.MAP_COLUMNS}
+		for r := fogRange * -1; r <= fogRange; r++ {
+			tileY := p.Y+r;
+			if(tileY < region.MAP_TOP){tileY = region.MAP_TOP}
+			if(tileY > region.MAP_TOP+region.MAP_LINES){tileY = region.MAP_TOP+region.MAP_LINES}
+			if (removeFog(&s.Screen.Buffer[tileY][tileX])) {
+				p.UpdateHealth(p.Stats.FogRet)
+				p.UpdateMana(p.Stats.FogRet)
+				s.Profile.Health = strconv.Itoa(p.Stats.Health)
+				s.Profile.Mana = strconv.Itoa(p.Stats.Mana)
+				s.Profile.Refresh() // would love to move to generic  session but I imagine this saves cycles
+				s.Screen.Compile(&s.Profile)
+			}
+		}
+	}
+	//some for loop here.
 	
 }
 
@@ -121,4 +144,13 @@ func preventMovement(tA *tile.Tile, tB *tile.Tile) bool {
 	}
 
 	return prevent
+}
+
+//TODO -- add all logic above into here. Also account for not being able to "see" through walls.
+func removeFog(c *screen.Cell) bool {
+	if (c.Get().Name == "FOG") {
+		c.Pop()
+		return true
+	}
+	return false
 }

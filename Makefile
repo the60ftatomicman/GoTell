@@ -4,5 +4,5 @@ burn:
 
 #stty -icanon && nc localhost 9002
 run:
-	$(MAKE) burn
+	- $(MAKE) burn
 	go run .

@@ -16,7 +16,7 @@ type Level struct {
 }
 
 func (m *Level) Initialize(b [][]tile.Tile) {
-	m.Buffer  = initializeBuffer(MAP_LINES, MAP_COLUMNS, b)
+	m.Buffer  = initializeBuffer(MAP_LINES, MAP_COLUMNS, b,tile.FOG)
 }
 
 func (m *Level) Get() (int, int, int, int, [][]tile.Tile) {
