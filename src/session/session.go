@@ -52,7 +52,16 @@ func (s *Session) Initialize(c *net.Conn) {
 func (s *Session) initializeObjects() {
 	//--Enemies
 	for idx,_ := range s.Enemies {
-		s.Screen.Set(s.Enemies[idx].Tile, s.Enemies[idx].X,s.Enemies[idx].Y)
+		enemy_X := s.Enemies[idx].X
+		enemy_Y := s.Enemies[idx].X
+		intendedType := s.Screen.Buffer[enemy_Y][enemy_X].Get()
+		if (intendedType.Name == "FOG"){
+			s.Screen.Buffer[enemy_Y][enemy_X].Pop()
+			s.Screen.Set(s.Enemies[idx].Tile, enemy_Y,enemy_X)
+			s.Screen.Set(tile.FOG, enemy_Y,enemy_X)
+		}else{
+			s.Screen.Set(s.Enemies[idx].Tile, enemy_Y,enemy_X)
+		}
 	}
 	//--Player
 	//if(playerMoved){

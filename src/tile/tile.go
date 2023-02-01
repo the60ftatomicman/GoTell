@@ -59,12 +59,24 @@ var INFO_H = Tile{
 	BGColor:   core.TermCodes(core.BgBlack),
 	Attribute: core.ATTR_SOLID,
 }
-var LADDER = Tile {
+
+var LADDER = Tile{
 	Name:  "LADDER",
 	Icon:  core.Icons(core.ICON_LADDER),
-	Color: core.TermCodes(core.FgWhite),
+	Color: core.TermCodes(core.FgYellow),
 }
 
+var EMPTY = Tile{
+	Name:  "EMPTY",
+	Icon:  core.Icons(core.ICON_EMPTY),
+	Color: core.TermCodes(core.FgWhite),
+}
+var FOG = Tile{
+	Name:  "FOG",
+	Icon:  core.Icons(core.ICON_FOG),
+	Color: core.TermCodes(core.FgGrey),
+	BGColor: core.TermCodes(core.BgGrey),
+}
 func GENERIC_TEXT(character string, colors ...core.TermCodes) Tile{
 	bgColor := core.TermCodes(core.BgBlack)
 	if(len(colors) > 1){

@@ -25,4 +25,7 @@ func (c *Cell)Set(t tile.Tile) {
 
 func (c *Cell)Pop() {
 	c.Tiles = c.Tiles[:len(c.Tiles)-1]
+	if (len(c.Tiles) == 0){
+		c.Set(tile.BLANK)
+	}
 }

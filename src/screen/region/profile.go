@@ -39,7 +39,7 @@ func (p *Profile) Initialize(b [][]tile.Tile) {
 	//haha yeah I am going to ignore B passed in.
 	b = p.compile()
 
-	p.Buffer = initializeBuffer(PROFILE_LINES, PROFILE_COLUMNS, b)
+	p.Buffer = initializeBuffer(PROFILE_LINES, PROFILE_COLUMNS, b,tile.BLANK)
 }
 
 func (p *Profile) Get() (int, int, int, int, [][]tile.Tile) {
@@ -59,7 +59,7 @@ func (p *Profile) ReadDataFromFile() [][]tile.Tile {
 }
 
 func (p *Profile)Refresh(){
-	p.Buffer = initializeBuffer(PROFILE_LINES, PROFILE_COLUMNS, p.compile())
+	p.Buffer = initializeBuffer(PROFILE_LINES, PROFILE_COLUMNS, p.compile(),tile.BLANK)
 }
 
 func (p *Profile)compile()[][]tile.Tile{
