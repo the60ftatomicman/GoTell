@@ -18,9 +18,9 @@ type Screen struct {
 
 func BlankScreen() [SCREEN_HEIGHT][SCREEN_WIDTH]Cell {
 	var blank [SCREEN_HEIGHT][SCREEN_WIDTH]Cell
-	for lIdx, line := range blank {
-		for cIdx, _ := range line {
-			blank[lIdx][cIdx] = generateNewCell()
+	for l := 0; l < len(blank); l++ {
+		for c := 0; c < len(blank[l]); c++ {
+			blank[l][c] = generateNewCell()
 		}
 	}
 	return blank
@@ -57,8 +57,8 @@ func (s *Screen) Refresh() {
 }
 
 func (s *Screen) Set(t tile.Tile, idx ...int) {
-	var line = idx[1]
-	var column = idx[0]
+	var column = idx[1]
+	var line = idx[0]
 
 	if line >= SCREEN_HEIGHT {
 		fmt.Println("ERROR, line " + strconv.Itoa(line) + " is greater than " + strconv.Itoa(SCREEN_HEIGHT))

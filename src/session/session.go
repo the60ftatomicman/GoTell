@@ -51,24 +51,17 @@ func (s *Session) Initialize(c *net.Conn) {
 
 func (s *Session) initializeObjects() {
 	//--Enemies
-	for idx,_ := range s.Enemies {
-		enemy_X := s.Enemies[idx].X
-		enemy_Y := s.Enemies[idx].X
-		intendedType := s.Screen.Buffer[enemy_Y][enemy_X].Get()
+	for _,enemy := range s.Enemies {
+		intendedType := s.Screen.Buffer[enemy.X][enemy.Y].Get()
 		if (intendedType.Name == "FOG"){
-			s.Screen.Buffer[enemy_Y][enemy_X].Pop()
-			s.Screen.Set(s.Enemies[idx].Tile, enemy_Y,enemy_X)
-			s.Screen.Set(tile.FOG, enemy_Y,enemy_X)
+			s.Screen.Buffer[enemy.Y][enemy.X].Pop()
+			s.Screen.Set(enemy.Tile, enemy.Y,enemy.X)
+			s.Screen.Set(tile.FOG, enemy.Y,enemy.X)
 		}else{
-			s.Screen.Set(s.Enemies[idx].Tile, enemy_Y,enemy_X)
+			s.Screen.Set(enemy.Tile, enemy.Y,enemy.X)
 		}
 	}
-	//--Player
-	//if(playerMoved){
-	//	s.Screen.Set(s.Player.UnderTile, s.Player.PrvX, s.Player.PrvY)
-	//	s.Player.UnderTile = s.Screen.Buffer[s.Player.Y][s.Player.X].Get()
-	//}
-	s.Screen.Set(s.Player.Tile, s.Player.X, s.Player.Y)
+	s.Screen.Set(s.Player.Tile, s.Player.Y, s.Player.X)
 }
 
 func (s *Session) Handle() {
@@ -80,19 +73,20 @@ func (s *Session) Handle() {
 	for {
 		netData, _    := bufio.NewReader(s.Connection).ReadByte()
 		formattedData := strings.TrimSpace(string(netData))
-		if hanleInputStateSwitching(formattedData, s, &s.Info) {
+		if hanleInputStateSwitching(formattedData, s) {
 			// AKA Quit
 			break
 		} else {
 			switch s.State{
 				case STATE_MOVING:{
-					// TODO -- we only need the buffer....
+					// TODO -- we only need the session
 					handleInputMoving(formattedData, &s.Player, s)
 				}
 				case STATE_INVENTORY:{
-					handleInputInventory(formattedData, &s.Profile, &s.Info)
+					handleInputInventory(formattedData, s)
 				}
 			}
+			s.Screen.Compile(&s.Profile, &s.Info)
 			s.Screen.Refresh()
 			core.HandleOutputToClient(s.Connection, 0, region.INFO_TOP+region.INFO_LINES+1, s.Screen.Get())
 		}

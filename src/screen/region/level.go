@@ -6,7 +6,7 @@ import (
 
 const MAP_LEFT = 0
 const MAP_TOP = 0
-const MAP_LINES = 20
+const MAP_LINES = 19
 const MAP_COLUMNS = 80
 
 type Level struct {

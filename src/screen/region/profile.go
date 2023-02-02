@@ -8,7 +8,7 @@ import (
 
 const PROFILE_LEFT = 80
 const PROFILE_TOP = 0
-const PROFILE_LINES = 21
+const PROFILE_LINES = 19
 const PROFILE_COLUMNS = 18
 // IMPORTANT LINES IN THE PROFILE FOR WRITING!
 // START INDEX 0
@@ -16,19 +16,21 @@ const LINE_VAR_NAME = 1
 const LINE_VAR_CLASS = 2
 const LINE_VAR_HEALTH = 4
 const LINE_VAR_MANA = 5
-const LINE_VAR_GOLD = 6
-
+//const LINE_VAR_GOLD = 6
+const LINE_VAR_LEVEL = 6
 const LINE_LBL_ITEMS = 8
 // Remember, each of these only have 16 characters!
 const LINE_VAR_ITEM_1 = 9
 const LINE_VAR_ITEM_2 = 10
 
+//TODO -- just put a player reference in here....
 type Profile struct {
 	Name   string
 	Class  string
 	Health string
 	Mana   string
 	Gold   string
+	Level  string
 	Items  []string
 	SelectedItem string
 	Buffer [][]tile.Tile
@@ -53,6 +55,7 @@ func (p *Profile) ReadDataFromFile() [][]tile.Tile {
 	p.Health = "100"
 	p.Mana   = "100"
 	p.Gold   = "0"
+	p.Level  = "1"
 	p.Items  = []string{"Boots","Helmet",""}
 	
 	return [][]tile.Tile{}
@@ -79,9 +82,12 @@ func (p *Profile)compile()[][]tile.Tile{
 			case LINE_VAR_MANA:{
 				t = append(t, p.getBaseRow(1,"MANA: "+p.Mana,core.FgBlue))
 			}
-			case LINE_VAR_GOLD:{
-				t = append(t, p.getBaseRow(1,"GOLD: "+p.Gold,core.FgYellow))
+			case LINE_VAR_LEVEL:{
+				t = append(t, p.getBaseRow(1,"LEVEL: "+p.Level,core.FgYellow))
 			}
+			//case LINE_VAR_GOLD:{
+			//	t = append(t, p.getBaseRow(1,"GOLD: "+p.Gold,core.FgYellow))
+			//}
 			case LINE_LBL_ITEMS:{
 				t = append(t, p.getBaseRow(0," --- ITEMS --- ",core.FgCyan))
 			}

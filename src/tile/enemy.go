@@ -17,11 +17,11 @@ type Enemy struct {
 func (e *Enemy) Interaction(p *Player) bool {
 	removeEnemy := false
 	if(p.Stats.Speed >= e.Stats.Speed){
-		e.Stats.Health -= statCalc_Battle(p.Stats.Offense,e.Stats.Defense)
-		p.UpdateHealth(statCalc_Battle(e.Stats.Offense,p.Stats.Defense) * -1)
+		e.Stats.UpdateHealth(statCalc_Battle(p.Stats.Offense,e.Stats.Defense,p.Stats.Level) * -1)
+		p.Stats.UpdateHealth(statCalc_Battle(e.Stats.Offense,p.Stats.Defense,e.Stats.Level) * -1)
 	}else{
-		p.UpdateHealth(statCalc_Battle(e.Stats.Offense,p.Stats.Defense) * -1)
-		e.Stats.Health -= statCalc_Battle(p.Stats.Offense,p.Stats.Defense)
+		p.Stats.UpdateHealth(statCalc_Battle(e.Stats.Offense,p.Stats.Defense,e.Stats.Level) * -1)
+		e.Stats.UpdateHealth(statCalc_Battle(p.Stats.Offense,p.Stats.Defense,p.Stats.Level) * -1)
 	}
 	if (e.Stats.Health <= 0) {
 		removeEnemy = true
@@ -29,18 +29,21 @@ func (e *Enemy) Interaction(p *Player) bool {
 	return removeEnemy
 }
 
-func generateEnemy() Enemy {
+func generateEnemy(x int,y int,level int) Enemy {
 	e := Enemy{
 		Name:      "Moleman",
-		X:         10,
-		Y:         10,
-		PrvX:      10,
-		Prvy:      10,
+		X:         x,
+		Y:         y,
+		PrvX:      x,
+		Prvy:      y,
 		Stats: Stats{
-			Health: 10,
-			Defense: 0,
-			Offense: 5,
-			Speed:   1,
+			Level:     level,
+			MaxHealth: 10,
+			Health:    10,
+			Defense:   0,
+			Offense:   5,
+			Speed:     1,
+			FogRet:    20,
 		},
 	}
 	e.Tile = Tile{
@@ -57,5 +60,11 @@ func generateEnemy() Enemy {
 //
 //
 func GenerateEnemiesFromFile() []Enemy{
-	return []Enemy{generateEnemy()}
+	return []Enemy{
+		generateEnemy(11,11,1),
+		generateEnemy(11,13,1),
+		generateEnemy(12,12,2),
+		generateEnemy(13,11,1),
+		generateEnemy(13,13,1),
+	}
 }
