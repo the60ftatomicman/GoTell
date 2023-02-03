@@ -15,24 +15,32 @@ func handleInputMoving(input string, p *tile.Player, s *Session) {
 		{
 			if p.Y > 1 {
 				p.Y -= 1
+				p.DirY = -1
+				p.DirX = 0
 			}
 		}
 	case "d":
 		{
 			if p.X < region.MAP_COLUMNS-1 {
 				p.X += 1
+				p.DirY = 0
+				p.DirX = 1
 			}
 		}
 	case "s":
 		{
 			if p.Y < region.MAP_LINES-1 {
 				p.Y += 1
+				p.DirY = 1
+				p.DirX = 0
 			}
 		}
 	case "a":
 		{
 			if p.X > 1 {
 				p.X -= 1
+				p.DirY = 0
+				p.DirX = -1
 			}
 		}
 	}
@@ -49,6 +57,8 @@ func handleInputMoving(input string, p *tile.Player, s *Session) {
 				//FIGHTING!
 				removeEnemy := s.Enemies[idx].Interaction(p)
 				s.Profile.Health = strconv.Itoa(p.Stats.Health)
+				s.Profile.Level = strconv.Itoa(p.Stats.Level)
+				s.Profile.XP = strconv.Itoa(p.Stats.XP)
 				enemy_msgs[0] = "ATTACKED: "+base_enemy_msg
 				if(removeEnemy){
 					enemy_msgs[0] = "DEFEATED ["+enemy.Name+"]"
@@ -89,9 +99,10 @@ func handleInputMoving(input string, p *tile.Player, s *Session) {
 		s.Screen.Buffer[p.PrvY][p.PrvX].Pop()
 		s.Screen.Buffer[p.Y][p.X].Set(p.Tile);
 		// -- remove any fog, loop to see who is nearby
-		fogRange := p.Stats.Vision
-		for c := fogRange * -1; c <= fogRange; c++ {
-			for r := fogRange * -1; r <= fogRange; r++ {
+		//TODO -- block based on who is nearby
+		xStart,xEnd,xInc,yStart,yEnd,yInc := p.GetViewRanges()
+		for c := xStart; c != xEnd; c += xInc {
+			for r := yStart; r != yEnd; r+= yInc  {
 				removeFog(s,c,r)
 			}
 		}

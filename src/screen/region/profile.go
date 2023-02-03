@@ -31,6 +31,7 @@ type Profile struct {
 	Mana   string
 	Gold   string
 	Level  string
+	XP     string
 	Items  []string
 	SelectedItem string
 	Buffer [][]tile.Tile
@@ -56,6 +57,7 @@ func (p *Profile) ReadDataFromFile() [][]tile.Tile {
 	p.Mana   = "100"
 	p.Gold   = "0"
 	p.Level  = "1"
+	p.XP     = "0"
 	p.Items  = []string{"Boots","Helmet",""}
 	
 	return [][]tile.Tile{}
@@ -77,13 +79,13 @@ func (p *Profile)compile()[][]tile.Tile{
 				t = append(t, p.getBaseRow(1,"CLASS: "+p.Class,core.FgWhite))
 			}
 			case LINE_VAR_HEALTH:{
-				t = append(t, p.getBaseRow(1,"  HP: "+p.Health,core.FgRed))
+				t = append(t, p.getBaseRow(1,"   HP: "+p.Health,core.FgRed))
 			}
 			case LINE_VAR_MANA:{
-				t = append(t, p.getBaseRow(1,"MANA: "+p.Mana,core.FgBlue))
+				t = append(t, p.getBaseRow(1," MANA: "+p.Mana,core.FgBlue))
 			}
 			case LINE_VAR_LEVEL:{
-				t = append(t, p.getBaseRow(1,"LEVEL: "+p.Level,core.FgYellow))
+				t = append(t, p.getBaseRow(1,"LEVEL: "+p.Level+" XP: "+p.XP,core.FgYellow))
 			}
 			//case LINE_VAR_GOLD:{
 			//	t = append(t, p.getBaseRow(1,"GOLD: "+p.Gold,core.FgYellow))

@@ -73,7 +73,7 @@ func getTileXY(playerX int,playerY int,colDelta int,rowDelta int) (int,int) {
 
 //TODO -- add all logic above into here. Also account for not being able to "see" through walls.
 //TODo -- why am I passing the player....
-func removeFog(s *Session,colDelta int,rowDelta int) {
+func removeFog(s *Session,colDelta int,rowDelta int) string{
 	p := &s.Player
 	tileX,tileY := getTileXY(p.X,p.Y,colDelta,rowDelta)
 	s.Screen.Buffer[tileY][tileX].Get()
@@ -90,4 +90,6 @@ func removeFog(s *Session,colDelta int,rowDelta int) {
 			e.Stats.UpdateMana(e.Stats.FogRet)
 		}
 	}
+	//return the value of the current tile
+	return s.Screen.Buffer[tileY][tileX].Get().Attribute
 }

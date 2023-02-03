@@ -6,7 +6,7 @@ type Player struct {
 	UnderTile        Tile
 	Tile             Tile
 	Name             string
-	X, Y, PrvX, PrvY int
+	X, Y, PrvX, PrvY,DirX,DirY int
 	Stats            Stats
 }
 
@@ -16,6 +16,8 @@ func GeneratePlayer() Player {
 		Y:    5,
 		PrvX: 1,
 		PrvY: 5,
+		DirX: 0,
+		DirY: 0,
 		Stats: Stats{
 			Level:     1,
 			MaxHealth: 100,
@@ -33,4 +35,25 @@ func GeneratePlayer() Player {
 			Attribute: core.ATTR_SOLID + core.ATTR_FOREGROUND,
 		},
 	}
+}
+
+func (p *Player)GetViewRanges() (int,int,int,int,int,int){
+	fogRange := p.Stats.Vision
+	xStart := fogRange * -1
+	xEnd   := fogRange
+	xInc   := 1
+	if(p.DirX != 0){
+		xStart = 0
+		xEnd = fogRange * p.DirX
+		xInc = p.DirX
+	}
+	yStart := fogRange * -1
+	yEnd   := fogRange
+	yInc   := 1
+	if(p.DirY != 0){
+		yStart = 0
+		yEnd = fogRange * p.DirY
+		yInc = p.DirY
+	}
+	return xStart,xEnd,xInc,yStart,yEnd,yInc
 }

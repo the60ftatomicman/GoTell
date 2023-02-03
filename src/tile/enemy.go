@@ -10,7 +10,7 @@ type Enemy struct {
 	Tile             Tile
 	Status           string
 	Name             string
-	X, Y, PrvX, Prvy int
+	X, Y, PrvX, Prvy,XP int
 	Stats            Stats
 }
 
@@ -25,13 +25,20 @@ func (e *Enemy) Interaction(p *Player) bool {
 	}
 	if (e.Stats.Health <= 0) {
 		removeEnemy = true
+		p.Stats.XP += e.Stats.XP
+		if(p.Stats.XP >= 10) {
+			p.Stats.Level  = (p.Stats.XP / 10) + 1
+			p.Stats.XP     = p.Stats.XP % 10
+			p.Stats.Health = p.Stats.MaxHealth
+			p.Stats.Mana   = p.Stats.MaxMana
+		}
 	}
 	return removeEnemy
 }
 
-func generateEnemy(x int,y int,level int) Enemy {
+func generateEnemy(x int,y int,level int,name string) Enemy {
 	e := Enemy{
-		Name:      "Moleman",
+		Name:      name,
 		X:         x,
 		Y:         y,
 		PrvX:      x,
@@ -44,6 +51,7 @@ func generateEnemy(x int,y int,level int) Enemy {
 			Offense:   5,
 			Speed:     1,
 			FogRet:    20,
+			XP:         5,
 		},
 	}
 	e.Tile = Tile{
@@ -61,10 +69,10 @@ func generateEnemy(x int,y int,level int) Enemy {
 //
 func GenerateEnemiesFromFile() []Enemy{
 	return []Enemy{
-		generateEnemy(11,11,1),
-		generateEnemy(11,13,1),
-		generateEnemy(12,12,2),
-		generateEnemy(13,11,1),
-		generateEnemy(13,13,1),
+		generateEnemy(11,11,1,"Moleman"),
+		generateEnemy(11,13,1,"Moleman"),
+		generateEnemy(12,12,4,"Moleman Boss"),
+		generateEnemy(13,11,1,"Moleman"),
+		generateEnemy(13,13,1,"Moleman"),
 	}
 }
