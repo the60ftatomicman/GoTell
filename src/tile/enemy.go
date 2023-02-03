@@ -2,10 +2,6 @@ package tile
 
 import "example/gotell/src/core"
 
-type iInteractiveObject interface {
-	Interaction() Tile
-}
-
 type Enemy struct {
 	Tile             Tile
 	Status           string
@@ -25,16 +21,12 @@ func (e *Enemy) Interaction(p *Player) bool {
 	}
 	if (e.Stats.Health <= 0) {
 		removeEnemy = true
-		p.Stats.XP += e.Stats.XP
-		if(p.Stats.XP >= 10) {
-			p.Stats.Level  = (p.Stats.XP / 10) + 1
-			p.Stats.XP     = p.Stats.XP % 10
-			p.Stats.Health = p.Stats.MaxHealth
-			p.Stats.Mana   = p.Stats.MaxMana
-		}
+		p.ChangeXP(e.Stats.XP);
 	}
 	return removeEnemy
 }
+
+func (e *Enemy) Convert(p *Player) {}
 
 func generateEnemy(x int,y int,level int,name string) Enemy {
 	e := Enemy{

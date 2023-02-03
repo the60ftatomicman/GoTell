@@ -24,6 +24,31 @@ func hanleInputStateSwitching(input string, s *Session) bool{
 			{
 				if s.State != STATE_MOVING{
 					s.State = STATE_MOVING
+					s.Profile.SelectedItem = ""
+				}
+			}
+		case "p":
+			{
+				if s.State == STATE_MOVING{
+					s.State = STATE_GETITEM
+					if(len(s.Player.Items) < region.LINE_VAR_ITEM_COUNT){
+						for idx,item := range s.Items {
+							if (item.X == s.Player.X && item.Y == s.Player.Y){
+								s.Player.Items = append(s.Player.Items,item)
+								s.Info.Set("Picked up ["+item.Name+"]")
+								//Remove player and item
+								s.Screen.Buffer[s.Player.Y][s.Player.X].Pop()
+								s.Screen.Buffer[s.Player.Y][s.Player.X].Pop()
+								s.Screen.Buffer[s.Player.Y][s.Player.X].Set(s.Player.Tile)
+								s.Profile.Items = append(s.Profile.Items,item.Name) 
+								s.Items = append(s.Items[:idx], s.Items[idx+1:]...)
+							}
+						}
+					}else{
+						s.Info.Set("Your inventory is FULL")
+					}
+					s.Info.Refresh()
+					s.Profile.Refresh()
 				}
 			}
 		case "r":
@@ -33,16 +58,23 @@ func hanleInputStateSwitching(input string, s *Session) bool{
 					s.Player.Stats.UpdateMana(s.Player.Stats.MaxMana)
 					s.State = STATE_MOVING
 					s.Info.Set("Currently [MOVING]: WASD (moves), switch to (i)nventory, (Q)uit")
-					s.Info.Refresh()
 					s.Profile.Health = strconv.Itoa(s.Player.Stats.Health)
 					s.Profile.Mana = strconv.Itoa(s.Player.Stats.Mana)
+					s.Info.Refresh()
 					s.Profile.Refresh()
 				}
 			}
-		case "1":
+		/*case "1":
 			{
 				if s.State == STATE_INVENTORY{
 					s.State = STATE_ITEM
+				}
+			}
+		*/
+		default:
+			{
+				if(s.State == STATE_GETITEM){
+					s.State = STATE_MOVING
 				}
 			}
 	}

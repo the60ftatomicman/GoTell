@@ -8,6 +8,7 @@ type Player struct {
 	Name             string
 	X, Y, PrvX, PrvY,DirX,DirY int
 	Stats            Stats
+	Items            []Item
 }
 
 func GeneratePlayer() Player {
@@ -34,6 +35,16 @@ func GeneratePlayer() Player {
 			Color:     core.TermCodes(core.FgGreen),
 			Attribute: core.ATTR_SOLID + core.ATTR_FOREGROUND,
 		},
+	}
+}
+
+func (p *Player)ChangeXP(deltaXP int) {
+	p.Stats.XP += deltaXP
+	if(p.Stats.XP >= 10) {
+		p.Stats.Level  = (p.Stats.XP / 10) + 1
+		p.Stats.XP     = p.Stats.XP % 10
+		p.Stats.Health = p.Stats.MaxHealth
+		p.Stats.Mana   = p.Stats.MaxMana
 	}
 }
 

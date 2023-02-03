@@ -45,21 +45,28 @@ func handleInputMoving(input string, p *tile.Player, s *Session) {
 		}
 	}
 	s.Info.Set("Currently [MOVING]: WASD (moves), switch to (i)nventory, (Q)uit")
+	// Check if we are on an item
+	for _,item := range s.Items {
+		if (item.X == p.X && item.Y == p.Y){
+			s.Info.Set("Currently [MOVING]: WASD (moves), (p)ick up ["+item.Name+"], switch to (i)nventory, (Q)uit")
+		}
+	}
 	// Test if we are fighting
-	enemy_msgs    := []string{""}
+	prev_status   := s.Info.Message[0];
+	enemy_msgs    := []string{prev_status}
 	for idx,enemy := range s.Enemies {
-		enemyXdelta  := enemy.X - p.X
-		enemyYdelta  := enemy.Y - p.Y
-		delta        := math.Abs(float64(enemyXdelta)) + math.Abs(float64(enemyYdelta))
+		enemyXdelta    := enemy.X - p.X
+		enemyYdelta    := enemy.Y - p.Y
+		delta          := math.Abs(float64(enemyXdelta)) + math.Abs(float64(enemyYdelta))
 		base_enemy_msg := "Enemy ["+enemy.Name+"] Level ["+strconv.Itoa(enemy.Stats.Level)+"] Health ["+strconv.Itoa(enemy.Stats.Health)+"]"
 		if (delta < 2) {
 			if (delta == 0) {
 				//FIGHTING!
-				removeEnemy := s.Enemies[idx].Interaction(p)
+				removeEnemy     := s.Enemies[idx].Interaction(p)
 				s.Profile.Health = strconv.Itoa(p.Stats.Health)
-				s.Profile.Level = strconv.Itoa(p.Stats.Level)
-				s.Profile.XP = strconv.Itoa(p.Stats.XP)
-				enemy_msgs[0] = "ATTACKED: "+base_enemy_msg
+				s.Profile.Level  = strconv.Itoa(p.Stats.Level)
+				s.Profile.XP     = strconv.Itoa(p.Stats.XP)
+				enemy_msgs[0]    = "ATTACKED: "+base_enemy_msg
 				if(removeEnemy){
 					enemy_msgs[0] = "DEFEATED ["+enemy.Name+"]"
 					s.Screen.Buffer[p.Y][p.X].Pop()
@@ -78,7 +85,7 @@ func handleInputMoving(input string, p *tile.Player, s *Session) {
 			if(enemy_msgs[0] != "" || len(enemy_msgs) > 1){
 				s.Info.Set(enemy_msgs...)
 			}else{
-				s.Info.Set("Currently [MOVING]: WASD (moves), switch to (i)nventory, (Q)uit")
+				s.Info.Set(prev_status)
 			}
 		}
 	}

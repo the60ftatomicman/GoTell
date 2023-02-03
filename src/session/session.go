@@ -19,6 +19,7 @@ type Session struct {
 	Info       region.Info
 	State      string //TODO -- ENUM!
 	Enemies    []tile.Enemy
+	Items      []tile.Item
 	Connection net.Conn
 }
 
@@ -37,6 +38,8 @@ func (s *Session) Initialize(c *net.Conn) {
 	}
 	// ------------ Generate Enemies
 	s.Enemies = tile.GenerateEnemiesFromFile()
+	// ------------ Generate Items
+	s.Items = tile.GenerateItemsFromFile()
 	// ---------- Generate Level region
 	s.Level = region.Level{}
 	s.Level.Initialize(s.Level.ReadDataFromFile())
@@ -59,6 +62,17 @@ func (s *Session) initializeObjects() {
 			s.Screen.Set(tile.FOG, enemy.Y,enemy.X)
 		}else{
 			s.Screen.Set(enemy.Tile, enemy.Y,enemy.X)
+		}
+	}
+	//--Items
+	for _,item := range s.Items {
+		intendedType := s.Screen.Buffer[item.X][item.Y].Get()
+		if (intendedType.Name == "FOG"){
+			s.Screen.Buffer[item.Y][item.X].Pop()
+			s.Screen.Set(item.Tile, item.Y,item.X)
+			s.Screen.Set(tile.FOG, item.Y,item.X)
+		}else{
+			s.Screen.Set(item.Tile, item.Y,item.X)
 		}
 	}
 	s.Screen.Set(s.Player.Tile, s.Player.Y, s.Player.X)

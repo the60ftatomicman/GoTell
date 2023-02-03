@@ -3,13 +3,13 @@ package tile
 import "example/gotell/src/core"
 
 type Tile struct {
-	Name              string         `default:"UNASSIGNED"`
-	Icon              core.Icons     `default:Icons(ICON_NULL)`
-	Color             core.TermCodes `default:""`
-	BGColor           core.TermCodes `default:""`
-	Status            string         `default:"OK"`
-	Attribute         string         `default:""`
-	Parent            *Enemy         `default:nil`
+	Name              string              `default:"UNASSIGNED"`
+	Icon              core.Icons          `default:Icons(ICON_NULL)`
+	Color             core.TermCodes      `default:""`
+	BGColor           core.TermCodes      `default:""`
+	Status            string              `default:"OK"`
+	Attribute         string              `default:""`
+	Parent            iInteractiveObject  `default:nil`
 }
 
 var BLANK = Tile{
