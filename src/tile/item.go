@@ -14,7 +14,9 @@ func (i *Item) Interaction(p *Player) bool{
 	switch(i.Affects){
 		case "HEALTH":{p.Stats.UpdateHealth(i.Delta)}
 		case "MANA":{p.Stats.UpdateMana(i.Delta)}
-		case "OFFENSE":{p.Stats.Offense += i.Delta}	
+		case "OFFENSE":{p.Stats.Offense += i.Delta}
+		case "DEFENSE":{p.Stats.Defense += i.Delta}
+		case "SPEED":{p.Stats.Speed += i.Delta}	
 	}
 	return true;
 }
@@ -28,7 +30,6 @@ func generateItem(x int,y int, i Item) Item {
 	i.PrvX = x
 	i.Y = y
 	i.Prvy = y
-	//i.Tile.Parent = &i //TODO - do we NEED the parent anymore? forgot it's purpose
 	return i
 }
 //
@@ -40,9 +41,9 @@ func GenerateItemsFromFile() []Item{
 		generateItem(8 ,8,ITEM_HP),
 		generateItem(9 ,8,ITEM_HP),
 		generateItem(10,8,ITEM_MANA),
-		generateItem(11,8,ITEM_HP),
+		generateItem(11,8,ITEM_DEF_BOOST),
 		generateItem(12,8,ITEM_OFF_BOOST),
-		generateItem(13,8,ITEM_HP),
+		generateItem(13,8,ITEM_SPEED_BOOST),
 	}
 }
 //
@@ -60,10 +61,10 @@ var ITEM_HP = Item{
 	Affects:   "HEALTH",
 	Tile: Tile{
 		Name:      "ITEM",
-		Icon:      "H",
+		Icon:      core.ICON_HEALTH,
 		Color:     core.TermCodes(core.FgWhite),
 		BGColor:   core.TermCodes(core.BgRed),
-		Attribute: core.ATTR_FOREGROUND+core.ATTR_ONETIME,
+		Attribute: core.ATTR_ONETIME,
 	},
 }
 var ITEM_MANA = Item{
@@ -77,10 +78,10 @@ var ITEM_MANA = Item{
 	Affects:   "MANA",
 	Tile: Tile{
 		Name:      "ITEM",
-		Icon:      "M",
+		Icon:      core.ICON_MANA,
 		Color:     core.TermCodes(core.FgWhite),
 		BGColor:   core.TermCodes(core.BgBlue),
-		Attribute: core.ATTR_FOREGROUND+core.ATTR_ONETIME,
+		Attribute: core.ATTR_ONETIME,
 	},
 }
 var ITEM_OFF_BOOST = Item{
@@ -90,13 +91,47 @@ var ITEM_OFF_BOOST = Item{
 	PrvX:      0,
 	Prvy:      0,
 	Delta:     5,
-	ConversionPoints: 1,
+	ConversionPoints: 10,
 	Affects:   "OFFENSE",
 	Tile: Tile{
 		Name:      "ITEM",
-		Icon:      "P",
+		Icon:      core.ICON_OFF_BOOST,
 		Color:     core.TermCodes(core.FgBlack),
 		BGColor:   core.TermCodes(core.BgGreen),
-		Attribute: core.ATTR_FOREGROUND,
+		Attribute: "",
+	},
+}
+var ITEM_DEF_BOOST = Item{
+	Name:      "Hard Hat",
+	X:         0,
+	Y:         0,
+	PrvX:      0,
+	Prvy:      0,
+	Delta:     5,
+	ConversionPoints: 10,
+	Affects:   "DEFENSE",
+	Tile: Tile{
+		Name:      "ITEM",
+		Icon:      core.ICON_OFF_BOOST,
+		Color:     core.TermCodes(core.FgBlack),
+		BGColor:   core.TermCodes(core.BgGreen),
+		Attribute: "",
+	},
+}
+var ITEM_SPEED_BOOST = Item{
+	Name:      "Roller Blades",
+	X:         0,
+	Y:         0,
+	PrvX:      0,
+	Prvy:      0,
+	Delta:     5,
+	ConversionPoints: 10,
+	Affects:   "SPEED",
+	Tile: Tile{
+		Name:      "ITEM",
+		Icon:      core.ICON_OFF_BOOST,
+		Color:     core.TermCodes(core.FgBlack),
+		BGColor:   core.TermCodes(core.BgGreen),
+		Attribute: "",
 	},
 }

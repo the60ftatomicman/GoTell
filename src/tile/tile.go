@@ -62,13 +62,12 @@ var INFO_H = Tile{
 	BGColor:   core.TermCodes(core.BgBlack),
 	Attribute: core.ATTR_SOLID,
 }
-
 var LADDER = Tile{
 	Name:  "LADDER",
 	Icon:  core.Icons(core.ICON_LADDER),
 	Color: core.TermCodes(core.FgYellow),
+	Attribute: core.ATTR_CLIMBABLE,
 }
-
 var EMPTY = Tile{
 	Name:  "EMPTY",
 	Icon:  core.Icons(core.ICON_EMPTY),
@@ -79,6 +78,7 @@ var FOG = Tile{
 	Icon:  core.Icons(core.ICON_FOG),
 	Color: core.TermCodes(core.FgGrey),
 	BGColor: core.TermCodes(core.BgGrey),
+	Attribute: core.ATTR_FOREGROUND,
 }
 
 

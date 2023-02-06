@@ -61,13 +61,6 @@ func hanleInputStateSwitching(input string, s *Session) bool{
 					s.Info.Refresh()
 				}
 			}
-		/*case "1":
-			{
-				if s.State == STATE_INVENTORY{
-					s.State = STATE_ITEM
-				}
-			}
-		*/
 		default:
 			{
 				if(s.State == STATE_GETITEM){
@@ -100,8 +93,7 @@ func getTileXY(playerX int,playerY int,colDelta int,rowDelta int) (int,int) {
 		return tileX,tileY
 }
 
-//TODO -- add all logic above into here. Also account for not being able to "see" through walls.
-//TODo -- why am I passing the player....
+//TODO -- Account for not being able to "see" through walls.
 func removeFog(s *Session,colDelta int,rowDelta int) string{
 	p := &s.Player
 	tileX,tileY := getTileXY(p.X,p.Y,colDelta,rowDelta)
@@ -110,8 +102,6 @@ func removeFog(s *Session,colDelta int,rowDelta int) string{
 		s.Screen.Buffer[tileY][tileX].Pop()
 		p.Stats.UpdateHealth(p.Stats.FogRet)
 		p.Stats.UpdateMana(p.Stats.FogRet)
-		//s.Profile.Health = strconv.Itoa(p.Stats.Health)
-		//s.Profile.Mana = strconv.Itoa(p.Stats.Mana)
 		// Update all those enemies health!
 		for idx,_ := range s.Enemies {
 			e := &s.Enemies[idx]

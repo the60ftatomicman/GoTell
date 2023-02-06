@@ -3,7 +3,6 @@ package tile
 import "example/gotell/src/core"
 
 type Player struct {
-	UnderTile        Tile
 	Tile             Tile
 	Name             string
 	Class            string
@@ -36,11 +35,12 @@ func GeneratePlayer() Player {
 			Name:      "PLAYER",
 			Icon:      core.Icons(core.ICON_PLAYER),
 			Color:     core.TermCodes(core.FgGreen),
-			Attribute: core.ATTR_SOLID + core.ATTR_FOREGROUND,
+			Attribute: core.ATTR_SOLID,
 		},
 	}
 }
 
+//TODO -- add to stats I think
 func (p *Player)ChangeXP(deltaXP int) {
 	p.Stats.XP += deltaXP
 	if(p.Stats.XP >= 10) {

@@ -33,9 +33,7 @@ func (s *Screen) Compile(regionList ...region.IRegion) {
 		rLeft, rTop, rLines, rColumns, rBuffer := r.Get()
 		for l := 0; l < rLines; l++ {
 			for c := 0; c < rColumns; c++ {
-				//if !strings.Contains(s.Buffer[rTop+l][rLeft+c].Get().Attribute,core.ATTR_FOREGROUND) {
-					s.Buffer[rTop+l][rLeft+c].Tiles[0] = rBuffer[l][c]
-			//	}
+				s.Buffer[rTop+l][rLeft+c].Tiles[0] = rBuffer[l][c]
 			}
 		}
 	}

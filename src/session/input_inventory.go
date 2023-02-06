@@ -44,7 +44,9 @@ func handleInputInventory(input string, s *Session){
 					item.X = s.Player.X
 					item.Y = s.Player.Y
 					//TODO -- buug! item display disappears
-					//s.Screen.Buffer[s.Player.Y][s.Player.X].Set(item.Tile)
+					s.Screen.Buffer[s.Player.Y][s.Player.X].Pop()
+					s.Screen.Buffer[s.Player.Y][s.Player.X].Set(item.Tile)
+					s.Screen.Buffer[s.Player.Y][s.Player.X].Set(s.Player.Tile)
 					s.Items = append(s.Items, item)
 					s.Player.Items = append(s.Player.Items[:idx], s.Player.Items[idx+1:]...)
 					s.Profile.SelectedItem = ""

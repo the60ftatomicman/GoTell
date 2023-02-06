@@ -56,7 +56,7 @@ func (s *Session) initializeObjects() {
 	//--Enemies
 	for _,enemy := range s.Enemies {
 		intendedType := s.Screen.Buffer[enemy.X][enemy.Y].Get()
-		if (intendedType.Name == "FOG"){
+		if (tile.CheckAttributes(intendedType,core.ATTR_FOREGROUND)){
 			s.Screen.Buffer[enemy.Y][enemy.X].Pop()
 			s.Screen.Set(enemy.Tile, enemy.Y,enemy.X)
 			s.Screen.Set(tile.FOG, enemy.Y,enemy.X)
@@ -67,7 +67,7 @@ func (s *Session) initializeObjects() {
 	//--Items
 	for _,item := range s.Items {
 		intendedType := s.Screen.Buffer[item.X][item.Y].Get()
-		if (intendedType.Name == "FOG"){
+		if (tile.CheckAttributes(intendedType,core.ATTR_FOREGROUND)){
 			s.Screen.Buffer[item.Y][item.X].Pop()
 			s.Screen.Set(item.Tile, item.Y,item.X)
 			s.Screen.Set(tile.FOG, item.Y,item.X)
