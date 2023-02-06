@@ -63,9 +63,6 @@ func handleInputMoving(input string, p *tile.Player, s *Session) {
 			if (delta == 0) {
 				//FIGHTING!
 				removeEnemy     := s.Enemies[idx].Interaction(p)
-				s.Profile.Health = strconv.Itoa(p.Stats.Health)
-				s.Profile.Level  = strconv.Itoa(p.Stats.Level)
-				s.Profile.XP     = strconv.Itoa(p.Stats.XP)
 				enemy_msgs[0]    = "ATTACKED: "+base_enemy_msg
 				if(removeEnemy){
 					enemy_msgs[0] = "DEFEATED ["+enemy.Name+"]"
@@ -114,6 +111,5 @@ func handleInputMoving(input string, p *tile.Player, s *Session) {
 			}
 		}
 	}
-	s.Profile.Refresh()
 	s.Info.Refresh()
 }

@@ -45,7 +45,7 @@ func (s *Session) Initialize(c *net.Conn) {
 	s.Level.Initialize(s.Level.ReadDataFromFile())
 	// ------------ Generate Profile region
 	s.Profile = region.Profile{}
-	s.Profile.Initialize(s.Profile.ReadDataFromFile())
+	s.Profile.Initialize(s.Profile.ReadDataFromPlayer(&s.Player))
 	// ------------ Generate Info Region
 	s.Info = region.Info{}
 	s.Info.Initialize([][]tile.Tile{})
@@ -100,6 +100,8 @@ func (s *Session) Handle() {
 					handleInputInventory(formattedData, s)
 				}
 			}
+			s.Profile.Player = &s.Player
+			s.Profile.Refresh()
 			s.Screen.Compile(&s.Profile, &s.Info)
 			s.Screen.Refresh()
 			core.HandleOutputToClient(s.Connection, 0, region.INFO_TOP+region.INFO_LINES+1, s.Screen.Get())

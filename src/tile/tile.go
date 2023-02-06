@@ -1,6 +1,9 @@
 package tile
 
-import "example/gotell/src/core"
+import (
+	"example/gotell/src/core"
+	"strings"
+)
 
 type Tile struct {
 	Name              string              `default:"UNASSIGNED"`
@@ -9,7 +12,7 @@ type Tile struct {
 	BGColor           core.TermCodes      `default:""`
 	Status            string              `default:"OK"`
 	Attribute         string              `default:""`
-	Parent            iInteractiveObject  `default:nil`
+	//Parent            iInteractiveObject  `default:nil`
 }
 
 var BLANK = Tile{
@@ -77,6 +80,8 @@ var FOG = Tile{
 	Color: core.TermCodes(core.FgGrey),
 	BGColor: core.TermCodes(core.BgGrey),
 }
+
+
 func GENERIC_TEXT(character string, colors ...core.TermCodes) Tile{
 	bgColor := core.TermCodes(core.BgBlack)
 	if(len(colors) > 1){
@@ -97,4 +102,8 @@ func GenerateHorizontalDivider(length int,bookend Tile,fill Tile) []Tile {
 	}
 	t = append(t, bookend)
 	return t
+}
+
+func CheckAttributes(t Tile, attr string) bool{
+	return strings.Contains(t.Attribute, attr)
 }

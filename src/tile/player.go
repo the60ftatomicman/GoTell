@@ -6,6 +6,7 @@ type Player struct {
 	UnderTile        Tile
 	Tile             Tile
 	Name             string
+	Class            string
 	X, Y, PrvX, PrvY,DirX,DirY int
 	Stats            Stats
 	Items            []Item
@@ -13,6 +14,8 @@ type Player struct {
 
 func GeneratePlayer() Player {
 	return Player{
+		Name: "Billsy",
+		Class: "Hero",
 		X:    1,
 		Y:    5,
 		PrvX: 1,

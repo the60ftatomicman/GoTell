@@ -4,7 +4,6 @@ import (
 	"example/gotell/src/core"
 	"example/gotell/src/screen/region"
 	"example/gotell/src/tile"
-	"strconv"
 	"strings"
 )
 
@@ -40,15 +39,16 @@ func hanleInputStateSwitching(input string, s *Session) bool{
 								s.Screen.Buffer[s.Player.Y][s.Player.X].Pop()
 								s.Screen.Buffer[s.Player.Y][s.Player.X].Pop()
 								s.Screen.Buffer[s.Player.Y][s.Player.X].Set(s.Player.Tile)
-								s.Profile.Items = append(s.Profile.Items,item.Name) 
 								s.Items = append(s.Items[:idx], s.Items[idx+1:]...)
+								if(!tile.CheckAttributes(item.Tile,core.ATTR_ONETIME)){
+									item.Interaction(&s.Player)
+								}
 							}
 						}
 					}else{
 						s.Info.Set("Your inventory is FULL")
 					}
 					s.Info.Refresh()
-					s.Profile.Refresh()
 				}
 			}
 		case "r":
@@ -58,10 +58,7 @@ func hanleInputStateSwitching(input string, s *Session) bool{
 					s.Player.Stats.UpdateMana(s.Player.Stats.MaxMana)
 					s.State = STATE_MOVING
 					s.Info.Set("Currently [MOVING]: WASD (moves), switch to (i)nventory, (Q)uit")
-					s.Profile.Health = strconv.Itoa(s.Player.Stats.Health)
-					s.Profile.Mana = strconv.Itoa(s.Player.Stats.Mana)
 					s.Info.Refresh()
-					s.Profile.Refresh()
 				}
 			}
 		/*case "1":
@@ -113,8 +110,8 @@ func removeFog(s *Session,colDelta int,rowDelta int) string{
 		s.Screen.Buffer[tileY][tileX].Pop()
 		p.Stats.UpdateHealth(p.Stats.FogRet)
 		p.Stats.UpdateMana(p.Stats.FogRet)
-		s.Profile.Health = strconv.Itoa(p.Stats.Health)
-		s.Profile.Mana = strconv.Itoa(p.Stats.Mana)
+		//s.Profile.Health = strconv.Itoa(p.Stats.Health)
+		//s.Profile.Mana = strconv.Itoa(p.Stats.Mana)
 		// Update all those enemies health!
 		for idx,_ := range s.Enemies {
 			e := &s.Enemies[idx]

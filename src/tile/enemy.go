@@ -51,7 +51,7 @@ func generateEnemy(x int,y int,level int,name string) Enemy {
 		Icon:      "E",
 		Color:     core.TermCodes(core.FgRed),
 		Attribute: core.ATTR_FIGHTABLE + core.ATTR_SOLID + core.ATTR_FOREGROUND,
-		Parent:    &e,
+	//	Parent:    &e,
 	}
 	return e
 }
