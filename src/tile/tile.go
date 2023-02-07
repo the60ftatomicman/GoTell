@@ -14,7 +14,6 @@ type Tile struct {
 	BGColor           core.TermCodes      `default:""`
 	Status            string              `default:"OK"`
 	Attribute         string              `default:""`
-	//Parent            iInteractiveObject  `default:nil`
 }
 
 var BLANK = Tile{
@@ -64,6 +63,7 @@ var INFO_H = Tile{
 	BGColor:   core.TermCodes(core.BgBlack),
 	Attribute: core.ATTR_SOLID,
 }
+//
 var LADDER = Tile{
 	Name:  "LADDER",
 	Icon:  core.Icons(core.ICON_LADDER),
@@ -82,6 +82,20 @@ var FOG = Tile{
 	BGColor: core.TermCodes(core.BgGrey),
 	Attribute: core.ATTR_FOREGROUND,
 }
+//
+var ENEMY_BASIC = Tile{
+	Name:      "ENEMY",
+	Icon:      "E",
+	Color:     core.TermCodes(core.FgRed),
+	Attribute: core.ATTR_FIGHTABLE + core.ATTR_SOLID,
+}
+var ENEMY_BOSS = Tile{
+	Name:      "ENEMY",
+	Icon:      "E",
+	Color:     core.TermCodes(core.FgRed),
+	Attribute: core.ATTR_FIGHTABLE + core.ATTR_SOLID,
+}
+
 
 func GENERIC_TEXT(character string, colors ...core.TermCodes) Tile{
 	bgColor := core.TermCodes(core.BgBlack)
@@ -111,7 +125,7 @@ func CheckAttributes(t Tile, attr string) bool{
 
 var tileConverter = map[string]Tile{
     "w": WALL,
-    "b": FOG,
+    "b": BLANK,
     "l": LADDER,
 }
 

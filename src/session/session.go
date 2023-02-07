@@ -8,6 +8,7 @@ import (
 	"example/gotell/src/tile"
 	"fmt"
 	"net"
+	"strconv"
 	"strings"
 )
 
@@ -51,29 +52,32 @@ func (s *Session) Initialize(c *net.Conn) {
 	s.Info.Initialize([][]tile.Tile{})
 
 }
+//TODO -- theseOUGHT to be a level region function
+
+func (s *Session) placeObject(interObj tile.IInteractiveObject)	{
+		objY,objX,objName,objTile := interObj.GetBufferData()
+		intendedType := s.Screen.Buffer[objY][objX].Get()
+		if (tile.CheckAttributes(intendedType,core.ATTR_SOLID)){
+			fmt.Println("ERROR placing item ["+objName+"] at location ["+strconv.Itoa(objY)+"]["+strconv.Itoa(objX)+"] do to ["+intendedType.Name+"] tile which is solid")
+		}
+		if (tile.CheckAttributes(intendedType,core.ATTR_FOREGROUND)){
+			s.Screen.Buffer[objY][objX].Pop()
+			s.Screen.Set(objTile, objY,objX)
+			s.Screen.Set(tile.FOG, objY,objX)
+		}else{
+			s.Screen.Set(objTile, objY,objX)
+		}
+}
+
 
 func (s *Session) initializeObjects() {
 	//--Enemies
 	for _,enemy := range s.Enemies {
-		intendedType := s.Screen.Buffer[enemy.X][enemy.Y].Get()
-		if (tile.CheckAttributes(intendedType,core.ATTR_FOREGROUND)){
-			s.Screen.Buffer[enemy.Y][enemy.X].Pop()
-			s.Screen.Set(enemy.Tile, enemy.Y,enemy.X)
-			s.Screen.Set(tile.FOG, enemy.Y,enemy.X)
-		}else{
-			s.Screen.Set(enemy.Tile, enemy.Y,enemy.X)
-		}
+		s.placeObject(&enemy)
 	}
 	//--Items
 	for _,item := range s.Items {
-		intendedType := s.Screen.Buffer[item.X][item.Y].Get()
-		if (tile.CheckAttributes(intendedType,core.ATTR_FOREGROUND)){
-			s.Screen.Buffer[item.Y][item.X].Pop()
-			s.Screen.Set(item.Tile, item.Y,item.X)
-			s.Screen.Set(tile.FOG, item.Y,item.X)
-		}else{
-			s.Screen.Set(item.Tile, item.Y,item.X)
-		}
+		s.placeObject(&item)
 	}
 	s.Screen.Set(s.Player.Tile, s.Player.Y, s.Player.X)
 }

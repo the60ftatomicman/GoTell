@@ -45,7 +45,7 @@ func (s *Screen) Refresh() {
 	for _, line := range s.Buffer {
 		for _, column := range line {
 			if (column.Get().BGColor != ""){
-				s.Raw += core.GenChar(string(column.Get().Icon), column.Get().Color,column.Get().BGColor) //TODO -- rename!
+				s.Raw += core.GenChar(string(column.Get().Icon), column.Get().Color,column.Get().BGColor)
 			}else{
 				s.Raw += core.GenChar(string(column.Get().Icon), column.Get().Color)
 			}

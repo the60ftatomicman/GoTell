@@ -24,6 +24,9 @@ func (i *Item) Interaction(p *Player) bool{
 func (i *Item) Convert(p *Player) {
 	p.ChangeXP(i.ConversionPoints)
 }
+func (i *Item) GetBufferData() (int,int,string,Tile) {
+	return i.Y,i.X,i.Name,i.Tile
+}
 
 func generateItem(x int,y int, i Item) Item {
 	i.X = x
