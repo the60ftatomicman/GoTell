@@ -29,7 +29,7 @@ Using "Cells" "Tiles" and "Regions" you can build a screen.
 -- examples of how to update screens now implemented
 -- switched to CELLS which are just stacks of tiles
 - ![image description](docs/imgs/v0.0.5.gif)
-- v0.0.5 Items-a-palooza
+- v0.0.6 Items-a-palooza
 -- Items are now a thing to pickup and uses
 -- this includes potions, equiptment AND spells
 -- One spell implemented
