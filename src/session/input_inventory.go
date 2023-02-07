@@ -22,7 +22,11 @@ func handleInputInventory(input string, s *Session){
 		switch input {
 			case "u":
 				{
-					if(!tile.CheckAttributes(item.Tile,core.ATTR_SPELL)){
+					if(tile.CheckAttributes(item.Tile,core.ATTR_SPELL)){
+						s.State = STATE_SPELL
+						//TODO -- this is a hack for now.
+						handleInputSpell(input, s)
+					}else{
 						if(item.Interaction(&s.Player.Stats)){
 							s.Player.Items = append(s.Player.Items[:idx], s.Player.Items[idx+1:]...)
 							s.Profile.SelectedItem = ""

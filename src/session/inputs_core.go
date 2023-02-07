@@ -61,12 +61,6 @@ func hanleInputStateSwitching(input string, s *Session) bool{
 					s.Info.Refresh()
 				}
 			}
-		case "u":
-			{
-				if s.State == STATE_INVENTORY{
-					s.State = STATE_SPELL
-				}
-			}
 		default:
 			{
 				if(s.State == STATE_GETITEM){
