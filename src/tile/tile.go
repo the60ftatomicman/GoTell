@@ -85,15 +85,46 @@ var FOG = Tile{
 //
 var ENEMY_BASIC = Tile{
 	Name:      "ENEMY",
-	Icon:      "E",
-	Color:     core.TermCodes(core.FgRed),
+	Icon:      core.ICON_ENEMY,
+	Color:     core.TermCodes(core.FgWhite),
+	BGColor:   core.TermCodes(core.BgRed),
 	Attribute: core.ATTR_FIGHTABLE + core.ATTR_SOLID,
 }
 var ENEMY_BOSS = Tile{
 	Name:      "ENEMY",
-	Icon:      "E",
+	Icon:      core.ICON_BOSS,
+	Color:     core.TermCodes(core.FgWhite),
+	BGColor:   core.TermCodes(core.BgRed),
+	Attribute: core.ATTR_FIGHTABLE + core.ATTR_SOLID + core.ATTR_BOSS,
+}
+
+var POTION_HEALTH = Tile{
+	Name:      "ITEM",
+	Icon:      core.ICON_HEALTH,
 	Color:     core.TermCodes(core.FgRed),
-	Attribute: core.ATTR_FIGHTABLE + core.ATTR_SOLID,
+	BGColor:   core.TermCodes(core.BgBlack),
+	Attribute: core.ATTR_USABLE,
+}
+var POTION_MANA = Tile{
+	Name:      "ITEM",
+	Icon:      core.ICON_MANA,
+	Color:     core.TermCodes(core.FgCyan),
+	BGColor:   core.TermCodes(core.BgBlack),
+	Attribute: core.ATTR_USABLE,
+}
+var EQUIPTMENT= Tile{
+	Name:      "ITEM",
+	Icon:      core.ICON_EQUIPTMENT,
+	Color:     core.TermCodes(core.FgYellow),
+	BGColor:   core.TermCodes(core.BgBlack),
+	Attribute: core.ATTR_EQUIPTABLE,
+}
+var SPELL = Tile{
+	Name:      "ITEM",
+	Icon:      core.ICON_SPELL,
+	Color:     core.TermCodes(core.FgMagenta),
+	BGColor:   core.TermCodes(core.BgBlack),
+	Attribute: core.ATTR_USABLE+core.ATTR_SPELL,
 }
 
 

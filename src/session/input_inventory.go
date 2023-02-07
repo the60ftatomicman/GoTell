@@ -15,30 +15,31 @@ func handleInputInventory(input string, s *Session){
 	)
 	idx,notInt := strconv.Atoi(input)
 	if(notInt != nil && s.Profile.SelectedItem != ""){
+		//TODO - make method in profile!
 		idx,_ = strconv.Atoi(s.Profile.SelectedItem)
 		idx = idx - 1
 		item := s.Player.Items[idx]
 		switch input {
 			case "u":
 				{
-					if(tile.CheckAttributes(item.Tile,core.ATTR_ONETIME)){
-						item.Interaction(&s.Player)
-						s.Player.Items = append(s.Player.Items[:idx], s.Player.Items[idx+1:]...)
-						s.Profile.SelectedItem = ""
+					if(!tile.CheckAttributes(item.Tile,core.ATTR_SPELL)){
+						if(item.Interaction(&s.Player.Stats)){
+							s.Player.Items = append(s.Player.Items[:idx], s.Player.Items[idx+1:]...)
+							s.Profile.SelectedItem = ""
+						}
 					}
-
 				}
 			case "c":
 				{
-					s.Player.ChangeXP(item.ConversionPoints)
+					s.Player.Stats.ChangeXP(item.ConversionPoints)
 					s.Player.Items = append(s.Player.Items[:idx], s.Player.Items[idx+1:]...)
 					s.Profile.SelectedItem = ""
 				}
 			case "d":
 				{
-					if(!tile.CheckAttributes(item.Tile,core.ATTR_ONETIME)){
+					if(!tile.CheckAttributes(item.Tile,core.ATTR_EQUIPTABLE)){
 						item.Delta *= -1
-						item.Interaction(&s.Player)
+						item.Interaction(&s.Player.Stats)
 					}
 					item.Delta *= -1
 					item.X = s.Player.X
@@ -57,7 +58,7 @@ func handleInputInventory(input string, s *Session){
 			idx -= 1
 			s.Profile.SelectedItem = input
 			item := s.Profile.Player.Items[idx]
-			if(tile.CheckAttributes(item.Tile,core.ATTR_ONETIME)){
+			if(!tile.CheckAttributes(item.Tile,core.ATTR_EQUIPTABLE)){
 				s.Info.Set(
 					"["+item.Name+"] selected. Press (b) to go BACK",
 					"Press (u) to USE",

@@ -40,8 +40,8 @@ func hanleInputStateSwitching(input string, s *Session) bool{
 								s.Screen.Buffer[s.Player.Y][s.Player.X].Pop()
 								s.Screen.Buffer[s.Player.Y][s.Player.X].Set(s.Player.Tile)
 								s.Items = append(s.Items[:idx], s.Items[idx+1:]...)
-								if(!tile.CheckAttributes(item.Tile,core.ATTR_ONETIME)){
-									item.Interaction(&s.Player)
+								if(tile.CheckAttributes(item.Tile,core.ATTR_EQUIPTABLE)){
+									item.Interaction(&s.Player.Stats)
 								}
 							}
 						}
@@ -59,6 +59,12 @@ func hanleInputStateSwitching(input string, s *Session) bool{
 					s.State = STATE_MOVING
 					s.Info.Set("Currently [MOVING]: WASD (moves), switch to (i)nventory, (Q)uit")
 					s.Info.Refresh()
+				}
+			}
+		case "u":
+			{
+				if s.State == STATE_INVENTORY{
+					s.State = STATE_SPELL
 				}
 			}
 		default:

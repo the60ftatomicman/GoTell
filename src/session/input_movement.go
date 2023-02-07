@@ -8,8 +8,8 @@ import (
 )
 
 func handleInputMoving(input string, p *tile.Player, s *Session) {
-	p.PrvY = p.Y
-	p.PrvX = p.X
+	PrvY := p.Y
+	PrvX := p.X
 	switch input {
 	case "w":
 		{
@@ -62,12 +62,11 @@ func handleInputMoving(input string, p *tile.Player, s *Session) {
 		if (delta < 2) {
 			if (delta == 0) {
 				//FIGHTING!
-				removeEnemy     := s.Enemies[idx].Interaction(p)
+				removeEnemy     := s.Enemies[idx].Interaction(&p.Stats)
 				enemy_msgs[0]    = "ATTACKED: "+base_enemy_msg
 				if(removeEnemy){
 					enemy_msgs[0] = "DEFEATED ["+enemy.Name+"]"
 					s.Screen.Buffer[p.Y][p.X].Pop()
-					//TODO -- is this right?
 					s.Enemies = append(s.Enemies[:idx], s.Enemies[idx+1:]...) 
 				}
 
@@ -90,17 +89,17 @@ func handleInputMoving(input string, p *tile.Player, s *Session) {
 	if(p.Stats.Health <= 0){
 		s.Info.Set(p.Name+" has died. Try (r)eviving")
 		s.State = STATE_DEAD
-		p.X = p.PrvX
-		p.Y = p.PrvY
+		p.X = PrvX
+		p.Y = PrvY
 	}else{
 		// -- We are not dead nor did we fight. movement time
 		nextTile := s.Screen.Buffer[p.Y][p.X].Get()
 		if preventMovement(&p.Tile, &nextTile) {
-			p.X = p.PrvX
-			p.Y = p.PrvY
+			p.X = PrvX
+			p.Y = PrvY
 		}
 		// -- now do the player placement
-		s.Screen.Buffer[p.PrvY][p.PrvX].Pop()
+		s.Screen.Buffer[PrvY][PrvX].Pop()
 		s.Screen.Buffer[p.Y][p.X].Set(p.Tile);
 		// -- remove any fog, loop to see who is nearby
 		//TODO -- block based on who is nearby

@@ -97,11 +97,14 @@ func (s *Session) Handle() {
 		} else {
 			switch s.State{
 				case STATE_MOVING:{
-					// TODO -- we only need the session
+					// TODO -- we only need the session.
 					handleInputMoving(formattedData, &s.Player, s)
 				}
 				case STATE_INVENTORY:{
 					handleInputInventory(formattedData, s)
+				}
+				case STATE_SPELL:{
+					handleInputSpell(formattedData, s)
 				}
 			}
 			s.Profile.Player = &s.Player

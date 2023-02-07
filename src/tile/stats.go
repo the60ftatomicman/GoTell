@@ -43,3 +43,13 @@ func (s *Stats) UpdateMana(delta int) {
 		s.Mana = 0
 	}
 }
+
+func (s *Stats)ChangeXP(deltaXP int) {
+	s.XP += deltaXP
+	if(s.XP >= 10) {
+		s.Level  = (s.XP / 10) + 1
+		s.XP     = s.XP % 10
+		s.Health = s.MaxHealth
+		s.Mana   = s.MaxMana
+	}
+}

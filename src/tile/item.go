@@ -1,28 +1,37 @@
 package tile
 
-import "example/gotell/src/core"
-
 
 type Item struct {
-	Tile             Tile
-	Name             string
-	X, Y, PrvX, Prvy,Delta,ConversionPoints int
-	Affects          string //TODO -- make ENUM
+	Tile             Tile                `default:"Unknown Item"`
+	Name             string              `default:"OK"`
+	X,Y,Cost,Delta,ConversionPoints int  `default:0`
+	Uses             int                 `default:1`
+	Affects          string              `default:""` //TODO -- make ENUM
 }
 
-func (i *Item) Interaction(p *Player) bool{
-	switch(i.Affects){
-		case "HEALTH":{p.Stats.UpdateHealth(i.Delta)}
-		case "MANA":{p.Stats.UpdateMana(i.Delta)}
-		case "OFFENSE":{p.Stats.Offense += i.Delta}
-		case "DEFENSE":{p.Stats.Defense += i.Delta}
-		case "SPEED":{p.Stats.Speed += i.Delta}	
+var UNLIMITED_USES = -1
+
+//DUN DUN DUN, we are 100 going to 
+func (i *Item) Interaction(s *Stats) bool{
+	if i.Uses > 0  || i.Uses == UNLIMITED_USES {
+		switch(i.Affects){
+			case "HEALTH":{s.UpdateHealth(i.Delta)}
+			case "MANA":{s.UpdateMana(i.Delta)}
+			case "OFFENSE":{s.Offense += i.Delta}
+			case "DEFENSE":{s.Defense += i.Delta}
+			case "SPEED":{s.Speed += i.Delta}	
+		}
+		if i.Uses != UNLIMITED_USES{
+			i.Uses -= 1
+		}
+		return i.Uses == 0
+	}else{
+		return true;
 	}
-	return true;
 }
 
-func (i *Item) Convert(p *Player) {
-	p.ChangeXP(i.ConversionPoints)
+func (i *Item) Convert(s *Stats) {
+	s.ChangeXP(i.ConversionPoints)
 }
 func (i *Item) GetBufferData() (int,int,string,Tile) {
 	return i.Y,i.X,i.Name,i.Tile
@@ -30,9 +39,7 @@ func (i *Item) GetBufferData() (int,int,string,Tile) {
 
 func generateItem(x int,y int, i Item) Item {
 	i.X = x
-	i.PrvX = x
 	i.Y = y
-	i.Prvy = y
 	return i
 }
 //
@@ -45,96 +52,73 @@ func GenerateItemsFromFile() []Item{
 		generateItem(9 ,8,ITEM_HP),
 		generateItem(10,8,ITEM_MANA),
 		generateItem(11,8,ITEM_DEF_BOOST),
-		generateItem(12,8,ITEM_OFF_BOOST),
-		generateItem(13,8,ITEM_SPEED_BOOST),
+		generateItem(12,8,ITEM_SPELL_DMG),
+		//generateItem(12,8,ITEM_OFF_BOOST),
+		//generateItem(13,8,ITEM_SPEED_BOOST),
 	}
 }
 //
 //
-//
+// TODO add "item" tiles to tiles file
 //
 var ITEM_HP = Item{
 	Name:      "HP Pot",
 	X:         0,
 	Y:         0,
-	PrvX:      0,
-	Prvy:      0,
+	Uses:      1,
 	Delta:     25,
 	ConversionPoints: 1,
 	Affects:   "HEALTH",
-	Tile: Tile{
-		Name:      "ITEM",
-		Icon:      core.ICON_HEALTH,
-		Color:     core.TermCodes(core.FgWhite),
-		BGColor:   core.TermCodes(core.BgRed),
-		Attribute: core.ATTR_ONETIME,
-	},
+	Tile: POTION_HEALTH,
 }
 var ITEM_MANA = Item{
 	Name:      "Mana Pot",
 	X:         0,
 	Y:         0,
-	PrvX:      0,
-	Prvy:      0,
+	Uses:      1,
 	Delta:     25,
 	ConversionPoints: 1,
 	Affects:   "MANA",
-	Tile: Tile{
-		Name:      "ITEM",
-		Icon:      core.ICON_MANA,
-		Color:     core.TermCodes(core.FgWhite),
-		BGColor:   core.TermCodes(core.BgBlue),
-		Attribute: core.ATTR_ONETIME,
-	},
+	Tile: POTION_MANA,
 }
 var ITEM_OFF_BOOST = Item{
 	Name:      "Pickaxe",
 	X:         0,
 	Y:         0,
-	PrvX:      0,
-	Prvy:      0,
 	Delta:     5,
+	Uses:      1,
 	ConversionPoints: 10,
 	Affects:   "OFFENSE",
-	Tile: Tile{
-		Name:      "ITEM",
-		Icon:      core.ICON_OFF_BOOST,
-		Color:     core.TermCodes(core.FgBlack),
-		BGColor:   core.TermCodes(core.BgGreen),
-		Attribute: "",
-	},
+	Tile: EQUIPTMENT,
 }
 var ITEM_DEF_BOOST = Item{
 	Name:      "Hard Hat",
 	X:         0,
 	Y:         0,
-	PrvX:      0,
-	Prvy:      0,
 	Delta:     5,
+	Uses:      1,
 	ConversionPoints: 10,
 	Affects:   "DEFENSE",
-	Tile: Tile{
-		Name:      "ITEM",
-		Icon:      core.ICON_OFF_BOOST,
-		Color:     core.TermCodes(core.FgBlack),
-		BGColor:   core.TermCodes(core.BgGreen),
-		Attribute: "",
-	},
+	Tile: EQUIPTMENT,
 }
 var ITEM_SPEED_BOOST = Item{
 	Name:      "Roller Blades",
 	X:         0,
 	Y:         0,
-	PrvX:      0,
-	Prvy:      0,
+	Uses:      1,
 	Delta:     5,
 	ConversionPoints: 10,
 	Affects:   "SPEED",
-	Tile: Tile{
-		Name:      "ITEM",
-		Icon:      core.ICON_OFF_BOOST,
-		Color:     core.TermCodes(core.FgBlack),
-		BGColor:   core.TermCodes(core.BgGreen),
-		Attribute: "",
-	},
+	Tile: EQUIPTMENT,
+}
+var ITEM_SPELL_DMG = Item{
+	Name:      "Moose shot",
+	X:         0,
+	Y:         0,
+	Uses:      UNLIMITED_USES,
+	Cost:      -100,
+	Delta:     -5,
+	ConversionPoints: 10,
+	Affects:   "HEALTH",
+	Tile: SPELL,
 }

@@ -6,7 +6,7 @@ type Player struct {
 	Tile             Tile
 	Name             string
 	Class            string
-	X, Y, PrvX, PrvY,DirX,DirY int
+	X,Y,DirX,DirY    int
 	Stats            Stats
 	Items            []Item
 }
@@ -17,14 +17,14 @@ func GeneratePlayer() Player {
 		Class: "Hero",
 		X:    1,
 		Y:    5,
-		PrvX: 1,
-		PrvY: 5,
 		DirX: 0,
 		DirY: 0,
 		Stats: Stats{
 			Level:     1,
 			MaxHealth: 100,
-			Health:   100,
+			MaxMana:   100,
+			Health:    100,
+			Mana:      100,
 			Defense:  1,
 			Offense:  1,
 			Speed:    2,
@@ -41,16 +41,6 @@ func GeneratePlayer() Player {
 }
 
 //TODO -- add to stats I think
-func (p *Player)ChangeXP(deltaXP int) {
-	p.Stats.XP += deltaXP
-	if(p.Stats.XP >= 10) {
-		p.Stats.Level  = (p.Stats.XP / 10) + 1
-		p.Stats.XP     = p.Stats.XP % 10
-		p.Stats.Health = p.Stats.MaxHealth
-		p.Stats.Mana   = p.Stats.MaxMana
-	}
-}
-
 func (p *Player)GetViewRanges() (int,int,int,int,int,int){
 	fogRange := p.Stats.Vision
 	xStart := fogRange * -1

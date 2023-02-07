@@ -29,7 +29,12 @@ Using "Cells" "Tiles" and "Regions" you can build a screen.
 -- examples of how to update screens now implemented
 -- switched to CELLS which are just stacks of tiles
 - ![image description](docs/imgs/v0.0.5.gif)
-
+- v0.0.5 Items-a-palooza
+-- Items are now a thing to pickup and uses
+-- this includes potions, equiptment AND spells
+-- One spell implemented
+-- ton of refactor work
+- ![image description](docs/imgs/v0.0.6.gif)
 ### MAIN STRUCTS ###
 - Screen
 Think old computers with all their talk of "column count" and you have a good idea on how this will work.
@@ -64,16 +69,16 @@ profile (aka user info area)
 Taking place during the golden age of invention (this is just a fancy way to say steampunk)
 a railroad mogul buys up a town with a mine in hopes to uncover it's treasures.
 You select a class to take on a mission; attempt to conquer the map and return with riches.
+7) Magic and items integrated
+8) Map from file parser COMPLETED
 
 
 ### TODO ###
 1) Make input it's own class thingy
-2) Read from file maps
+2) Read from file for player,items, and enemies (Maps done)
 3) Do some actual enemy stuff
---- can remove it now
 --- want drops
 --- want spawns
 4) Intro screen and map selection
 5) Add FOG wall detection (cannot see through walls)
-6) Begin working on items
 7) Start thinking about town hub interactions.

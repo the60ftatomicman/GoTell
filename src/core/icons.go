@@ -14,10 +14,14 @@ const (
 	ICON_FOG    = "?"
 	ICON_EMPTY  = "."
 	ICON_PLAYER = "@"
+	//Enemies
+	ICON_ENEMY = "E"
+	ICON_BOSS  = "B"
 	//Items
-	ICON_MANA      = "M"
-	ICON_HEALTH    = "H"
-	ICON_OFF_BOOST = "I"
+	ICON_MANA       = "M"
+	ICON_HEALTH     = "H"
+	ICON_EQUIPTMENT = "I"
+	ICON_SPELL      = "S"
 )
 
 func StringToIcon(character string) Icons {
