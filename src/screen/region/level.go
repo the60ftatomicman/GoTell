@@ -16,7 +16,15 @@ type Level struct {
 }
 
 func (m *Level) Initialize(b [][]tile.Tile) {
-	m.Buffer  = initializeBuffer(MAP_LINES, MAP_COLUMNS, b,tile.FOG)
+	m.Buffer  = initializeBuffer(MAP_LINES, MAP_COLUMNS, b,tile.BLANK)
+	//Add fog AFTERWARDS
+	for rIdx,row := range m.Buffer {
+		for cIdx,column := range row {
+			if(column == tile.BLANK){
+				m.Buffer[rIdx][cIdx] = tile.FOG
+			}
+		}
+	}
 }
 
 func (m *Level) Get() (int, int, int, int, [][]tile.Tile) {
@@ -28,14 +36,31 @@ func (m *Level) Refresh() () {
 }
 
 func (m *Level) ReadDataFromFile() [][]tile.Tile {
-	return [][]tile.Tile{
-		{tile.BLANK},
-		{tile.WALL, tile.WALL, tile.WALL, tile.WALL, tile.WALL, tile.WALL},
-		{tile.WALL, tile.BLANK, tile.BLANK, tile.BLANK, tile.BLANK, tile.BLANK},
-		{tile.WALL, tile.BLANK, tile.BLANK, tile.BLANK, tile.BLANK, tile.BLANK},
-		{tile.WALL, tile.BLANK, tile.BLANK, tile.BLANK, tile.BLANK, tile.BLANK},
-		{tile.WALL, tile.LADDER, tile.BLANK, tile.BLANK, tile.BLANK, tile.BLANK},
-		{tile.WALL, tile.BLANK, tile.BLANK, tile.BLANK, tile.BLANK, tile.BLANK},
-		{tile.WALL, tile.WALL, tile.WALL, tile.WALL, tile.WALL, tile.WALL},
+	tiles := [][]tile.Tile{}
+	fileData := []string{
+		"b", // aLwAYS need to include this. idk why.
+		"79w",
+		"w",
+		"w",
+		"w",
+		"w",
+		"w",
+		"w",
+		"w",
+		"5w",
+		"5w",
+		"5w",
+		"10w,20b,20w,20b,10w",
+		//"10w,20b,20w,20b,10w",
+		//"10w,20b,20w,20b,10w",
+		//"10w,20b,20w,20b,10w",
+		//"10w,20b,20w,20b,10w",
+		//"10w,20b,20w,20b,10w",
+		//"10w,20b,20w,20b,10w",
+		//"10w,20b,20w,20b,10w",
 	}
+	for _,row := range fileData {
+		tiles = append(tiles,tile.FileParser(row))
+	}
+	return tiles
 }

@@ -33,9 +33,7 @@ func (s *Screen) Compile(regionList ...region.IRegion) {
 		rLeft, rTop, rLines, rColumns, rBuffer := r.Get()
 		for l := 0; l < rLines; l++ {
 			for c := 0; c < rColumns; c++ {
-				//if !strings.Contains(s.Buffer[rTop+l][rLeft+c].Get().Attribute,core.ATTR_FOREGROUND) {
-					s.Buffer[rTop+l][rLeft+c].Tiles[0] = rBuffer[l][c]
-			//	}
+				s.Buffer[rTop+l][rLeft+c].Tiles[0] = rBuffer[l][c]
 			}
 		}
 	}
@@ -47,7 +45,7 @@ func (s *Screen) Refresh() {
 	for _, line := range s.Buffer {
 		for _, column := range line {
 			if (column.Get().BGColor != ""){
-				s.Raw += core.GenChar(string(column.Get().Icon), column.Get().Color,column.Get().BGColor) //TODO -- rename!
+				s.Raw += core.GenChar(string(column.Get().Icon), column.Get().Color,column.Get().BGColor)
 			}else{
 				s.Raw += core.GenChar(string(column.Get().Icon), column.Get().Color)
 			}

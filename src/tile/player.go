@@ -3,25 +3,28 @@ package tile
 import "example/gotell/src/core"
 
 type Player struct {
-	UnderTile        Tile
 	Tile             Tile
 	Name             string
-	X, Y, PrvX, PrvY,DirX,DirY int
+	Class            string
+	X,Y,DirX,DirY    int
 	Stats            Stats
+	Items            []Item
 }
 
 func GeneratePlayer() Player {
 	return Player{
+		Name: "Billsy",
+		Class: "Hero",
 		X:    1,
 		Y:    5,
-		PrvX: 1,
-		PrvY: 5,
 		DirX: 0,
 		DirY: 0,
 		Stats: Stats{
 			Level:     1,
 			MaxHealth: 100,
-			Health:   100,
+			MaxMana:   100,
+			Health:    100,
+			Mana:      100,
 			Defense:  1,
 			Offense:  1,
 			Speed:    2,
@@ -32,11 +35,12 @@ func GeneratePlayer() Player {
 			Name:      "PLAYER",
 			Icon:      core.Icons(core.ICON_PLAYER),
 			Color:     core.TermCodes(core.FgGreen),
-			Attribute: core.ATTR_SOLID + core.ATTR_FOREGROUND,
+			Attribute: core.ATTR_SOLID,
 		},
 	}
 }
 
+//TODO -- add to stats I think
 func (p *Player)GetViewRanges() (int,int,int,int,int,int){
 	fogRange := p.Stats.Vision
 	xStart := fogRange * -1

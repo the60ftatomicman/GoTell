@@ -4,7 +4,6 @@ import (
 	"example/gotell/src/core"
 	"example/gotell/src/screen/region"
 	"example/gotell/src/tile"
-	"strconv"
 	"strings"
 )
 
@@ -24,6 +23,32 @@ func hanleInputStateSwitching(input string, s *Session) bool{
 			{
 				if s.State != STATE_MOVING{
 					s.State = STATE_MOVING
+					s.Profile.SelectedItem = ""
+				}
+			}
+		case "p":
+			{
+				if s.State == STATE_MOVING{
+					s.State = STATE_GETITEM
+					if(len(s.Player.Items) < region.LINE_VAR_ITEM_COUNT){
+						for idx,item := range s.Items {
+							if (item.X == s.Player.X && item.Y == s.Player.Y){
+								s.Player.Items = append(s.Player.Items,item)
+								s.Info.Set("Picked up ["+item.Name+"]")
+								//Remove player and item
+								s.Screen.Buffer[s.Player.Y][s.Player.X].Pop()
+								s.Screen.Buffer[s.Player.Y][s.Player.X].Pop()
+								s.Screen.Buffer[s.Player.Y][s.Player.X].Set(s.Player.Tile)
+								s.Items = append(s.Items[:idx], s.Items[idx+1:]...)
+								if(tile.CheckAttributes(item.Tile,core.ATTR_EQUIPTABLE)){
+									item.Interaction(&s.Player.Stats)
+								}
+							}
+						}
+					}else{
+						s.Info.Set("Your inventory is FULL")
+					}
+					s.Info.Refresh()
 				}
 			}
 		case "r":
@@ -34,15 +59,12 @@ func hanleInputStateSwitching(input string, s *Session) bool{
 					s.State = STATE_MOVING
 					s.Info.Set("Currently [MOVING]: WASD (moves), switch to (i)nventory, (Q)uit")
 					s.Info.Refresh()
-					s.Profile.Health = strconv.Itoa(s.Player.Stats.Health)
-					s.Profile.Mana = strconv.Itoa(s.Player.Stats.Mana)
-					s.Profile.Refresh()
 				}
 			}
-		case "1":
+		default:
 			{
-				if s.State == STATE_INVENTORY{
-					s.State = STATE_ITEM
+				if(s.State == STATE_GETITEM){
+					s.State = STATE_MOVING
 				}
 			}
 	}
@@ -71,8 +93,7 @@ func getTileXY(playerX int,playerY int,colDelta int,rowDelta int) (int,int) {
 		return tileX,tileY
 }
 
-//TODO -- add all logic above into here. Also account for not being able to "see" through walls.
-//TODo -- why am I passing the player....
+//TODO -- Account for not being able to "see" through walls.
 func removeFog(s *Session,colDelta int,rowDelta int) string{
 	p := &s.Player
 	tileX,tileY := getTileXY(p.X,p.Y,colDelta,rowDelta)
@@ -81,8 +102,6 @@ func removeFog(s *Session,colDelta int,rowDelta int) string{
 		s.Screen.Buffer[tileY][tileX].Pop()
 		p.Stats.UpdateHealth(p.Stats.FogRet)
 		p.Stats.UpdateMana(p.Stats.FogRet)
-		s.Profile.Health = strconv.Itoa(p.Stats.Health)
-		s.Profile.Mana = strconv.Itoa(p.Stats.Mana)
 		// Update all those enemies health!
 		for idx,_ := range s.Enemies {
 			e := &s.Enemies[idx]

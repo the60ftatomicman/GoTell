@@ -8,6 +8,7 @@ import (
 	"example/gotell/src/tile"
 	"fmt"
 	"net"
+	"strconv"
 	"strings"
 )
 
@@ -19,6 +20,7 @@ type Session struct {
 	Info       region.Info
 	State      string //TODO -- ENUM!
 	Enemies    []tile.Enemy
+	Items      []tile.Item
 	Connection net.Conn
 }
 
@@ -37,29 +39,45 @@ func (s *Session) Initialize(c *net.Conn) {
 	}
 	// ------------ Generate Enemies
 	s.Enemies = tile.GenerateEnemiesFromFile()
+	// ------------ Generate Items
+	s.Items = tile.GenerateItemsFromFile()
 	// ---------- Generate Level region
 	s.Level = region.Level{}
 	s.Level.Initialize(s.Level.ReadDataFromFile())
 	// ------------ Generate Profile region
 	s.Profile = region.Profile{}
-	s.Profile.Initialize(s.Profile.ReadDataFromFile())
+	s.Profile.Initialize(s.Profile.ReadDataFromPlayer(&s.Player))
 	// ------------ Generate Info Region
 	s.Info = region.Info{}
 	s.Info.Initialize([][]tile.Tile{})
 
 }
+//TODO -- theseOUGHT to be a level region function
+
+func (s *Session) placeObject(interObj tile.IInteractiveObject)	{
+		objY,objX,objName,objTile := interObj.GetBufferData()
+		intendedType := s.Screen.Buffer[objY][objX].Get()
+		if (tile.CheckAttributes(intendedType,core.ATTR_SOLID)){
+			fmt.Println("ERROR placing item ["+objName+"] at location ["+strconv.Itoa(objY)+"]["+strconv.Itoa(objX)+"] do to ["+intendedType.Name+"] tile which is solid")
+		}
+		if (tile.CheckAttributes(intendedType,core.ATTR_FOREGROUND)){
+			s.Screen.Buffer[objY][objX].Pop()
+			s.Screen.Set(objTile, objY,objX)
+			s.Screen.Set(tile.FOG, objY,objX)
+		}else{
+			s.Screen.Set(objTile, objY,objX)
+		}
+}
+
 
 func (s *Session) initializeObjects() {
 	//--Enemies
 	for _,enemy := range s.Enemies {
-		intendedType := s.Screen.Buffer[enemy.X][enemy.Y].Get()
-		if (intendedType.Name == "FOG"){
-			s.Screen.Buffer[enemy.Y][enemy.X].Pop()
-			s.Screen.Set(enemy.Tile, enemy.Y,enemy.X)
-			s.Screen.Set(tile.FOG, enemy.Y,enemy.X)
-		}else{
-			s.Screen.Set(enemy.Tile, enemy.Y,enemy.X)
-		}
+		s.placeObject(&enemy)
+	}
+	//--Items
+	for _,item := range s.Items {
+		s.placeObject(&item)
 	}
 	s.Screen.Set(s.Player.Tile, s.Player.Y, s.Player.X)
 }
@@ -79,13 +97,18 @@ func (s *Session) Handle() {
 		} else {
 			switch s.State{
 				case STATE_MOVING:{
-					// TODO -- we only need the session
+					// TODO -- we only need the session.
 					handleInputMoving(formattedData, &s.Player, s)
 				}
 				case STATE_INVENTORY:{
 					handleInputInventory(formattedData, s)
 				}
+				case STATE_SPELL:{
+					handleInputSpell(formattedData, s)
+				}
 			}
+			s.Profile.Player = &s.Player
+			s.Profile.Refresh()
 			s.Screen.Compile(&s.Profile, &s.Info)
 			s.Screen.Refresh()
 			core.HandleOutputToClient(s.Connection, 0, region.INFO_TOP+region.INFO_LINES+1, s.Screen.Get())
