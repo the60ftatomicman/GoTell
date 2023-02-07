@@ -28,14 +28,32 @@ func (m *Level) Refresh() () {
 }
 
 func (m *Level) ReadDataFromFile() [][]tile.Tile {
-	return [][]tile.Tile{
-		{tile.BLANK},
-		{tile.WALL, tile.WALL, tile.WALL, tile.WALL, tile.WALL, tile.WALL},
-		{tile.WALL, tile.BLANK, tile.BLANK, tile.BLANK, tile.BLANK, tile.BLANK},
-		{tile.WALL, tile.BLANK, tile.BLANK, tile.BLANK, tile.BLANK, tile.BLANK},
-		{tile.WALL, tile.BLANK, tile.BLANK, tile.BLANK, tile.BLANK, tile.BLANK},
-		{tile.WALL, tile.LADDER, tile.BLANK, tile.BLANK, tile.BLANK, tile.BLANK},
-		{tile.WALL, tile.BLANK, tile.BLANK, tile.BLANK, tile.BLANK, tile.BLANK},
-		{tile.WALL, tile.WALL, tile.WALL, tile.WALL, tile.WALL, tile.WALL},
+	tiles := [][]tile.Tile{}
+	fileData := []string{
+		"b", // aLwAYS need to include this. idk why.
+		"80w",
+		"w",
+		"w",
+		"w",
+		"w",
+		"w",
+		"w",
+		"5w",
+		"5w",
+		"5w",
+		"5w",
+		//BUG - adding fog for this is bizarre revisit that code
+		"10w,20b,20w,20b,10w",
+		//"10w,20b,20w,20b,10w",
+		//"10w,20b,20w,20b,10w",
+		//"10w,20b,20w,20b,10w",
+		//"10w,20b,20w,20b,10w",
+		//"10w,20b,20w,20b,10w",
+		//"10w,20b,20w,20b,10w",
+		//"10w,20b,20w,20b,10w",
 	}
+	for _,row := range fileData {
+		tiles = append(tiles,tile.FileParser(row))
+	}
+	return tiles
 }

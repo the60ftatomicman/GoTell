@@ -2,6 +2,8 @@ package tile
 
 import (
 	"example/gotell/src/core"
+	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -21,11 +23,11 @@ var BLANK = Tile{
 	Color:     core.TermCodes(core.BgBlack),
 	BGColor:   core.TermCodes(core.BgBlack),
 }
-var BLANKW = Tile{
-	Name: "BLANK",
-	Icon: core.Icons(core.ICON_BLANK),
-	Color:     core.TermCodes(core.FgWhite),
-	BGColor:   core.TermCodes(core.FgWhite),
+var NULL = Tile{
+	Name: "NULL",
+	Icon: core.Icons(core.ICON_NULL),
+	Color:     core.TermCodes(core.FgYellow),
+	BGColor:   core.TermCodes(core.BgMagenta),
 }
 var WALL = Tile{
 	Name:      "WALL",
@@ -81,7 +83,6 @@ var FOG = Tile{
 	Attribute: core.ATTR_FOREGROUND,
 }
 
-
 func GENERIC_TEXT(character string, colors ...core.TermCodes) Tile{
 	bgColor := core.TermCodes(core.BgBlack)
 	if(len(colors) > 1){
@@ -106,4 +107,37 @@ func GenerateHorizontalDivider(length int,bookend Tile,fill Tile) []Tile {
 
 func CheckAttributes(t Tile, attr string) bool{
 	return strings.Contains(t.Attribute, attr)
+}
+
+var tileConverter = map[string]Tile{
+    "w": WALL,
+    "b": FOG,
+    "l": LADDER,
+}
+
+func FileParser(tileColVals string) []Tile{
+	tileStrings := strings.Split(tileColVals, ",")
+	tiles := []Tile{}
+	for _, strTile := range tileStrings {
+		//see if we have a # count
+		numTile := 1
+		re,regErr := regexp.Compile(`\d{1,}`)
+		if(regErr == nil){
+			matches := re.FindStringSubmatch(strTile)
+			if(len(matches) > 0){
+				nt,_ := strconv.Atoi(matches[0])
+				numTile = nt
+			}
+		}
+		
+		for i:= 0; i < numTile ; i++ {
+			val, keyExist := tileConverter[strings.ReplaceAll(strTile,strconv.Itoa(numTile),"")]
+			if(keyExist){
+				tiles = append(tiles,val)
+			}else{
+				tiles = append(tiles,NULL)
+			}
+		}
+	}
+	return tiles
 }
