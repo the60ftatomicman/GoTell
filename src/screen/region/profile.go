@@ -9,7 +9,7 @@ import (
 
 const PROFILE_LEFT = 80
 const PROFILE_TOP = 0
-const PROFILE_LINES = 19
+const PROFILE_LINES = 29
 const PROFILE_COLUMNS = 18
 // IMPORTANT LINES IN THE PROFILE FOR WRITING!
 // START INDEX 0
@@ -26,7 +26,7 @@ const LINE_VAR_ITEM_COUNT = 5
 
 type Profile struct {
 	Player *tile.Player
-	SelectedItem string
+	SelectedItem string `default:""`
 	Buffer [][]tile.Tile
 }
 

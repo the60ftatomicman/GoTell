@@ -9,11 +9,11 @@ import (
 )
 
 const SCREEN_WIDTH = 100
-const SCREEN_HEIGHT = 25
+const SCREEN_HEIGHT = 29
 
 type Screen struct {
 	Buffer [SCREEN_HEIGHT][SCREEN_WIDTH]Cell
-	Raw    string
+	Raw    string `default:""`
 }
 
 func BlankScreen() [SCREEN_HEIGHT][SCREEN_WIDTH]Cell {

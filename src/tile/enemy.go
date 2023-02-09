@@ -2,9 +2,9 @@ package tile
 
 type Enemy struct {
 	Tile             Tile
-	Status           string
-	Name             string
-	X,Y,XP int
+	Status           string `default:""`
+	Name             string `default:""`
+	X,Y,XP           int    `default:0`
 	Stats            Stats
 }
 

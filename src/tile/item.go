@@ -1,25 +1,31 @@
 package tile
 
+type Affects string
+const (
+	Health     Affects = "HEALTH"
+	Mana               = "MANA"
+	Offense            = "OFFENSE"
+	Defense            = "DEFENSE"
+	Speed              = "SPEED"
+)
+const UNLIMITED_USES = -1 //TODO -- do we use this anymore?
 
 type Item struct {
 	Tile             Tile                `default:"Unknown Item"`
 	Name             string              `default:"OK"`
 	X,Y,Cost,Delta,ConversionPoints int  `default:0`
 	Uses             int                 `default:1`
-	Affects          string              `default:""` //TODO -- make ENUM
+	Affects          Affects
 }
 
-var UNLIMITED_USES = -1
-
-//DUN DUN DUN, we are 100 going to 
 func (i *Item) Interaction(s *Stats) bool{
 	if i.Uses > 0  || i.Uses == UNLIMITED_USES {
 		switch(i.Affects){
-			case "HEALTH":{s.UpdateHealth(i.Delta)}
-			case "MANA":{s.UpdateMana(i.Delta)}
-			case "OFFENSE":{s.Offense += i.Delta}
-			case "DEFENSE":{s.Defense += i.Delta}
-			case "SPEED":{s.Speed += i.Delta}	
+			case Affects(Health) :{s.UpdateHealth(i.Delta)}
+			case Affects(Mana)   :{s.UpdateMana(i.Delta)  }
+			case Affects(Offense):{s.Offense += i.Delta   }
+			case Affects(Defense):{s.Defense += i.Delta   }
+			case Affects(Speed)  :{s.Speed += i.Delta     }	
 		}
 		if i.Uses != UNLIMITED_USES{
 			i.Uses -= 1
@@ -59,7 +65,8 @@ func GenerateItemsFromFile() []Item{
 }
 //
 //
-// TODO add "item" tiles to tiles file
+//
+//
 //
 var ITEM_HP = Item{
 	Name:      "HP Pot",
@@ -68,7 +75,7 @@ var ITEM_HP = Item{
 	Uses:      1,
 	Delta:     25,
 	ConversionPoints: 1,
-	Affects:   "HEALTH",
+	Affects:   Affects(Health),
 	Tile: POTION_HEALTH,
 }
 var ITEM_MANA = Item{
@@ -78,7 +85,7 @@ var ITEM_MANA = Item{
 	Uses:      1,
 	Delta:     25,
 	ConversionPoints: 1,
-	Affects:   "MANA",
+	Affects:  Affects(Mana),
 	Tile: POTION_MANA,
 }
 var ITEM_OFF_BOOST = Item{
@@ -88,7 +95,7 @@ var ITEM_OFF_BOOST = Item{
 	Delta:     5,
 	Uses:      1,
 	ConversionPoints: 10,
-	Affects:   "OFFENSE",
+	Affects:   Affects(Offense),
 	Tile: EQUIPTMENT,
 }
 var ITEM_DEF_BOOST = Item{
@@ -98,7 +105,7 @@ var ITEM_DEF_BOOST = Item{
 	Delta:     5,
 	Uses:      1,
 	ConversionPoints: 10,
-	Affects:   "DEFENSE",
+	Affects:   Affects(Defense),
 	Tile: EQUIPTMENT,
 }
 var ITEM_SPEED_BOOST = Item{
@@ -108,7 +115,7 @@ var ITEM_SPEED_BOOST = Item{
 	Uses:      1,
 	Delta:     5,
 	ConversionPoints: 10,
-	Affects:   "SPEED",
+	Affects:   Affects(Speed),
 	Tile: EQUIPTMENT,
 }
 var ITEM_SPELL_DMG = Item{
@@ -119,6 +126,6 @@ var ITEM_SPELL_DMG = Item{
 	Cost:      -100,
 	Delta:     -5,
 	ConversionPoints: 10,
-	Affects:   "HEALTH",
+	Affects:   Affects(Health),
 	Tile: SPELL,
 }

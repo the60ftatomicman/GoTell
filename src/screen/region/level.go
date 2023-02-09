@@ -5,13 +5,13 @@ import (
 )
 
 const MAP_LEFT = 0
-const MAP_TOP = 0
-const MAP_LINES = 19
+const MAP_TOP = 3
+const MAP_LINES = 20
 const MAP_COLUMNS = 80
 
 type Level struct {
-	Name   string
-	Filename string
+	Name   string       `default:"Training"`
+	Filename string     `default:"map.txt"`
 	Buffer [][]tile.Tile
 }
 
@@ -38,7 +38,6 @@ func (m *Level) Refresh() () {
 func (m *Level) ReadDataFromFile() [][]tile.Tile {
 	tiles := [][]tile.Tile{}
 	fileData := []string{
-		"b", // aLwAYS need to include this. idk why.
 		"79w",
 		"w",
 		"w",

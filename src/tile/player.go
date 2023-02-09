@@ -4,9 +4,10 @@ import "example/gotell/src/core"
 
 type Player struct {
 	Tile             Tile
-	Name             string
-	Class            string
-	X,Y,DirX,DirY    int
+	Name             string `default:""`
+	Class            string `default:""`
+	Dir              string `default:""`
+	X,Y,DirX,DirY    int    `default:0`
 	Stats            Stats
 	Items            []Item
 }
@@ -17,8 +18,6 @@ func GeneratePlayer() Player {
 		Class: "Hero",
 		X:    1,
 		Y:    5,
-		DirX: 0,
-		DirY: 0,
 		Stats: Stats{
 			Level:     1,
 			MaxHealth: 100,
@@ -40,7 +39,6 @@ func GeneratePlayer() Player {
 	}
 }
 
-//TODO -- add to stats I think
 func (p *Player)GetViewRanges() (int,int,int,int,int,int){
 	fogRange := p.Stats.Vision
 	xStart := fogRange * -1
@@ -60,4 +58,13 @@ func (p *Player)GetViewRanges() (int,int,int,int,int,int){
 		yInc = p.DirY
 	}
 	return xStart,xEnd,xInc,yStart,yEnd,yInc
+}
+
+func (p *Player) GetDirString() string{
+	dir := ""
+	if (p.DirY < 0){dir+="NORTH"}
+	if (p.DirY > 0){dir+="SOUTH"}
+	if (p.DirX < 0){dir+="WEST"}
+	if (p.DirX > 0){dir+="EAST"}
+	return dir
 }

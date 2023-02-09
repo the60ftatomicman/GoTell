@@ -7,9 +7,9 @@ import (
 )
 
 const INFO_LEFT = 1
-const INFO_TOP = 19
+const INFO_TOP = 23
 const INFO_LINES = 6
-const INFO_COLUMNS = 99
+const INFO_COLUMNS = 79
 
 type Info struct {
 	Message [INFO_LINES-2]string
@@ -18,7 +18,7 @@ type Info struct {
 
 func (p *Info) Initialize(b [][]tile.Tile) {
 	//haha yeah I am going to ignore B passed in.
-	p.Set("Currently [MOVING]: WASD (moves), switch to (i)nventory, (Q)uit")
+	p.Set("By Andrew Garber")
 	b = p.compile()
 
 	p.Buffer = initializeBuffer(INFO_LINES, INFO_COLUMNS, b,tile.BLANK)
@@ -50,7 +50,6 @@ func (p *Info) compile()[][]tile.Tile{
 	return t
 }
 
-//TODO make part of struct
 func (p *Info) getBaseRow(colIdx int, extraMsg string,color core.TermCodes ) []tile.Tile {
 	t        := []tile.Tile{tile.INFO_V}
 	msgArray := strings.Split(extraMsg, "")
@@ -62,9 +61,9 @@ func (p *Info) getBaseRow(colIdx int, extraMsg string,color core.TermCodes ) []t
 
 	for i := 0; i < INFO_COLUMNS-2; i++ {
 		if(i >= colIdx && i < endIdx){
-			t = append(t, tile.GENERIC_TEXT(msgArray[i-colIdx],color,core.BgGrey))
+			t = append(t, tile.GENERIC_TEXT(msgArray[i-colIdx],color,core.BgBlack))
 		}else{
-			t = append(t, tile.GENERIC_TEXT(" ",color,core.BgGrey))
+			t = append(t, tile.GENERIC_TEXT(" ",color,core.BgBlack))
 		}
 	}
 	t = append(t, tile.INFO_V)

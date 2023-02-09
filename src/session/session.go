@@ -15,10 +15,11 @@ import (
 type Session struct {
 	Player     tile.Player
 	Screen     screen.Screen
+	Header     region.Header
 	Level      region.Level
 	Profile    region.Profile
 	Info       region.Info
-	State      string //TODO -- ENUM!
+	State      State
 	Enemies    []tile.Enemy
 	Items      []tile.Item
 	Connection net.Conn
@@ -41,6 +42,9 @@ func (s *Session) Initialize(c *net.Conn) {
 	s.Enemies = tile.GenerateEnemiesFromFile()
 	// ------------ Generate Items
 	s.Items = tile.GenerateItemsFromFile()
+	// ---------- Generate Header region
+	s.Header = region.Header{}
+	s.Header.Initialize([][]tile.Tile{})
 	// ---------- Generate Level region
 	s.Level = region.Level{}
 	s.Level.Initialize(s.Level.ReadDataFromFile())
@@ -80,39 +84,49 @@ func (s *Session) initializeObjects() {
 		s.placeObject(&item)
 	}
 	s.Screen.Set(s.Player.Tile, s.Player.Y, s.Player.X)
+	//-- Remove initial Fog around player
+	for r:=s.Player.Stats.Vision * -1;r<s.Player.Stats.Vision ;r++{
+		for c:=s.Player.Stats.Vision * -1;c<s.Player.Stats.Vision ;c++{
+			visionR := r+s.Player.Y
+			visionC := c+s.Player.X
+			inColumn := visionC >=0 && visionC < region.MAP_LEFT+region.MAP_COLUMNS
+			inRow    := visionR >=0 && visionR < region.MAP_TOP+region.MAP_LINES
+			if(inColumn && inRow){
+				cell := s.Screen.Buffer[visionR][visionC].Get()
+				if(cell.Name == tile.FOG.Name){
+					s.Screen.Buffer[visionR][visionC].Pop()
+				}
+			}
+		}
+	}
 }
 
 func (s *Session) Handle() {
 	fmt.Printf("Serving %s\n", s.Connection.RemoteAddr().String())
-	s.Screen.Compile(&s.Level, &s.Profile, &s.Info)
+	s.Screen.Compile(&s.Header,&s.Level, &s.Profile, &s.Info)
 	s.initializeObjects()
 	s.Screen.Refresh()
 	core.HandleOutputToClient(s.Connection, 0, region.INFO_TOP+region.INFO_LINES+1, s.Screen.Get())
 	for {
 		netData, _    := bufio.NewReader(s.Connection).ReadByte()
 		formattedData := strings.TrimSpace(string(netData))
-		if hanleInputStateSwitching(formattedData, s) {
-			// AKA Quit
+		//TODO remove this for / while loop!
+		//AKA are we quitting
+		if(handleGlobalStateSwitching(formattedData,s)){
 			break
-		} else {
-			switch s.State{
-				case STATE_MOVING:{
-					// TODO -- we only need the session.
-					handleInputMoving(formattedData, &s.Player, s)
-				}
-				case STATE_INVENTORY:{
-					handleInputInventory(formattedData, s)
-				}
-				case STATE_SPELL:{
-					handleInputSpell(formattedData, s)
-				}
+		}
+		if handleInputStateSwitching(formattedData,s) || s.State.IsInputValid(formattedData){
+			if(s.State.handleInput(formattedData,s)){
+				//This is a hack for getItem and THAT IS IT.
+				s.State.handleInput(formattedData,s)
 			}
 			s.Profile.Player = &s.Player
 			s.Profile.Refresh()
+			s.Info.Refresh()
 			s.Screen.Compile(&s.Profile, &s.Info)
 			s.Screen.Refresh()
-			core.HandleOutputToClient(s.Connection, 0, region.INFO_TOP+region.INFO_LINES+1, s.Screen.Get())
 		}
+		core.HandleOutputToClient(s.Connection, 0, region.INFO_TOP+region.INFO_LINES+1, s.Screen.Get())
 	}
 	s.Connection.Close()
 }

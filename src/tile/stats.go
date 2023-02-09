@@ -1,19 +1,19 @@
 package tile
 
 type Stats struct {
-	MaxHealth int
-	Health    int
-	MaxMana   int
-	Mana      int
-	Level     int
-	LevelMod  int
-	XP        int
-	Defense   int
-	Offense   int
-	Speed     int
-	Favor     int
-	FogRet    int
-	Vision    int
+	MaxHealth int `default:100`
+	Health    int `default:100`
+	MaxMana   int `default:100`
+	Mana      int `default:100`
+	Level     int `default:1`
+	LevelMod  int `default:10`
+	XP        int `default:0`
+	Defense   int `default:1`
+	Offense   int `default:1`
+	Speed     int `default:1`
+	Favor     int `default:0`
+	FogRet    int `default:25`
+	Vision    int `default:1`
 }
 
 func statCalc_Battle(off int, def int, offMod int) int{

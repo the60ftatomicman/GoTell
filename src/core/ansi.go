@@ -10,10 +10,10 @@ type TermCodes string
 
 // / https://tldp.org/HOWTO/Bash-Prompt-HOWTO/x361.html
 const (
-	ColorCode             =  "\u001b[<FG><BG>m"
+	ColorCode   TermCodes =  "\u001b[<FG><BG>m"
 	FgReset               = "\u001b[0m"
 	//
-	FgBlack     TermCodes = "30"
+	FgBlack               = "30"
 	FgBlue                = "34"
 	FgCyan                = "36"
 	FgGreen               = "32"
