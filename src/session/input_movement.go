@@ -60,7 +60,8 @@ func handleInputMoving(input string,s *Session) bool{
 		enemyXdelta    := enemy.X - s.Player.X
 		enemyYdelta    := enemy.Y - s.Player.Y
 		delta          := math.Abs(float64(enemyXdelta)) + math.Abs(float64(enemyYdelta))
-		base_enemy_msg := "Enemy ["+enemy.Name+"] Level ["+strconv.Itoa(enemy.Stats.Level)+"] Health ["+strconv.Itoa(enemy.Stats.Health)+"]"
+		base_enemy_msg := "Enemy ["+enemy.Name+"] Level ["+strconv.Itoa(enemy.Stats.Level)+"] Health ["+strconv.Itoa(enemy.Stats.Health)+"] Hits ["+strconv.Itoa(enemy.CalcDefeat(&s.Player.Stats))+"]"
+
 		if (delta < 2) {
 			if (delta == 0) {
 				//FIGHTING!

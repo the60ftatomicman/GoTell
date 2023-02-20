@@ -54,7 +54,7 @@ func handleInputStateSwitching(input string, s *Session) bool{
 }
 
 ///
-///
+/// TODO -- this needs to go back into movement I think
 ///
 func preventMovement(tA *tile.Tile, tB *tile.Tile) bool {
 	var prevent bool = false
@@ -65,6 +65,7 @@ func preventMovement(tA *tile.Tile, tB *tile.Tile) bool {
 	return prevent
 }
 
+//TODO -- use this more!
 func getTileXY(playerX int,playerY int,colDelta int,rowDelta int) (int,int) {
 		tileX := playerX+colDelta;
 		if(tileX < region.MAP_LEFT){tileX = region.MAP_LEFT}

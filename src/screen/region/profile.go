@@ -18,10 +18,14 @@ const LINE_VAR_CLASS = 2
 const LINE_VAR_HEALTH = 4
 const LINE_VAR_MANA = 5
 //const LINE_VAR_GOLD = 6
-const LINE_VAR_LEVEL = 6
-const LINE_LBL_ITEMS = 8
+const LINE_VAR_OFFENSE = 7
+const LINE_VAR_DEFENSE = 8
+
+const LINE_VAR_LEVEL = 10
+const LINE_VAR_XP = 11
+const LINE_LBL_ITEMS = 13
 // Remember, each of these only have 16 characters!
-const LINE_VAR_ITEM = 9
+const LINE_VAR_ITEM = 14
 const LINE_VAR_ITEM_COUNT = 5
 
 type Profile struct {
@@ -69,7 +73,16 @@ func (p *Profile)compile()[][]tile.Tile{
 				t = append(t, p.getBaseRow(1," MANA: "+strconv.Itoa(p.Player.Stats.Mana),core.FgBlue))
 			}
 			case LINE_VAR_LEVEL:{
-				t = append(t, p.getBaseRow(1,"LEVEL: "+strconv.Itoa(p.Player.Stats.Level)+" XP: "+strconv.Itoa(p.Player.Stats.XP),core.FgYellow))
+				t = append(t, p.getBaseRow(1,"LEVEL: "+strconv.Itoa(p.Player.Stats.Level),core.FgYellow))
+			}
+			case LINE_VAR_XP:{
+				t = append(t, p.getBaseRow(1,"   XP: "+strconv.Itoa(p.Player.Stats.XP),core.FgYellow))
+			}
+			case LINE_VAR_OFFENSE:{
+				t = append(t, p.getBaseRow(1,"  OFF: "+strconv.Itoa(p.Player.Stats.Offense),core.FgWhite))
+			}
+			case LINE_VAR_DEFENSE:{
+				t = append(t, p.getBaseRow(1,"  DEF: "+strconv.Itoa(p.Player.Stats.Defense),core.FgWhite))
 			}
 			//case LINE_VAR_GOLD:{
 			//	t = append(t, p.getBaseRow(1,"GOLD: "+p.Gold,core.FgYellow))

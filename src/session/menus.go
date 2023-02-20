@@ -2,19 +2,30 @@ package session
 
 import (
 	"example/gotell/src/screen/region"
+	"example/gotell/src/tile"
 	"strconv"
 )
 
 func MENU_SPELL(hasMana bool,attacked []string) []string {
 	menu := []string{"Currently Casting [Spell]"}
 	if(hasMana){
-		menu[0] = "OOPS! Not enough mana! "+menu[0]
+		menu[0] = menu[0]+": OOPS! Not enough mana! "
 	}
 	if(attacked != nil){
-		menu[0] = "You ["+attacked[0]+"] ["+attacked[1]+"]."+menu[0]
+		menu = append(menu, "You ["+attacked[0]+"] ["+attacked[1]+"].")
 	}
 	menu = append(menu, "Press [wasd] to cast in that direction")
 	menu = append(menu, "Press [x] to cast on SELF")
+	return menu
+}
+
+func MENU_ITEM(item *tile.Item)[]string{
+	menu := []string{
+		"["+item.Name+"] selected.",
+		"Press (u) to USE",
+		"Press (c) to CONVERT",
+		"Press (d) to DROP",
+	}
 	return menu
 }
 

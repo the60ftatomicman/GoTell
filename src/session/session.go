@@ -107,10 +107,10 @@ func (s *Session) Handle() {
 	s.initializeObjects()
 	s.Screen.Refresh()
 	core.HandleOutputToClient(s.Connection, 0, region.INFO_TOP+region.INFO_LINES+1, s.Screen.Get())
+	//Begin Game loop
 	for {
 		netData, _    := bufio.NewReader(s.Connection).ReadByte()
 		formattedData := strings.TrimSpace(string(netData))
-		//TODO remove this for / while loop!
 		//AKA are we quitting
 		if(handleGlobalStateSwitching(formattedData,s)){
 			break
@@ -120,9 +120,11 @@ func (s *Session) Handle() {
 				//This is a hack for getItem and THAT IS IT.
 				s.State.handleInput(formattedData,s)
 			}
+			//Refresh our dynamic regions
 			s.Profile.Player = &s.Player
 			s.Profile.Refresh()
 			s.Info.Refresh()
+			//Refresh the full screen.
 			s.Screen.Compile(&s.Profile, &s.Info)
 			s.Screen.Refresh()
 		}

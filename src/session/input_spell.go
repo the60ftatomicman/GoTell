@@ -40,6 +40,7 @@ func handleInputSpell(input string, s *Session) bool{
 	}
 	if(castPressed && remainingMana >= 0){
 		//TODO -- to make more interesting spells we'll have to update this :/
+		//TODO -- most likely a new attribute
 		for idx,enemy := range s.Enemies{
 			//Loop enemies
 			if(enemy.X == targetX && enemy.Y == targetY){

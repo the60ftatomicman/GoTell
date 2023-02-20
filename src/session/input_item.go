@@ -7,6 +7,7 @@ import (
 	"strconv"
 )
 
+//TODO -- make a MENU for this.
 func handleGetItem(input string, s *Session) bool{
 	msg := "you are NOT on an item."
 	if(len(s.Player.Items) < region.LINE_VAR_ITEM_COUNT){
@@ -27,23 +28,22 @@ func handleGetItem(input string, s *Session) bool{
 	}else{
 		msg = "Your inventory is FULL"
 	}
-	s.Info.Set(msg)
+	s.Info.Set(msg,"Press [wasd] to move")
 	s.State = STATE_MOVING
 	return false
 }
-
+func handleItemAction(input string, s *Session) bool{
+	//s.State = STATE_INVENTORY
+	return false
+}
 func handleInputItem(input string, s *Session) bool{
-	idx,notInt         := strconv.Atoi(s.Profile.SelectedItem)
+	idx,notInt    := strconv.Atoi(s.Profile.SelectedItem)
+	secondRefresh := false
 	if notInt == nil {
 		//TODO -- error handling
 		idx            = idx - 1
 		item          := s.Player.Items[idx]
-		s.Info.Set(
-			"["+item.Name+"] selected.",
-			"Press (u) to USE",
-			"Press (c) to CONVERT",
-			"Press (d) to DROP",
-		)
+		s.Info.Set(MENU_ITEM(&item)...)
 		switch input {
 			case "u":
 				{
@@ -55,6 +55,8 @@ func handleInputItem(input string, s *Session) bool{
 						if(item.Interaction(&s.Player.Stats)){
 							s.Player.Items = append(s.Player.Items[:idx], s.Player.Items[idx+1:]...)
 							s.Profile.SelectedItem = ""
+							secondRefresh = true
+							s.State = STATE_ITEMACTION
 						}
 					}
 				}
@@ -63,6 +65,8 @@ func handleInputItem(input string, s *Session) bool{
 					s.Player.Stats.ChangeXP(item.ConversionPoints)
 					s.Player.Items = append(s.Player.Items[:idx], s.Player.Items[idx+1:]...)
 					s.Profile.SelectedItem = ""
+					secondRefresh = true
+					s.State = STATE_ITEMACTION
 				}
 			case "d":
 				{
@@ -80,9 +84,10 @@ func handleInputItem(input string, s *Session) bool{
 					s.Items = append(s.Items, item)
 					s.Player.Items = append(s.Player.Items[:idx], s.Player.Items[idx+1:]...)
 					s.Profile.SelectedItem = ""
+					secondRefresh = true
+					s.State = STATE_ITEMACTION
 				}
 		}
-		s.Info.Refresh()
 	}
-	return false
+	return secondRefresh
 }

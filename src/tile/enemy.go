@@ -24,6 +24,10 @@ func (e *Enemy) Interaction(s *Stats) bool {
 	return removeEnemy
 }
 
+func (e *Enemy) CalcDefeat(s *Stats) int{
+	return e.Stats.Health / statCalc_Battle(s.Offense,e.Stats.Defense,s.Level)
+}
+
 func (e *Enemy) Convert(s *Stats) {}
 func (e *Enemy) GetBufferData() (int,int,string,Tile) {
 	return e.Y,e.X,e.Name,e.Tile
