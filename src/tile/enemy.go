@@ -16,19 +16,41 @@ type Enemy struct {
 
 func (e *Enemy) Interaction(s *Stats) bool {
 	removeEnemy := false
+	// Do dmg
 	if(s.Speed >= e.Stats.Speed){
 		e.Stats.UpdateHealth(statCalc_Battle(s.Offense,e.Stats.Defense,s.Level) * -1)
-		s.UpdateHealth(statCalc_Battle(e.Stats.Offense,s.Defense,e.Stats.Level) * -1)
+		if (e.Stats.Health > 0) {
+			s.UpdateHealth(statCalc_Battle(e.Stats.Offense,s.Defense,e.Stats.Level) * -1)
+		}
 	}else{
 		s.UpdateHealth(statCalc_Battle(e.Stats.Offense,s.Defense,e.Stats.Level) * -1)
-		e.Stats.UpdateHealth(statCalc_Battle(s.Offense,s.Defense,s.Level) * -1)
+		if (s.Health > 0) {
+			e.Stats.UpdateHealth(statCalc_Battle(s.Offense,e.Stats.Defense,s.Level) * -1)
+		}
 	}
+	//Did player die?
+	if (s.Health <= 0) {
+		return false
+	}
+	//Attribute assigning time
+	e.applyEffects(s)
+	//Test if enemy is dead
 	if (e.Stats.Health <= 0) {
 		removeEnemy = true
 		s.ChangeXP(e.Stats.XP);
 	}
 	return removeEnemy
 }
+
+func (e *Enemy) applyEffects(s *Stats) {
+	if(CheckAttributes(e.Tile,core.ATTR_POISONOUS)){
+		s.AddEffects(core.ATTR_POISONOUS)
+	}
+	if(CheckAttributes(e.Tile,core.ATTR_MANABURN)){
+		s.AddEffects(core.ATTR_MANABURN)
+		s.Mana = 0
+	}
+} 
 
 func (e *Enemy) CalcDefeat(s *Stats) int {
 	hits := e.Stats.Health / statCalc_Battle(s.Offense,e.Stats.Defense,s.Level)
@@ -39,6 +61,7 @@ func (e *Enemy) CalcDefeat(s *Stats) int {
 }
 
 func (e *Enemy) Convert(s *Stats) {}
+
 func (e *Enemy) GetBufferData() (int,int,string,Tile) {
 	return e.Y,e.X,e.Name,e.Tile
 }
@@ -48,6 +71,7 @@ func generateEnemy(x int,y int,l int,e Enemy) Enemy {
 	e.Stats.Level = l
 	return e
 }
+
 //
 //
 //
@@ -57,8 +81,9 @@ func GenerateEnemiesFromFile() [10][]Enemy {
 	enemyList := [10][]Enemy{}
 	fileData := []string{
 		"boss:ENEMY_BOSS_MOLEMAN",
-		"1,3,4,5,6,7,8,9:ENEMY_MOLEMAN",
-		"2:ENEMY_SNAKE",
+		"1,4,5,6,7,8,9:ENEMY_MOLEMAN",
+		"3,5:ENEMY_SNAKE",
+		"2,4:ENEMY_GHOST",
 	}
 	for _,row := range fileData {
 		indicies,enemies := fileParserEnemy(row)
@@ -77,12 +102,12 @@ func GenerateEnemiesFromFile() [10][]Enemy {
 //
 var dataConverterEnemy = map[string]Enemy{
      "ENEMY_BOSS_MOLEMAN": ENEMY_BOSS_MOLEMAN,
-     "ENEMY_MOLEMAN": ENEMY_MOLEMAN,
-	 "ENEMY_SNAKE": ENEMY_SNAKE,
+     "ENEMY_MOLEMAN"     : ENEMY_MOLEMAN,
+	 "ENEMY_SNAKE"       : ENEMY_SNAKE,
+	 "ENEMY_GHOST"       : ENEMY_GHOST,
 }
 
 func fileParserEnemy(enemyVals string) ([]string,[]Enemy){
-	//enemyStrings := strings.Split(enemyVals, ":")
 	enemies  := []Enemy{}
 	indicies := []string{}
 	keyVal   := strings.Split(enemyVals, ":")
@@ -146,10 +171,25 @@ var ENEMY_SNAKE = Enemy{
 		MaxHealth: 5,
 		Health:    5,
 		Defense:   0,
-		Offense:   10,
+		Offense:   5,
 		Speed:     5,
-		FogRet:    50,
+		FogRet:    20,
 		XP:         5,
 	},
 	Tile : getEnemyTile(ENEMY_BASIC,core.ATTR_POISONOUS),
+}
+
+// Poisonous! TODO, make this a more generic to get the tiles....
+var ENEMY_GHOST = Enemy{
+	Name: "Ghost",
+	Stats: Stats{
+		MaxHealth: 5,
+		Health:    5,
+		Defense:   0,
+		Offense:   5,
+		Speed:     5,
+		FogRet:    20,
+		XP:        5,
+	},
+	Tile : getEnemyTile(ENEMY_BASIC,core.ATTR_MANABURN),
 }

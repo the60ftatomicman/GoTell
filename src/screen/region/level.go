@@ -26,22 +26,29 @@ type Level struct {
 	Buffer      [][]tile.Tile
 	Enemies     []tile.Enemy
 	enemySpawns [][]int
+	maxEnemies  int
 	Items       []tile.Item
 	itemSpawns  [][]int
+	maxItems    int
 }
 
 func (m *Level) Initialize(b [][]tile.Tile) {
 	m.Buffer  = initializeBuffer(MAP_LINES, MAP_COLUMNS, b,tile.BLANK)
 	m.AssignEnemies(tile.GenerateEnemiesFromFile())
 	m.AssignItems(tile.GenerateItemsFromFile())
-	//Add fog AFTERWARDS
+	//remove spawns add fog
 	for rIdx,row := range m.Buffer {
 		for cIdx,column := range row {
+			if(column == tile.ENEMY_SPAWN || column == tile.ITEM_SPAWN){
+				m.Buffer[rIdx][cIdx] = tile.BLANK
+			}
 			if(column == tile.BLANK){
 				m.Buffer[rIdx][cIdx] = tile.FOG
 			}
+
 		}
 	}
+
 }
 
 func (m *Level) Get() (int, int, int, int, [][]tile.Tile) {
@@ -54,20 +61,20 @@ func (m *Level) ReadDataFromFile() [][]tile.Tile {
 	tiles := [][]tile.Tile{}
 	// READ MAP DATA
 	fileData := []string{
-		"79w",
-		"w",
-		"w",
-		"w",
-		"w",
+		"80w",
+		"w,78b,w",
+		"w,78b,w",
+		"w,78b,w",
+		"w,78b,w",
 		"w,10b,5si",
-		"w",
+		"w,78b,w",
 		"w,2se",
 		"5w,2se",
 		"5w",
 		"5w",
+		"10w,20b,20w,3se,17b,10w",
 		"10w,20b,20w,20b,10w",
-		"10w,20b,20w,20b,10w",
-		"10w,20b,20w,20b,10w",
+		"10w,20b,20w,2se,18b,10w",
 	}
 	for r,row := range fileData {
 		var nextRow []tile.Tile = fileParser(row)
@@ -163,13 +170,20 @@ func (m *Level) AssignEnemies(enemyList [10][]tile.Enemy) {
 		}
 	}
 	m.Enemies = placedEnemies
+	// Truncate the length of our enemies
+	//if(len(m.enemySpawns) > m.maxEnemies){
+	//	m.enemySpawns = m.enemySpawns[:m.maxEnemies]
+	//}
 }
 
 func (m *Level) AssignItems(itemList []tile.Item) {
 	//Always assign a boss
 	placedItems := []tile.Item{}
 	rand.Seed(time.Now().UnixNano())
+	//Shuffle Spawns
 	rand.Shuffle(len(m.itemSpawns), func(i, j int) { m.itemSpawns[i], m.itemSpawns[j] = m.itemSpawns[j], m.itemSpawns[i] })
+	//Shuffle Items
+	rand.Shuffle(len(itemList), func(i, j int) { itemList[i], itemList[j] = itemList[j], itemList[i] })
 	for sIdx,spawn := range m.itemSpawns {
 		item := itemList[sIdx]
 		item.X = spawn[1]
@@ -177,4 +191,8 @@ func (m *Level) AssignItems(itemList []tile.Item) {
 		placedItems= append(placedItems, item)
 	}
 	m.Items = placedItems
+	//Truncate the length of my Items
+	//if(len(m.itemSpawns) > m.maxItems){
+	//	m.itemSpawns = m.itemSpawns[:m.maxItems]
+	//}
 }

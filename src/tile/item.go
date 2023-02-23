@@ -1,6 +1,7 @@
 package tile
 
 import (
+	"example/gotell/src/core"
 	"strconv"
 	"strings"
 )
@@ -24,13 +25,20 @@ type Item struct {
 }
 
 func (i *Item) Interaction(s *Stats) bool{
+	//TODO -- is the ues code actually used or did I fix this with attributes?
 	if i.Uses > 0  || i.Uses == UNLIMITED_USES {
 		switch(i.Affects){
-			case Affects(Health) :{s.UpdateHealth(i.Delta)}
-			case Affects(Mana)   :{s.UpdateMana(i.Delta)  }
-			case Affects(Offense):{s.Offense += i.Delta   }
-			case Affects(Defense):{s.Defense += i.Delta   }
-			case Affects(Speed)  :{s.Speed += i.Delta     }	
+			case Affects(Health) :{
+				s.RemoveEffects(core.ATTR_POISONOUS)
+				s.UpdateHealth(i.Delta)
+			}
+			case Affects(Mana)   :{
+				s.RemoveEffects(core.ATTR_MANABURN)
+				s.UpdateMana(i.Delta)  
+			}
+			case Affects(Offense):{s.Offense += i.Delta }
+			case Affects(Defense):{s.Defense += i.Delta }
+			case Affects(Speed)  :{s.Speed   += i.Delta }	
 		}
 		if i.Uses != UNLIMITED_USES{
 			i.Uses -= 1
@@ -60,8 +68,8 @@ func generateItem(x int,y int, i Item) Item {
 func GenerateItemsFromFile() []Item{
 	itemList := []Item{}
 	fileData := []string{
-		"1:ITEM_HP",
-		"1:ITEM_MANA",
+		"2:ITEM_HP",
+		"2:ITEM_MANA",
 	 	"1:ITEM_OFF_BOOST",
 	 	"1:ITEM_DEF_BOOST",
 	 	"1:ITEM_SPELL_DMG",
@@ -71,13 +79,13 @@ func GenerateItemsFromFile() []Item{
 	}
 	return itemList
 }
+
 var dataConverterItem = map[string]Item{
      "ITEM_HP": ITEM_HP,
      "ITEM_MANA": ITEM_MANA,
 	 "ITEM_OFF_BOOST":ITEM_OFF_BOOST,
 	 "ITEM_DEF_BOOST":ITEM_DEF_BOOST,
 	 "ITEM_SPELL_DMG":ITEM_SPELL_DMG,
-
 }
 
 func fileParserItem(itemVals string) ([]Item){
@@ -119,7 +127,7 @@ var ITEM_OFF_BOOST = Item{
 	Name:      "Pickaxe",
 	X:         0,
 	Y:         0,
-	Delta:     5,
+	Delta:     1,
 	Uses:      1,
 	ConversionPoints: 10,
 	Affects:   Affects(Offense),
@@ -129,7 +137,7 @@ var ITEM_DEF_BOOST = Item{
 	Name:      "Hard Hat",
 	X:         0,
 	Y:         0,
-	Delta:     5,
+	Delta:     1,
 	Uses:      1,
 	ConversionPoints: 10,
 	Affects:   Affects(Defense),

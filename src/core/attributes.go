@@ -18,5 +18,6 @@ const ATTR_SPELL      = "SPELL;"      // Used to determine if an ITEM is a spell
 // ---- Enemy Attribbutes
 
 const ATTR_FIGHTABLE  = "FIGHTABLE;"  // Whether or not a player can engage in combat
-const ATTR_POISONOUS  = "POISONOUS;"  // Whether or not a player can engage in combat
+const ATTR_POISONOUS  = "POISONOUS;"  // Will add poison to stats effects. Poison prevents the entity from gaining health from FOG
+const ATTR_MANABURN   = "MANABURN;"   // Will add mana burn to stats effects. Mana burn prevents the entity from gaining mana from FOG
 const ATTR_BOSS       = "BOSS;"       // Whether or not an enemy is a boss (killing boss should end level!)

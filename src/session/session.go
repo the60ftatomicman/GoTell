@@ -59,15 +59,12 @@ func (s *Session) placeObject(interObj tile.IInteractiveObject)	{
 			fmt.Println("ERROR placing item ["+objName+"] at location ["+strconv.Itoa(objY)+"]["+strconv.Itoa(objX)+"] do to ["+intendedType.Name+"] tile which is solid")
 		}
 		s.Screen.Buffer[objY][objX].Pop()
-		//if (tile.CheckAttributes(intendedType,core.ATTR_FOREGROUND)){
-			s.Screen.Buffer[objY][objX].Pop()
-			s.Screen.Set(objTile, objY,objX)
-			s.Screen.Set(tile.FOG, objY,objX)
-		//}else{
-		//	s.Screen.Set(objTile, objY,objX)
-		//}
+		s.Screen.Buffer[objY][objX].Pop()
+		s.Screen.Set(objTile, objY,objX)
+		s.Screen.Set(tile.FOG, objY,objX)
 }
 
+//TODO -- get rid of this somehow? Keep sessions out of level logic
 func (s *Session) initializeObjects() {
 	//--Enemies
 	for _,enemy := range s.Level.Enemies {
@@ -77,7 +74,6 @@ func (s *Session) initializeObjects() {
 	for _,item := range s.Level.Items {
 		s.placeObject(&item)
 	}
-	s.Screen.Set(s.Player.Tile, s.Player.Y, s.Player.X)
 	//-- Remove initial Fog around player
 	for r:=s.Player.Stats.Vision * -1;r<s.Player.Stats.Vision ;r++{
 		for c:=s.Player.Stats.Vision * -1;c<s.Player.Stats.Vision ;c++{
@@ -93,6 +89,8 @@ func (s *Session) initializeObjects() {
 			}
 		}
 	}
+	//-- Now place player
+	s.Screen.Set(s.Player.Tile, s.Player.Y, s.Player.X)
 }
 
 func (s *Session) Handle() {
