@@ -42,6 +42,7 @@ func (m *Level) Initialize(b [][]tile.Tile) {
 		for cIdx,column := range row {
 			if(column == tile.ENEMY_SPAWN || column == tile.ITEM_SPAWN){
 				m.Buffer[rIdx][cIdx] = tile.BLANK
+				column = tile.BLANK
 			}
 			if(column == tile.BLANK){
 				m.Buffer[rIdx][cIdx] = tile.FOG
@@ -74,7 +75,7 @@ func (m *Level) getFileRegions()[][]string {
 		fileLine := fileScanner.Text()
 		
 		//TODO make this a regex
-		if(fileLine == "#### LEVEL ####" || fileLine == "#### ENEMY ####" || fileLine == "#### ITEM ####"){
+		if(fileLine == "#### METADATA ####" || fileLine == "#### LEVEL ####" || fileLine == "#### ENEMY ####" || fileLine == "#### ITEM ####"){
 			skipLine = true
 			fileData = append(fileData, []string{})
 		}
@@ -99,7 +100,7 @@ func (m *Level) ReadDataFromFile() [][]tile.Tile {
 	//Open that data file
 	fileData := m.getFileRegions()
 	//Assign levels
-	for r,row := range fileData[0] {
+	for r,row := range fileData[1] {
 		var nextRow []tile.Tile = fileParser(row)
 		for c,nextCell := range nextRow{
 			if(nextCell.Name == tile.ENEMY_SPAWN.Name){
@@ -111,9 +112,10 @@ func (m *Level) ReadDataFromFile() [][]tile.Tile {
 		}
 		tiles = append(tiles,nextRow)
 	}
-	
-	m.AssignEnemies(tile.GenerateEnemiesFromFile(fileData[1]))
-	m.AssignItems(tile.GenerateItemsFromFile(fileData[2]))
+	//TODO -- write a parser class to make this cleaner. Think, we have to also parse player data
+	m.parseMetadata(fileData[0])
+	m.assignEnemies(tile.GenerateEnemiesFromFile(fileData[2]))
+	m.assignItems(tile.GenerateItemsFromFile(fileData[3]))
 	return tiles
 }
 //
@@ -159,8 +161,23 @@ func fileParser(tileColVals string) []tile.Tile{
 //
 //
 //
+func (m *Level) parseMetadata(metaData []string) {
+	for _, md := range metaData {
+		keyVal := strings.Split(md, ":")
+		switch(keyVal[0]){
+			case "max_enemies":{
+				val,_ := strconv.Atoi(keyVal[1])
+				m.maxEnemies = val
+			}
+			case "max_items":{
+				val,_ := strconv.Atoi(keyVal[1])
+				m.maxItems = val
+			}
+		}
+	}
+}
 //TODO simplify this a bit.
-func (m *Level) AssignEnemies(enemyList [10][]tile.Enemy) {
+func (m *Level) assignEnemies(enemyList [10][]tile.Enemy) {
 	//Always assign a boss
 	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(len(m.enemySpawns), func(i, j int) { m.enemySpawns[i], m.enemySpawns[j] = m.enemySpawns[j], m.enemySpawns[i] })
@@ -182,7 +199,6 @@ func (m *Level) AssignEnemies(enemyList [10][]tile.Enemy) {
 		if(sIdx > 0){
 			enemy := enemyList[currentLevelPool][rand.Intn(len(enemyList[currentLevelPool]))]
 			//Assign enemy XY based on the enemy spawn
-			//m.Buffer[spawn[1]][spawn[0]] = tile.BLANK // this is SADLY not working!
 			enemy.X = spawn[1]
 			enemy.Y = spawn[0]
 			enemy.Stats.Level = currentLevelPool
@@ -197,12 +213,12 @@ func (m *Level) AssignEnemies(enemyList [10][]tile.Enemy) {
 	}
 	m.Enemies = placedEnemies
 	// Truncate the length of our enemies
-	//if(len(m.enemySpawns) > m.maxEnemies){
-	//	m.enemySpawns = m.enemySpawns[:m.maxEnemies]
-	//}
+	if(len(m.Enemies) > m.maxEnemies){
+		m.Enemies = m.Enemies[:m.maxEnemies]
+	}
 }
 
-func (m *Level) AssignItems(itemList []tile.Item) {
+func (m *Level) assignItems(itemList []tile.Item) {
 	//Always assign a boss
 	placedItems := []tile.Item{}
 	rand.Seed(time.Now().UnixNano())
@@ -218,7 +234,7 @@ func (m *Level) AssignItems(itemList []tile.Item) {
 	}
 	m.Items = placedItems
 	//Truncate the length of my Items
-	//if(len(m.itemSpawns) > m.maxItems){
-	//	m.itemSpawns = m.itemSpawns[:m.maxItems]
-	//}
+	if(len(m.Items) > m.maxItems){
+		m.Items = m.Items[:m.maxItems]
+	}
 }
