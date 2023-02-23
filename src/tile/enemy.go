@@ -29,8 +29,12 @@ func (e *Enemy) Interaction(s *Stats) bool {
 	return removeEnemy
 }
 
-func (e *Enemy) CalcDefeat(s *Stats) int{
-	return e.Stats.Health / statCalc_Battle(s.Offense,e.Stats.Defense,s.Level)
+func (e *Enemy) CalcDefeat(s *Stats) int {
+	hits := e.Stats.Health / statCalc_Battle(s.Offense,e.Stats.Defense,s.Level)
+	if hits < 1 {
+		hits = 1
+	}
+	return hits
 }
 
 func (e *Enemy) Convert(s *Stats) {}

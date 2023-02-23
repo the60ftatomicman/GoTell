@@ -56,7 +56,7 @@ func handleInputItem(input string, s *Session) bool{
 							s.Player.Items = append(s.Player.Items[:idx], s.Player.Items[idx+1:]...)
 							s.Profile.SelectedItem = ""
 							secondRefresh = true
-							s.State = STATE_ITEMACTION
+							s.State = STATE_MOVING
 						}
 					}
 				}

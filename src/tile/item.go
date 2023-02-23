@@ -60,8 +60,11 @@ func generateItem(x int,y int, i Item) Item {
 func GenerateItemsFromFile() []Item{
 	itemList := []Item{}
 	fileData := []string{
-		"3:ITEM_HP",
-		"3:ITEM_MANA",
+		"1:ITEM_HP",
+		"1:ITEM_MANA",
+	 	"1:ITEM_OFF_BOOST",
+	 	"1:ITEM_DEF_BOOST",
+	 	"1:ITEM_SPELL_DMG",
 	}
 	for _,row := range fileData {
 		itemList = append(itemList,fileParserItem(row)...)
@@ -71,6 +74,10 @@ func GenerateItemsFromFile() []Item{
 var dataConverterItem = map[string]Item{
      "ITEM_HP": ITEM_HP,
      "ITEM_MANA": ITEM_MANA,
+	 "ITEM_OFF_BOOST":ITEM_OFF_BOOST,
+	 "ITEM_DEF_BOOST":ITEM_DEF_BOOST,
+	 "ITEM_SPELL_DMG":ITEM_SPELL_DMG,
+
 }
 
 func fileParserItem(itemVals string) ([]Item){
