@@ -18,7 +18,7 @@ w,2se
 5w
 10w,20b,20w,2se,17b,10w
 10w,20b,20w,20b,10w
-10w,20b,20w,1se,18b,10w
+10w,20b,20w,3se,18b,10w
 #### ENEMY ####
 boss:ENEMY_BOSS_MOLEMAN
 1,4,5,6,7,8,9:ENEMY_MOLEMAN
@@ -32,4 +32,5 @@ boss:ENEMY_BOSS_MOLEMAN
 1:ITEM_SPELL_DMG
 #### NOTES ####
 This is an EXAMPLE level I am using for debugging.
-It's nothing too fancy.
+It's nothing too fancy. My hopes are that this'll serve as a template for
+my first level I push out!

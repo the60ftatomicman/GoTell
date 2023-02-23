@@ -181,6 +181,10 @@ func (m *Level) assignEnemies(enemyList [10][]tile.Enemy) {
 	//Always assign a boss
 	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(len(m.enemySpawns), func(i, j int) { m.enemySpawns[i], m.enemySpawns[j] = m.enemySpawns[j], m.enemySpawns[i] })
+	//Now Truncate Spawns
+	if(len(m.enemySpawns) > m.maxEnemies){
+		m.enemySpawns = m.enemySpawns[:m.maxEnemies]
+	}
 	placedEnemies := []tile.Enemy{}
 	//First set BOSS
 	enemyList[0][0].X           = m.enemySpawns[0][1]
@@ -189,10 +193,13 @@ func (m *Level) assignEnemies(enemyList [10][]tile.Enemy) {
 	placedEnemies               = append(placedEnemies, enemyList[0][0])
 	//Now place other enemies
 	currentLevelPool  := 1
-	enemiesPerlevel   := 1
+	enemiesPerLevel   := 1
 	spawnsLeft        := len(m.enemySpawns)
 	if (spawnsLeft > 10){ 
-		enemiesPerlevel = int(math.Round(float64(spawnsLeft) / 10))
+		enemiesPerLevel = int(math.Round(float64(spawnsLeft) / 10))
+		if enemiesPerLevel == 1 {
+			enemiesPerLevel = 2
+		}
 	}
 	currentCountAtLevel := 0
 	for sIdx,spawn := range m.enemySpawns {
@@ -205,25 +212,24 @@ func (m *Level) assignEnemies(enemyList [10][]tile.Enemy) {
 			//Clear both our arrays of the offending value
 			placedEnemies = append(placedEnemies, enemy)
 			currentCountAtLevel += 1
-			if(currentCountAtLevel >= enemiesPerlevel){
+			if(currentCountAtLevel >= enemiesPerLevel){
 				currentCountAtLevel = 0
 				currentLevelPool++
 			}
 		}
 	}
 	m.Enemies = placedEnemies
-	// Truncate the length of our enemies
-	if(len(m.Enemies) > m.maxEnemies){
-		m.Enemies = m.Enemies[:m.maxEnemies]
-	}
 }
 
 func (m *Level) assignItems(itemList []tile.Item) {
 	//Always assign a boss
 	placedItems := []tile.Item{}
 	rand.Seed(time.Now().UnixNano())
-	//Shuffle Spawns
+	//Shuffle and Truncate Spawns
 	rand.Shuffle(len(m.itemSpawns), func(i, j int) { m.itemSpawns[i], m.itemSpawns[j] = m.itemSpawns[j], m.itemSpawns[i] })
+	if(len(m.itemSpawns) > m.maxItems){
+		m.itemSpawns = m.itemSpawns[:m.maxItems]
+	}
 	//Shuffle Items
 	rand.Shuffle(len(itemList), func(i, j int) { itemList[i], itemList[j] = itemList[j], itemList[i] })
 	for sIdx,spawn := range m.itemSpawns {
@@ -233,8 +239,4 @@ func (m *Level) assignItems(itemList []tile.Item) {
 		placedItems= append(placedItems, item)
 	}
 	m.Items = placedItems
-	//Truncate the length of my Items
-	if(len(m.Items) > m.maxItems){
-		m.Items = m.Items[:m.maxItems]
-	}
 }
