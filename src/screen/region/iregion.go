@@ -2,6 +2,9 @@ package region
 
 import "example/gotell/src/tile"
 
+// IRegion
+// This interface is intended to help build and manage regions of tiles
+// to be displayed on the screen
 type IRegion interface {
 	Get() (int, int, int, int, [][]tile.Tile)
 	Initialize(b [][]tile.Tile)

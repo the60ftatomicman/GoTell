@@ -7,27 +7,32 @@ import (
 	"strings"
 )
 
-const PROFILE_LEFT = 80
-const PROFILE_TOP = 0
-const PROFILE_LINES = 29
+const PROFILE_LEFT    = 80
+const PROFILE_TOP     = 0
+const PROFILE_LINES   = 29
 const PROFILE_COLUMNS = 18
+
 // IMPORTANT LINES IN THE PROFILE FOR WRITING!
 // START INDEX 0
-const LINE_VAR_NAME = 1
-const LINE_VAR_CLASS = 2
-const LINE_VAR_HEALTH = 4
-const LINE_VAR_MANA = 5
-//const LINE_VAR_GOLD = 6
-const LINE_VAR_OFFENSE = 7
-const LINE_VAR_DEFENSE = 8
-
-const LINE_VAR_LEVEL = 10
-const LINE_VAR_XP = 11
-const LINE_LBL_ITEMS = 13
 // Remember, each of these only have 16 characters!
-const LINE_VAR_ITEM = 14
-const LINE_VAR_ITEM_COUNT = 5
 
+const LINE_VAR_NAME       = 1 // Line for player name
+const LINE_VAR_CLASS      = 2 // Line for player class
+const LINE_VAR_HEALTH     = 4 // Line for player health
+const LINE_VAR_MANA       = 5 // Line for player mana
+const LINE_VAR_OFFENSE    = 7  // Line for player OFFENSE stat
+const LINE_VAR_DEFENSE    = 8  // Line for player DEFENSE stat
+const LINE_VAR_LEVEL      = 10 // Line for player DEFENSE stat
+const LINE_VAR_XP         = 11 // Line for player XP stat
+const LINE_LBL_ITEMS      = 13 // Line for label to denote where items begin
+const LINE_VAR_ITEM       = 14 // Starting line for items
+const LINE_VAR_ITEM_COUNT = 5  // How many item lines we'll display
+//const LINE_VAR_GOLD = 6
+
+// Profile
+// Displays to the RIGHT of the level
+// This area gives detailed stats about the player
+// XP,Level,Health,Mana as well as the items the player currently has
 type Profile struct {
 	Player *tile.Player
 	SelectedItem string `default:""`

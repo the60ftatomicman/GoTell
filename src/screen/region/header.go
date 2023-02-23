@@ -11,6 +11,8 @@ const HEADER_TOP = 1
 const HEADER_LINES = 2
 const HEADER_COLUMNS = 79
 
+// Header
+// Used to display the title and MENU options at all times
 type Header struct {
 	Message string
 	Buffer  [][]tile.Tile
@@ -32,9 +34,11 @@ func (p *Header) Refresh() {
 func (p *Header) Get() (int, int, int, int, [][]tile.Tile) {
 	return HEADER_LEFT, HEADER_TOP, HEADER_LINES, HEADER_COLUMNS, p.Buffer
 }
+
 func (p *Header) Set(msgs string){
 	p.Message = msgs
 }
+
 func (p *Header) compile()[][]tile.Tile{
 	t := [][]tile.Tile{p.getBaseRow(1,p.Message,core.FgWhite)}
 	t = append(t, tile.GenerateHorizontalDivider(HEADER_COLUMNS,tile.BLANK,tile.INFO_H))

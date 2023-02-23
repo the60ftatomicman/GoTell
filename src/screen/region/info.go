@@ -11,6 +11,9 @@ const INFO_TOP = 23
 const INFO_LINES = 6
 const INFO_COLUMNS = 79
 
+// Info
+// Displays on the bottom beneath the level.
+// Provides current commands available (non menu) and other info
 type Info struct {
 	Message [INFO_LINES-2]string
 	Buffer  [][]tile.Tile
@@ -32,6 +35,7 @@ func (p *Info) Refresh() {
 func (p *Info) Get() (int, int, int, int, [][]tile.Tile) {
 	return INFO_LEFT, INFO_TOP, INFO_LINES, INFO_COLUMNS, p.Buffer
 }
+
 func (p *Info) Set(msgs ...string){
 	for i:=0; i<INFO_LINES-2;i++ {
 		if (i < len(msgs)){
@@ -41,6 +45,7 @@ func (p *Info) Set(msgs ...string){
 		}
 	}
 }
+
 func (p *Info) compile()[][]tile.Tile{
 	t := [][]tile.Tile{tile.GenerateHorizontalDivider(INFO_COLUMNS-2,tile.BLANK,tile.INFO_H)}
 	for i := 0; i < len(p.Message); i++ {

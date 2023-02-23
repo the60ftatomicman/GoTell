@@ -15,6 +15,11 @@ const MAP_TOP = 3
 const MAP_LINES = 20
 const MAP_COLUMNS = 80
 
+
+// Level
+// Where the action takes place.
+// This is where we display players, enemies, items, etc.
+// You know, the gameplay.
 type Level struct {
 	Name        string        `default:"Training"`
 	Filename    string        `default:"map.txt"`
