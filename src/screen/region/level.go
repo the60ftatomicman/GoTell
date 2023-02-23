@@ -1,9 +1,11 @@
 package region
 
 import (
+	"bufio"
 	"example/gotell/src/tile"
 	"math"
 	"math/rand"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -57,26 +59,38 @@ func (m *Level) Get() (int, int, int, int, [][]tile.Tile) {
 
 func (m *Level) Refresh(){}
 
+//TODO -- make this pull ALL 3 things
+func (m *Level) getFileRegions()[]string {
+	fileData := []string{}
+	readFile,err := os.Open("./utilities/data/demolevel.txt")
+	if(err != nil){
+		panic(err)
+	}
+    fileScanner := bufio.NewScanner(readFile)
+    fileScanner.Split(bufio.ScanLines)
+	beginAppending := false
+    for fileScanner.Scan() {
+		fileLine := fileScanner.Text()
+		if(beginAppending){
+			fileData = append(fileData, fileLine)
+		}
+		if(fileLine == "#### LEVEL ####"){
+			beginAppending = true
+		}
+		if(fileLine == "#### ENEMY ####"){
+			beginAppending = false
+		}
+    }
+    readFile.Close()
+	return fileData
+}
+
 func (m *Level) ReadDataFromFile() [][]tile.Tile {
 	tiles := [][]tile.Tile{}
-	// READ MAP DATA
-	fileData := []string{
-		"80w",
-		"w,78b,w",
-		"w,78b,w",
-		"w,78b,w",
-		"w,78b,w",
-		"w,10b,5si",
-		"w,78b,w",
-		"w,2se",
-		"5w,2se",
-		"5w",
-		"5w",
-		"10w,20b,20w,3se,17b,10w",
-		"10w,20b,20w,20b,10w",
-		"10w,20b,20w,2se,18b,10w",
-	}
-	for r,row := range fileData {
+	//Open that data file
+	levelData := m.getFileRegions()
+
+	for r,row := range levelData {
 		var nextRow []tile.Tile = fileParser(row)
 		for c,nextCell := range nextRow{
 			if(nextCell.Name == tile.ENEMY_SPAWN.Name){
@@ -88,6 +102,7 @@ func (m *Level) ReadDataFromFile() [][]tile.Tile {
 		}
 		tiles = append(tiles,nextRow)
 	}
+
 	return tiles
 }
 //

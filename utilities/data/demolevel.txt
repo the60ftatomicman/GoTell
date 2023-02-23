@@ -1,22 +1,23 @@
 #### LEVEL ####
-79w
+80w
 w,78b,w
 w,78b,w
 w,78b,w
 w,78b,w
 w,10b,5si
-w
+w,78b,w
 w,2se
 5w,2se
 5w
 5w
+10w,20b,20w,3se,17b,10w
 10w,20b,20w,20b,10w
-10w,20b,20w,20b,10w
-10w,20b,20w,20b,10w
+10w,20b,20w,2se,18b,10w
 #### ENEMY ####
 boss:ENEMY_BOSS_MOLEMAN
-1,3,4,5,6,7,8,9:ENEMY_MOLEMAN
-2:ENEMY_SNAKE
+1,4,5,6,7,8,9:ENEMY_MOLEMAN
+3,5:ENEMY_SNAKE
+2,4:ENEMY_GHOST
 #### ITEM ####
 2:ITEM_HP
 2:ITEM_MANA
