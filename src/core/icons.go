@@ -1,5 +1,8 @@
 package core
 
+// Icons
+// These are used to determine what a tile SHOWS
+// *Most* tiles use these constants. Messages use the function StringToIcons
 type Icons string
 
 const (

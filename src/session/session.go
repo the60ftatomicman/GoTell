@@ -15,12 +15,11 @@ import (
 type Session struct {
 	Player     tile.Player
 	Screen     screen.Screen
+	Header     region.Header
 	Level      region.Level
 	Profile    region.Profile
 	Info       region.Info
-	State      string //TODO -- ENUM!
-	Enemies    []tile.Enemy
-	Items      []tile.Item
+	State      State
 	Connection net.Conn
 }
 
@@ -37,10 +36,9 @@ func (s *Session) Initialize(c *net.Conn) {
 		Buffer: screen.BlankScreen(),
 		Raw:    "",
 	}
-	// ------------ Generate Enemies
-	s.Enemies = tile.GenerateEnemiesFromFile()
-	// ------------ Generate Items
-	s.Items = tile.GenerateItemsFromFile()
+	// ---------- Generate Header region
+	s.Header = region.Header{}
+	s.Header.Initialize([][]tile.Tile{})
 	// ---------- Generate Level region
 	s.Level = region.Level{}
 	s.Level.Initialize(s.Level.ReadDataFromFile())
@@ -52,67 +50,77 @@ func (s *Session) Initialize(c *net.Conn) {
 	s.Info.Initialize([][]tile.Tile{})
 
 }
-//TODO -- theseOUGHT to be a level region function
 
+//TODO -- theseOUGHT to be a level region function
 func (s *Session) placeObject(interObj tile.IInteractiveObject)	{
 		objY,objX,objName,objTile := interObj.GetBufferData()
 		intendedType := s.Screen.Buffer[objY][objX].Get()
 		if (tile.CheckAttributes(intendedType,core.ATTR_SOLID)){
 			fmt.Println("ERROR placing item ["+objName+"] at location ["+strconv.Itoa(objY)+"]["+strconv.Itoa(objX)+"] do to ["+intendedType.Name+"] tile which is solid")
 		}
-		if (tile.CheckAttributes(intendedType,core.ATTR_FOREGROUND)){
-			s.Screen.Buffer[objY][objX].Pop()
-			s.Screen.Set(objTile, objY,objX)
-			s.Screen.Set(tile.FOG, objY,objX)
-		}else{
-			s.Screen.Set(objTile, objY,objX)
-		}
+		s.Screen.Buffer[objY][objX].Pop()
+		s.Screen.Buffer[objY][objX].Pop()
+		s.Screen.Set(objTile, objY,objX)
+		s.Screen.Set(tile.FOG, objY,objX)
 }
 
-
+//TODO -- get rid of this somehow? Keep sessions out of level logic
 func (s *Session) initializeObjects() {
 	//--Enemies
-	for _,enemy := range s.Enemies {
+	for _,enemy := range s.Level.Enemies {
 		s.placeObject(&enemy)
 	}
 	//--Items
-	for _,item := range s.Items {
+	for _,item := range s.Level.Items {
 		s.placeObject(&item)
 	}
+	//-- Remove initial Fog around player
+	for r:=s.Player.Stats.Vision * -1;r<s.Player.Stats.Vision ;r++{
+		for c:=s.Player.Stats.Vision * -1;c<s.Player.Stats.Vision ;c++{
+			visionR := r+s.Player.Y
+			visionC := c+s.Player.X
+			inColumn := visionC >=0 && visionC < region.MAP_LEFT+region.MAP_COLUMNS
+			inRow    := visionR >=0 && visionR < region.MAP_TOP+region.MAP_LINES
+			if(inColumn && inRow){
+				cell := s.Screen.Buffer[visionR][visionC].Get()
+				if(cell.Name == tile.FOG.Name){
+					s.Screen.Buffer[visionR][visionC].Pop()
+				}
+			}
+		}
+	}
+	//-- Now place player
 	s.Screen.Set(s.Player.Tile, s.Player.Y, s.Player.X)
 }
 
 func (s *Session) Handle() {
 	fmt.Printf("Serving %s\n", s.Connection.RemoteAddr().String())
-	s.Screen.Compile(&s.Level, &s.Profile, &s.Info)
+	s.Screen.Compile(&s.Header,&s.Level, &s.Profile, &s.Info)
 	s.initializeObjects()
 	s.Screen.Refresh()
 	core.HandleOutputToClient(s.Connection, 0, region.INFO_TOP+region.INFO_LINES+1, s.Screen.Get())
+	//Begin Game loop
 	for {
 		netData, _    := bufio.NewReader(s.Connection).ReadByte()
 		formattedData := strings.TrimSpace(string(netData))
-		if hanleInputStateSwitching(formattedData, s) {
-			// AKA Quit
+		//AKA are we quitting
+		if(handleGlobalStateSwitching(formattedData,s)){
 			break
-		} else {
-			switch s.State{
-				case STATE_MOVING:{
-					// TODO -- we only need the session.
-					handleInputMoving(formattedData, &s.Player, s)
-				}
-				case STATE_INVENTORY:{
-					handleInputInventory(formattedData, s)
-				}
-				case STATE_SPELL:{
-					handleInputSpell(formattedData, s)
-				}
+		}
+		if handleInputStateSwitching(formattedData,s) || s.State.IsInputValid(formattedData){
+			if(s.State.handleInput(formattedData,s)){
+				//This is a hack for getItem and THAT IS IT.
+				s.State.handleInput(formattedData,s)
 			}
+			//Refresh our dynamic regions
 			s.Profile.Player = &s.Player
 			s.Profile.Refresh()
+			s.Info.Refresh()
+			//Refresh the full screen.
 			s.Screen.Compile(&s.Profile, &s.Info)
 			s.Screen.Refresh()
-			core.HandleOutputToClient(s.Connection, 0, region.INFO_TOP+region.INFO_LINES+1, s.Screen.Get())
 		}
+		core.HandleOutputToClient(s.Connection, 0, region.INFO_TOP+region.INFO_LINES+1, s.Screen.Get())
 	}
 	s.Connection.Close()
 }

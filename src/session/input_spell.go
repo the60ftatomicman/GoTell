@@ -4,13 +4,8 @@ import (
 	"strconv"
 )
 
-func handleInputSpell(input string, s *Session){
-	s.Info.Set(
-		"Currently Casting [Spell]",
-		"Press [wasd] to cast in that direction [x] to cast on SELF",
-		"Press [i] to return to inventory",
-		"Press [m] to return to moving",
-	)
+func handleInputSpell(input string, s *Session) bool{
+	s.Info.Set(MENU_SPELL(false,nil)...)
 	idx,_         := strconv.Atoi(s.Profile.SelectedItem)
 	//TODO -- error handling
 	idx            = idx - 1
@@ -45,34 +40,26 @@ func handleInputSpell(input string, s *Session){
 	}
 	if(castPressed && remainingMana >= 0){
 		//TODO -- to make more interesting spells we'll have to update this :/
-		for idx,enemy := range s.Enemies{
+		//TODO -- most likely a new attribute
+		for idx,enemy := range s.Level.Enemies{
 			//Loop enemies
 			if(enemy.X == targetX && enemy.Y == targetY){
 				enemyStatus := "Damaged"
-				item.Interaction(&s.Enemies[idx].Stats)
+				item.Interaction(&s.Level.Enemies[idx].Stats)
 				s.Player.Stats.UpdateMana(item.Cost)
-				if s.Enemies[idx].Stats.Health <=0{
+				if s.Level.Enemies[idx].Stats.Health <=0{
 					s.Screen.Buffer[enemy.Y][enemy.X].Pop()
-					s.Enemies = append(s.Enemies[:idx], s.Enemies[idx+1:]...)
+					s.Level.Enemies = append(s.Level.Enemies[:idx], s.Level.Enemies[idx+1:]...)
 					enemyStatus = "Killed"
 				}
-				s.Info.Set(
-					"You ["+enemyStatus+"] enemy ["+enemy.Name+"]. Currently Casting [Spell]",
-					"Press [wasd] to cast in that direction [x] to cast on SELF",
-					"Press [i] to return to inventory",
-					"Press [m] to return to moving",
-				)
+				s.Info.Set(MENU_SPELL(true,[]string{enemyStatus,enemy.Name})...)
+				
 			}
 		}
 	}else{
 		if(remainingMana < 0){
-			s.Info.Set(
-				"OOPS! Not enough mana! Currently Casting [Spell]",
-				"Press [wasd] to cast in that direction [x] to cast on SELF",
-				"Press [i] to return to inventory",
-				"Press [m] to return to moving",
-			)
+			s.Info.Set(MENU_SPELL(true,nil)...)
 		}
 	}
-	s.Info.Refresh()
+	return false
 }

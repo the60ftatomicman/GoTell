@@ -8,14 +8,22 @@ import (
 	"strconv"
 )
 
-const SCREEN_WIDTH = 100
-const SCREEN_HEIGHT = 25
+const SCREEN_WIDTH = 100 // How many COLUMNS of characters the screen is
+const SCREEN_HEIGHT = 29 // How many LINES of characters the screen is
 
+// --------------------
+
+// Screen
+// This object helps manage the data which we want to draw to the screen
+// The game logic should interact with the buffer and the Raw property
+// is the compiled text to send to the client
 type Screen struct {
-	Buffer [SCREEN_HEIGHT][SCREEN_WIDTH]Cell
-	Raw    string
+	Buffer [SCREEN_HEIGHT][SCREEN_WIDTH]Cell // Collection of Cells containing Z amount of tiles
+	Raw    string `default:""`               // Represents the raw ANSI text we wish to send to the terminal
 }
 
+// BlankScreen
+// Set every cell to just contain tile.Blank
 func BlankScreen() [SCREEN_HEIGHT][SCREEN_WIDTH]Cell {
 	var blank [SCREEN_HEIGHT][SCREEN_WIDTH]Cell
 	for l := 0; l < len(blank); l++ {
@@ -26,7 +34,11 @@ func BlankScreen() [SCREEN_HEIGHT][SCREEN_WIDTH]Cell {
 	return blank
 }
 
-//When the regions are modified and we need to make new cells; call this
+// Compile
+// When the regions are modified and we need to modify the cells
+// This functino takes the tiles from those regions and pushes them into the Cell which is a slice.
+// Order of Operations matter! Latter passed in regions display on top of earlier regions.
+// TODO -- should I blank before I run this each time?
 func (s *Screen) Compile(regionList ...region.IRegion) {
 	s.Raw = ""
 	for _, r := range regionList {
@@ -39,7 +51,8 @@ func (s *Screen) Compile(regionList ...region.IRegion) {
 	}
 }
 
-//When we are just updating what our cells look like; call this.
+// Refresh
+// This resets Raw based on what is currently in our Buffer
 func (s *Screen) Refresh() {
 	s.Raw = ""
 	for _, line := range s.Buffer {
@@ -54,6 +67,8 @@ func (s *Screen) Refresh() {
 	}
 }
 
+// Set
+// Attempts to put a tile into a Cell slice
 func (s *Screen) Set(t tile.Tile, idx ...int) {
 	var column = idx[1]
 	var line = idx[0]
@@ -69,6 +84,8 @@ func (s *Screen) Set(t tile.Tile, idx ...int) {
 	}
 }
 
+// Get
+// Returns the Raw text
 func (s *Screen) Get() string {
 	return s.Raw
 }
