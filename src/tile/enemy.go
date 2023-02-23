@@ -1,6 +1,7 @@
 package tile
 
 import (
+	"example/gotell/src/core"
 	"strconv"
 	"strings"
 )
@@ -56,7 +57,8 @@ func GenerateEnemiesFromFile() [10][]Enemy {
 	enemyList := [10][]Enemy{}
 	fileData := []string{
 		"boss:ENEMY_BOSS_MOLEMAN",
-		"1,2,3,4,5,6,7,8,9:ENEMY_MOLEMAN",
+		"1,3,4,5,6,7,8,9:ENEMY_MOLEMAN",
+		"2:ENEMY_SNAKE",
 	}
 	for _,row := range fileData {
 		indicies,enemies := fileParserEnemy(row)
@@ -76,6 +78,7 @@ func GenerateEnemiesFromFile() [10][]Enemy {
 var dataConverterEnemy = map[string]Enemy{
      "ENEMY_BOSS_MOLEMAN": ENEMY_BOSS_MOLEMAN,
      "ENEMY_MOLEMAN": ENEMY_MOLEMAN,
+	 "ENEMY_SNAKE": ENEMY_SNAKE,
 }
 
 func fileParserEnemy(enemyVals string) ([]string,[]Enemy){
@@ -100,8 +103,15 @@ func fileParserEnemy(enemyVals string) ([]string,[]Enemy){
 //
 //
 //
+func getEnemyTile(t Tile, attrs ...string) Tile{
+	for _,attr := range attrs{
+		t.Attribute += attr
+	}
+	return t
+}
+// Basic Grunt
 var ENEMY_MOLEMAN = Enemy{
-	Name:      "Moleman",
+	Name: "Moleman",
 	Stats: Stats{
 		MaxHealth: 10,
 		Health:    10,
@@ -111,8 +121,10 @@ var ENEMY_MOLEMAN = Enemy{
 		FogRet:    20,
 		XP:         5,
 	},
-	Tile : ENEMY_BASIC,
+	Tile : getEnemyTile(ENEMY_BASIC),
 }
+
+// Boss of the basic grunts
 var ENEMY_BOSS_MOLEMAN = Enemy{
 	Name:      "Boss Moleman",
 	Stats: Stats{
@@ -124,5 +136,20 @@ var ENEMY_BOSS_MOLEMAN = Enemy{
 		FogRet:    20,
 		XP:         5,
 	},
-	Tile: ENEMY_BOSS,
+	Tile: getEnemyTile(ENEMY_BOSS),
+}
+
+// Poisonous! TODO, make this a more generic to get the tiles....
+var ENEMY_SNAKE = Enemy{
+	Name: "Snake",
+	Stats: Stats{
+		MaxHealth: 5,
+		Health:    5,
+		Defense:   0,
+		Offense:   10,
+		Speed:     5,
+		FogRet:    50,
+		XP:         5,
+	},
+	Tile : getEnemyTile(ENEMY_BASIC,core.ATTR_POISONOUS),
 }
