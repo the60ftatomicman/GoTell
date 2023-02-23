@@ -36,8 +36,7 @@ type Level struct {
 
 func (m *Level) Initialize(b [][]tile.Tile) {
 	m.Buffer  = initializeBuffer(MAP_LINES, MAP_COLUMNS, b,tile.BLANK)
-	m.AssignEnemies(tile.GenerateEnemiesFromFile())
-	m.AssignItems(tile.GenerateItemsFromFile())
+
 	//remove spawns add fog
 	for rIdx,row := range m.Buffer {
 		for cIdx,column := range row {
@@ -60,26 +59,36 @@ func (m *Level) Get() (int, int, int, int, [][]tile.Tile) {
 func (m *Level) Refresh(){}
 
 //TODO -- make this pull ALL 3 things
-func (m *Level) getFileRegions()[]string {
-	fileData := []string{}
+func (m *Level) getFileRegions()[][]string {
+	fileData      := [][]string{}
+	currentRegion := -1
+	skipLine      := false
 	readFile,err := os.Open("./utilities/data/demolevel.txt")
 	if(err != nil){
 		panic(err)
 	}
     fileScanner := bufio.NewScanner(readFile)
     fileScanner.Split(bufio.ScanLines)
-	beginAppending := false
+	
     for fileScanner.Scan() {
 		fileLine := fileScanner.Text()
-		if(beginAppending){
-			fileData = append(fileData, fileLine)
+		
+		//TODO make this a regex
+		if(fileLine == "#### LEVEL ####" || fileLine == "#### ENEMY ####" || fileLine == "#### ITEM ####"){
+			skipLine = true
+			fileData = append(fileData, []string{})
 		}
-		if(fileLine == "#### LEVEL ####"){
-			beginAppending = true
+		if(fileLine == "#### NOTES ####"){
+			currentRegion = -1
 		}
-		if(fileLine == "#### ENEMY ####"){
-			beginAppending = false
+		if(!skipLine && currentRegion > -1){
+			fileData[currentRegion] = append(fileData[currentRegion], fileLine)
 		}
+		if(skipLine){
+			skipLine = false
+			currentRegion += 1
+		}
+		
     }
     readFile.Close()
 	return fileData
@@ -88,9 +97,9 @@ func (m *Level) getFileRegions()[]string {
 func (m *Level) ReadDataFromFile() [][]tile.Tile {
 	tiles := [][]tile.Tile{}
 	//Open that data file
-	levelData := m.getFileRegions()
-
-	for r,row := range levelData {
+	fileData := m.getFileRegions()
+	//Assign levels
+	for r,row := range fileData[0] {
 		var nextRow []tile.Tile = fileParser(row)
 		for c,nextCell := range nextRow{
 			if(nextCell.Name == tile.ENEMY_SPAWN.Name){
@@ -102,7 +111,9 @@ func (m *Level) ReadDataFromFile() [][]tile.Tile {
 		}
 		tiles = append(tiles,nextRow)
 	}
-
+	
+	m.AssignEnemies(tile.GenerateEnemiesFromFile(fileData[1]))
+	m.AssignItems(tile.GenerateItemsFromFile(fileData[2]))
 	return tiles
 }
 //

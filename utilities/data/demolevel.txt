@@ -1,3 +1,4 @@
+#### METADATA ####
 #### LEVEL ####
 80w
 w,78b,w
@@ -24,3 +25,6 @@ boss:ENEMY_BOSS_MOLEMAN
 1:ITEM_OFF_BOOST
 1:ITEM_DEF_BOOST
 1:ITEM_SPELL_DMG
+#### NOTES ####
+This is an EXAMPLE level I am using for debugging.
+It's nothing too fancy.

@@ -65,15 +65,8 @@ func generateItem(x int,y int, i Item) Item {
 //
 //
 //
-func GenerateItemsFromFile() []Item{
+func GenerateItemsFromFile(fileData []string) []Item{
 	itemList := []Item{}
-	fileData := []string{
-		"2:ITEM_HP",
-		"2:ITEM_MANA",
-	 	"1:ITEM_OFF_BOOST",
-	 	"1:ITEM_DEF_BOOST",
-	 	"1:ITEM_SPELL_DMG",
-	}
 	for _,row := range fileData {
 		itemList = append(itemList,fileParserItem(row)...)
 	}

@@ -76,15 +76,9 @@ func generateEnemy(x int,y int,l int,e Enemy) Enemy {
 //
 //
 //
-func GenerateEnemiesFromFile() [10][]Enemy {
+func GenerateEnemiesFromFile(fileData []string) [10][]Enemy {
 	//We'll enforce Order of Operatins. enemy 0 is ALWAYS your boss
 	enemyList := [10][]Enemy{}
-	fileData := []string{
-		"boss:ENEMY_BOSS_MOLEMAN",
-		"1,4,5,6,7,8,9:ENEMY_MOLEMAN",
-		"3,5:ENEMY_SNAKE",
-		"2,4:ENEMY_GHOST",
-	}
 	for _,row := range fileData {
 		indicies,enemies := fileParserEnemy(row)
 		
