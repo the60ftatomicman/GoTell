@@ -35,6 +35,23 @@ Using "Cells" "Tiles" and "Regions" you can build a screen.
 -- One spell implemented
 -- ton of refactor work
 - ![image description](docs/imgs/v0.0.6.gif)
+- v0.0.7 The Great Last Refactor
+-- Refactored input and a ton of other code
+-- Finally added file parsing for levels and items
+-- Randomization of things on the Level!
+-- New enemies generated
+-- Removed a ton from our session object (as I should have)
+-- added header region
+-- Modfied other regions
+-- added menus (just static text things)
+- ![image description](docs/imgs/v0.0.7.gif)
+- v0.0.8 Great Refactor 2
+-- This will be refactoring how we handle file parsing
+-- There are things I put into core which seem stupid to do so in hindsight so ill be moving them
+-- I will have a title and level select at this point!
+-- Maybe gods will be added?
+-- Generate a static HTML file for level editing
+
 ### MAIN STRUCTS ###
 - Screen
 Think old computers with all their talk of "column count" and you have a good idea on how this will work.
@@ -70,15 +87,16 @@ Taking place during the golden age of invention (this is just a fancy way to say
 a railroad mogul buys up a town with a mine in hopes to uncover it's treasures.
 You select a class to take on a mission; attempt to conquer the map and return with riches.
 7) Magic and items integrated
-8) Map from file parser COMPLETED
+8) Level,enemies and items from file completed.
+9) Randomized spawns completed.
 
 
 ### TODO ###
 1) Make input it's own class thingy
-2) Read from file for player,items, and enemies (Maps done)
-3) Do some actual enemy stuff
---- want drops
---- want spawns
-4) Intro screen and map selection
-5) Add FOG wall detection (cannot see through walls)
-7) Start thinking about town hub interactions.
+2) Enemy Drops
+3) Intro screen and map selection
+4) Add FOG wall detection (cannot see through walls)
+5) Start thinking about town hub interactions.
+6) Popup messages
+7) Multi-layered levels? Multi BOSS levels?
+8) End conditions for beating the level
