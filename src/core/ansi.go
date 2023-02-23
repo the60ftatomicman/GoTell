@@ -6,9 +6,11 @@ import (
 	"strings"
 )
 
+// TermCodes
+// These are used to generate our colorful text in the terminal
+// Most of my macro stuff is pulled from the article belows
+// https://tldp.org/HOWTO/Bash-Prompt-HOWTO/x361.html
 type TermCodes string
-
-// / https://tldp.org/HOWTO/Bash-Prompt-HOWTO/x361.html
 const (
 	ColorCode   TermCodes =  "\u001b[<FG><BG>m"
 	FgReset               = "\u001b[0m"
@@ -46,6 +48,9 @@ const (
 	//CursorRestore           = "\033[u" // DOES NOTHING ATM
 )
 
+// ResizeTerminal 
+// Changes the window (on users desktop) to given size
+// lines == Y or HEIGHT ; columns = X or WIDTH
 func ResizeTerminal(lines int, columns int) string {
 	template := "<L>;<C>"
 	mod := strconv.Itoa(lines) + ";" + strconv.Itoa(columns)
@@ -61,10 +66,16 @@ func moveCursor(x int, y int) string {
 	return pos
 }
 
+// Clear
+// Clears the screen of all characters
 func Clear() string {
 	return string(TermCodes(ClearScreen))
 }
 
+// GenChar
+// Given a string, apply the Terminal Codes to it
+// If no colors are provided, it uses default black background white foreground
+// If 1 color is provided we only set the Foreground
 func GenChar(msg string, colors ...TermCodes) string {
 	fgclr := string(colors[0])
 	bgclr := string(TermCodes(BgBlack))
@@ -76,6 +87,9 @@ func GenChar(msg string, colors ...TermCodes) string {
 	return color + msg + rst
 }
 
+// HandleOutputToClient
+// Clear the screen and draw the proper console character.
+// Note: This does NOT handle input parsing, that is done in the session
 func HandleOutputToClient(c net.Conn, cursorX int, cursorY int, out string) {
 	c.Write([]byte(Clear() + out + moveCursor(cursorX, cursorY) + ">"))
 }

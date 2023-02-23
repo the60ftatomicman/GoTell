@@ -76,7 +76,7 @@ func removeFog(s *Session,colDelta int,rowDelta int) string{
 		p.Stats.UpdateHealth(p.Stats.FogRet)
 		p.Stats.UpdateMana(p.Stats.FogRet)
 		// Update all those enemies health (dun dun dun)
-		for idx,_ := range s.Level.Enemies {
+		for idx := range s.Level.Enemies {
 			e := &s.Level.Enemies[idx]
 			e.Stats.UpdateHealth(e.Stats.FogRet)
 			e.Stats.UpdateMana(e.Stats.FogRet)
