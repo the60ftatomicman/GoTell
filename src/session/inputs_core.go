@@ -1,10 +1,7 @@
 package session
 
 import (
-	"example/gotell/src/core"
 	"example/gotell/src/screen/region"
-	"example/gotell/src/tile"
-	"strings"
 )
 
 func handleGlobalStateSwitching(input string, s *Session) bool{
@@ -56,14 +53,6 @@ func handleInputStateSwitching(input string, s *Session) bool{
 ///
 /// TODO -- this needs to go back into movement I think
 ///
-func preventMovement(tA *tile.Tile, tB *tile.Tile) bool {
-	var prevent bool = false
-	if strings.Contains(tA.Attribute, core.ATTR_SOLID) && strings.Contains(tB.Attribute, core.ATTR_SOLID) {
-		prevent = true
-	}
-
-	return prevent
-}
 
 //TODO -- use this more!
 func getTileXY(playerX int,playerY int,colDelta int,rowDelta int) (int,int) {
@@ -81,13 +70,14 @@ func removeFog(s *Session,colDelta int,rowDelta int) string{
 	p := &s.Player
 	tileX,tileY := getTileXY(p.X,p.Y,colDelta,rowDelta)
 	s.Screen.Buffer[tileY][tileX].Get()
+	//TODO -- hate this is hard coded
 	if (s.Screen.Buffer[tileY][tileX].Get().Name  == "FOG") {
 		s.Screen.Buffer[tileY][tileX].Pop()
 		p.Stats.UpdateHealth(p.Stats.FogRet)
 		p.Stats.UpdateMana(p.Stats.FogRet)
-		// Update all those enemies health!
-		for idx,_ := range s.Enemies {
-			e := &s.Enemies[idx]
+		// Update all those enemies health (dun dun dun)
+		for idx,_ := range s.Level.Enemies {
+			e := &s.Level.Enemies[idx]
 			e.Stats.UpdateHealth(e.Stats.FogRet)
 			e.Stats.UpdateMana(e.Stats.FogRet)
 		}

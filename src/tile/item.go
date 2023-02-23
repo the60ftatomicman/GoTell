@@ -1,5 +1,10 @@
 package tile
 
+import (
+	"strconv"
+	"strings"
+)
+
 type Affects string
 const (
 	Health     Affects = "HEALTH"
@@ -53,15 +58,30 @@ func generateItem(x int,y int, i Item) Item {
 //
 //
 func GenerateItemsFromFile() []Item{
-	return []Item{
-		generateItem(8 ,8,ITEM_HP),
-		generateItem(9 ,8,ITEM_HP),
-		generateItem(10,8,ITEM_MANA),
-		generateItem(11,8,ITEM_DEF_BOOST),
-		generateItem(12,8,ITEM_SPELL_DMG),
-		//generateItem(12,8,ITEM_OFF_BOOST),
-		//generateItem(13,8,ITEM_SPEED_BOOST),
+	itemList := []Item{}
+	fileData := []string{
+		"3:ITEM_HP",
+		"3:ITEM_MANA",
 	}
+	for _,row := range fileData {
+		itemList = append(itemList,fileParserItem(row)...)
+	}
+	return itemList
+}
+var dataConverterItem = map[string]Item{
+     "ITEM_HP": ITEM_HP,
+     "ITEM_MANA": ITEM_MANA,
+}
+
+func fileParserItem(itemVals string) ([]Item){
+	items    := []Item{}
+	countVal := strings.Split(itemVals, ":")
+	count,_  := strconv.Atoi(countVal[0])
+	value    := countVal[1]
+	for len(items) < count {
+		items  = append(items, dataConverterItem[value])
+	}
+	return items
 }
 //
 //

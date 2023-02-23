@@ -11,7 +11,7 @@ import (
 func handleGetItem(input string, s *Session) bool{
 	msg := "you are NOT on an item."
 	if(len(s.Player.Items) < region.LINE_VAR_ITEM_COUNT){
-		for idx,item := range s.Items {
+		for idx,item := range s.Level.Items {
 			if (item.X == s.Player.X && item.Y == s.Player.Y){
 				s.Player.Items = append(s.Player.Items,item)
 				msg = "Picked up ["+item.Name+"]"
@@ -19,7 +19,7 @@ func handleGetItem(input string, s *Session) bool{
 				s.Screen.Buffer[s.Player.Y][s.Player.X].Pop()
 				s.Screen.Buffer[s.Player.Y][s.Player.X].Pop()
 				s.Screen.Buffer[s.Player.Y][s.Player.X].Set(s.Player.Tile)
-				s.Items = append(s.Items[:idx], s.Items[idx+1:]...)
+				s.Level.Items = append(s.Level.Items[:idx], s.Level.Items[idx+1:]...)
 				if(tile.CheckAttributes(item.Tile,core.ATTR_EQUIPTABLE)){
 					item.Interaction(&s.Player.Stats)
 				}
@@ -81,7 +81,7 @@ func handleInputItem(input string, s *Session) bool{
 					s.Screen.Buffer[s.Player.Y][s.Player.X].Pop()
 					s.Screen.Buffer[s.Player.Y][s.Player.X].Set(item.Tile)
 					s.Screen.Buffer[s.Player.Y][s.Player.X].Set(s.Player.Tile)
-					s.Items = append(s.Items, item)
+					s.Level.Items = append(s.Level.Items, item)
 					s.Player.Items = append(s.Player.Items[:idx], s.Player.Items[idx+1:]...)
 					s.Profile.SelectedItem = ""
 					secondRefresh = true

@@ -1,5 +1,10 @@
 package tile
 
+import (
+	"strconv"
+	"strings"
+)
+
 type Enemy struct {
 	Tile             Tile
 	Status           string `default:""`
@@ -42,14 +47,50 @@ func generateEnemy(x int,y int,l int,e Enemy) Enemy {
 //
 //
 //
-func GenerateEnemiesFromFile() []Enemy{
-	return []Enemy{
-		generateEnemy(11,11,1,ENEMY_MOLEMAN),
-		generateEnemy(11,13,1,ENEMY_MOLEMAN),
-		generateEnemy(12,12,4,ENEMY_BOSS_MOLEMAN),
-		generateEnemy(13,11,1,ENEMY_MOLEMAN),
-		generateEnemy(13,13,1,ENEMY_MOLEMAN),
+func GenerateEnemiesFromFile() [10][]Enemy {
+	//We'll enforce Order of Operatins. enemy 0 is ALWAYS your boss
+	enemyList := [10][]Enemy{}
+	fileData := []string{
+		"boss:ENEMY_BOSS_MOLEMAN",
+		"1,2,3,4,5,6,7,8,9:ENEMY_MOLEMAN",
 	}
+	for _,row := range fileData {
+		indicies,enemies := fileParserEnemy(row)
+		
+		for _,idx := range indicies{
+			idxInt,_ := strconv.Atoi(idx)
+			enemyList[idxInt] = append(enemyList[idxInt],enemies...)
+		}
+	}
+	return enemyList
+}
+//
+//
+//
+//
+//
+var dataConverterEnemy = map[string]Enemy{
+     "ENEMY_BOSS_MOLEMAN": ENEMY_BOSS_MOLEMAN,
+     "ENEMY_MOLEMAN": ENEMY_MOLEMAN,
+}
+
+func fileParserEnemy(enemyVals string) ([]string,[]Enemy){
+	//enemyStrings := strings.Split(enemyVals, ":")
+	enemies  := []Enemy{}
+	indicies := []string{}
+	keyVal   := strings.Split(enemyVals, ":")
+	key      := keyVal[0]
+	value    := keyVal[1]
+	if(key == "boss"){
+		indicies = append(indicies, "0")
+		enemies  = append(enemies, dataConverterEnemy[value])
+	}else{
+		indicies = append(indicies, strings.Split(key, ",")...)
+		for _,e := range strings.Split(value, ","){
+			enemies  = append(enemies, dataConverterEnemy[e])
+		}
+	}
+	return indicies,enemies
 }
 //
 //

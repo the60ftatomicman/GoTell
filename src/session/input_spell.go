@@ -41,15 +41,15 @@ func handleInputSpell(input string, s *Session) bool{
 	if(castPressed && remainingMana >= 0){
 		//TODO -- to make more interesting spells we'll have to update this :/
 		//TODO -- most likely a new attribute
-		for idx,enemy := range s.Enemies{
+		for idx,enemy := range s.Level.Enemies{
 			//Loop enemies
 			if(enemy.X == targetX && enemy.Y == targetY){
 				enemyStatus := "Damaged"
-				item.Interaction(&s.Enemies[idx].Stats)
+				item.Interaction(&s.Level.Enemies[idx].Stats)
 				s.Player.Stats.UpdateMana(item.Cost)
-				if s.Enemies[idx].Stats.Health <=0{
+				if s.Level.Enemies[idx].Stats.Health <=0{
 					s.Screen.Buffer[enemy.Y][enemy.X].Pop()
-					s.Enemies = append(s.Enemies[:idx], s.Enemies[idx+1:]...)
+					s.Level.Enemies = append(s.Level.Enemies[:idx], s.Level.Enemies[idx+1:]...)
 					enemyStatus = "Killed"
 				}
 				s.Info.Set(MENU_SPELL(true,[]string{enemyStatus,enemy.Name})...)

@@ -1,9 +1,12 @@
 package session
 
 import (
+	"example/gotell/src/core"
 	"example/gotell/src/screen/region"
+	"example/gotell/src/tile"
 	"math"
 	"strconv"
+	"strings"
 )
 
 
@@ -48,7 +51,7 @@ func handleInputMoving(input string,s *Session) bool{
 	}
 	//New potential coordinates chosen.
 	// Check Items
-	for _,item := range s.Items {
+	for _,item := range s.Level.Items {
 		if (item.X == s.Player.X && item.Y == s.Player.Y){
 			s.Info.Set(MENU_MOVING(item.Name)...)
 		}
@@ -56,7 +59,7 @@ func handleInputMoving(input string,s *Session) bool{
 	// Test if we are fighting
 	prev_status   := s.Info.Message[0];
 	enemy_msgs    := []string{prev_status}
-	for idx,enemy := range s.Enemies {
+	for idx,enemy := range s.Level.Enemies {
 		enemyXdelta    := enemy.X - s.Player.X
 		enemyYdelta    := enemy.Y - s.Player.Y
 		delta          := math.Abs(float64(enemyXdelta)) + math.Abs(float64(enemyYdelta))
@@ -65,12 +68,12 @@ func handleInputMoving(input string,s *Session) bool{
 		if (delta < 2) {
 			if (delta == 0) {
 				//FIGHTING!
-				removeEnemy     := s.Enemies[idx].Interaction(&s.Player.Stats)
+				removeEnemy     := s.Level.Enemies[idx].Interaction(&s.Player.Stats)
 				enemy_msgs[0]    = "ATTACKED ["+s.Player.GetDirString()+"]: "+base_enemy_msg
 				if(removeEnemy){
 					enemy_msgs[0] = "DEFEATED ["+enemy.Name+"]"
 					s.Screen.Buffer[s.Player.Y][s.Player.X].Pop()
-					s.Enemies = append(s.Enemies[:idx], s.Enemies[idx+1:]...)
+					s.Level.Enemies = append(s.Level.Enemies[:idx], s.Level.Enemies[idx+1:]...)
 				}
 
 			}
@@ -115,4 +118,17 @@ func handleInputMoving(input string,s *Session) bool{
 		}
 	}
 	return false
+}
+//
+//
+// Helper functions only useful in this state
+//
+//
+func preventMovement(tA *tile.Tile, tB *tile.Tile) bool {
+	var prevent bool = false
+	if strings.Contains(tA.Attribute, core.ATTR_SOLID) && strings.Contains(tB.Attribute, core.ATTR_SOLID) {
+		prevent = true
+	}
+
+	return prevent
 }

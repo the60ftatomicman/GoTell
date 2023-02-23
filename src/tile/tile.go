@@ -2,8 +2,6 @@ package tile
 
 import (
 	"example/gotell/src/core"
-	"regexp"
-	"strconv"
 	"strings"
 )
 
@@ -97,6 +95,21 @@ var ENEMY_BOSS = Tile{
 	BGColor:   core.TermCodes(core.BgRed),
 	Attribute: core.ATTR_FIGHTABLE + core.ATTR_SOLID + core.ATTR_BOSS,
 }
+var ENEMY_SPAWN = Tile{
+	Name:      "ENEMY_SPAWN",
+	Icon:      core.ICON_NULL,
+	Color:     core.TermCodes(core.FgWhite),
+	BGColor:   core.TermCodes(core.BgRed),
+	Attribute: "",
+}
+
+var ITEM_SPAWN = Tile{
+	Name:      "ITEM_SPAWN",
+	Icon:      core.ICON_NULL,
+	Color:     core.TermCodes(core.FgWhite),
+	BGColor:   core.TermCodes(core.BgRed),
+	Attribute: "",
+}
 
 var POTION_HEALTH = Tile{
 	Name:      "ITEM",
@@ -152,37 +165,4 @@ func GenerateHorizontalDivider(length int,bookend Tile,fill Tile) []Tile {
 
 func CheckAttributes(t Tile, attr string) bool{
 	return strings.Contains(t.Attribute, attr)
-}
-
-var tileConverter = map[string]Tile{
-    "w": WALL,
-    "b": BLANK,
-    "l": LADDER,
-}
-
-func FileParser(tileColVals string) []Tile{
-	tileStrings := strings.Split(tileColVals, ",")
-	tiles := []Tile{}
-	for _, strTile := range tileStrings {
-		//see if we have a # count
-		numTile := 1
-		re,regErr := regexp.Compile(`\d{1,}`)
-		if(regErr == nil){
-			matches := re.FindStringSubmatch(strTile)
-			if(len(matches) > 0){
-				nt,_ := strconv.Atoi(matches[0])
-				numTile = nt
-			}
-		}
-		
-		for i:= 0; i < numTile ; i++ {
-			val, keyExist := tileConverter[strings.ReplaceAll(strTile,strconv.Itoa(numTile),"")]
-			if(keyExist){
-				tiles = append(tiles,val)
-			}else{
-				tiles = append(tiles,NULL)
-			}
-		}
-	}
-	return tiles
 }

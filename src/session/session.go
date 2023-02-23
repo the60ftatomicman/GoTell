@@ -20,8 +20,6 @@ type Session struct {
 	Profile    region.Profile
 	Info       region.Info
 	State      State
-	Enemies    []tile.Enemy
-	Items      []tile.Item
 	Connection net.Conn
 }
 
@@ -38,10 +36,6 @@ func (s *Session) Initialize(c *net.Conn) {
 		Buffer: screen.BlankScreen(),
 		Raw:    "",
 	}
-	// ------------ Generate Enemies
-	s.Enemies = tile.GenerateEnemiesFromFile()
-	// ------------ Generate Items
-	s.Items = tile.GenerateItemsFromFile()
 	// ---------- Generate Header region
 	s.Header = region.Header{}
 	s.Header.Initialize([][]tile.Tile{})
@@ -56,31 +50,31 @@ func (s *Session) Initialize(c *net.Conn) {
 	s.Info.Initialize([][]tile.Tile{})
 
 }
-//TODO -- theseOUGHT to be a level region function
 
+//TODO -- theseOUGHT to be a level region function
 func (s *Session) placeObject(interObj tile.IInteractiveObject)	{
 		objY,objX,objName,objTile := interObj.GetBufferData()
 		intendedType := s.Screen.Buffer[objY][objX].Get()
 		if (tile.CheckAttributes(intendedType,core.ATTR_SOLID)){
 			fmt.Println("ERROR placing item ["+objName+"] at location ["+strconv.Itoa(objY)+"]["+strconv.Itoa(objX)+"] do to ["+intendedType.Name+"] tile which is solid")
 		}
-		if (tile.CheckAttributes(intendedType,core.ATTR_FOREGROUND)){
+		s.Screen.Buffer[objY][objX].Pop()
+		//if (tile.CheckAttributes(intendedType,core.ATTR_FOREGROUND)){
 			s.Screen.Buffer[objY][objX].Pop()
 			s.Screen.Set(objTile, objY,objX)
 			s.Screen.Set(tile.FOG, objY,objX)
-		}else{
-			s.Screen.Set(objTile, objY,objX)
-		}
+		//}else{
+		//	s.Screen.Set(objTile, objY,objX)
+		//}
 }
-
 
 func (s *Session) initializeObjects() {
 	//--Enemies
-	for _,enemy := range s.Enemies {
+	for _,enemy := range s.Level.Enemies {
 		s.placeObject(&enemy)
 	}
 	//--Items
-	for _,item := range s.Items {
+	for _,item := range s.Level.Items {
 		s.placeObject(&item)
 	}
 	s.Screen.Set(s.Player.Tile, s.Player.Y, s.Player.X)
