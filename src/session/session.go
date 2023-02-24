@@ -19,6 +19,7 @@ type Session struct {
 	Level      region.Level
 	Profile    region.Profile
 	Info       region.Info
+	Popup      region.Popup
 	State      State
 	Connection net.Conn
 }
@@ -48,10 +49,14 @@ func (s *Session) Initialize(c *net.Conn) {
 	// ------------ Generate Info Region
 	s.Info = region.Info{}
 	s.Info.Initialize([][]tile.Tile{})
-
+	// ------------ Generate Info Region
+	s.Popup = region.Popup{}
+	s.Popup.Initialize([][]tile.Tile{})
+	s.Popup.Set("Some dumb message")
+	s.Popup.Refresh()
 }
 
-//TODO -- theseOUGHT to be a level region function
+//TODO -- these OUGHT to be a level region function
 func (s *Session) placeObject(interObj tile.IInteractiveObject)	{
 		objY,objX,objName,objTile := interObj.GetBufferData()
 		intendedType := s.Screen.Buffer[objY][objX].Get()
@@ -61,10 +66,9 @@ func (s *Session) placeObject(interObj tile.IInteractiveObject)	{
 		s.Screen.Buffer[objY][objX].Pop()
 		s.Screen.Buffer[objY][objX].Pop()
 		s.Screen.Set(objTile, objY,objX)
-		s.Screen.Set(tile.FOG, objY,objX)
 }
 
-//TODO -- get rid of this somehow? Keep sessions out of level logic
+//TODO -- Put this WHOOOOLE thing into the level logic. Leevl should just have a pointer to the player obj.
 func (s *Session) initializeObjects() {
 	//--Enemies
 	for _,enemy := range s.Level.Enemies {
@@ -74,29 +78,26 @@ func (s *Session) initializeObjects() {
 	for _,item := range s.Level.Items {
 		s.placeObject(&item)
 	}
-	//-- Remove initial Fog around player
-	for r:=s.Player.Stats.Vision * -1;r<s.Player.Stats.Vision ;r++{
-		for c:=s.Player.Stats.Vision * -1;c<s.Player.Stats.Vision ;c++{
-			visionR := r+s.Player.Y
-			visionC := c+s.Player.X
-			inColumn := visionC >=0 && visionC < region.MAP_LEFT+region.MAP_COLUMNS
-			inRow    := visionR >=0 && visionR < region.MAP_TOP+region.MAP_LINES
-			if(inColumn && inRow){
-				cell := s.Screen.Buffer[visionR][visionC].Get()
-				if(cell.Name == tile.FOG.Name){
-					s.Screen.Buffer[visionR][visionC].Pop()
-				}
+	//-- Now place player
+	s.Screen.Buffer[s.Player.Y][s.Player.X].Pop()
+	s.Screen.Set(s.Player.Tile, s.Player.Y, s.Player.X)
+
+	//-- Set FOG and other mask . Do not set fog around player
+	for r:=region.MAP_TOP;r < region.MAP_TOP+region.MAP_LINES;r++ {
+		for c:=region.MAP_LEFT;c < region.MAP_LEFT+region.MAP_COLUMNS;c++ {
+			inRow := r >= s.Player.Y - s.Player.Stats.Vision && r <= s.Player.Y + s.Player.Stats.Vision
+			inCol := c >= s.Player.X - s.Player.Stats.Vision && c <= s.Player.X + s.Player.Stats.Vision
+			if(!inRow || !inCol){
+				s.Screen.Buffer[r][c].Set(tile.FOG)
 			}
 		}
 	}
-	//-- Now place player
-	s.Screen.Set(s.Player.Tile, s.Player.Y, s.Player.X)
 }
 
 func (s *Session) Handle() {
 	fmt.Printf("Serving %s\n", s.Connection.RemoteAddr().String())
-	s.Screen.Compile(&s.Header,&s.Level, &s.Profile, &s.Info)
 	s.initializeObjects()
+	s.Screen.Compile(&s.Header,&s.Level, &s.Profile, &s.Info)
 	s.Screen.Refresh()
 	core.HandleOutputToClient(s.Connection, 0, region.INFO_TOP+region.INFO_LINES+1, s.Screen.Get())
 	//Begin Game loop
@@ -108,16 +109,27 @@ func (s *Session) Handle() {
 			break
 		}
 		if handleInputStateSwitching(formattedData,s) || s.State.IsInputValid(formattedData){
-			if(s.State.handleInput(formattedData,s)){
-				//This is a hack for getItem and THAT IS IT.
+			formerState := s.State.Name // Hack for popups
+
+			//This is a hack for getItem and THAT IS IT.
+			if(s.State.handleInput(formattedData,s) ){
 				s.State.handleInput(formattedData,s)
 			}
-			//Refresh our dynamic regions
-			s.Profile.Player = &s.Player
-			s.Profile.Refresh()
-			s.Info.Refresh()
-			//Refresh the full screen.
-			s.Screen.Compile(&s.Profile, &s.Info)
+			if(s.State.Name == STATE_POPUP.Name){
+				s.Popup.Refresh()
+				s.Screen.Compile(&s.Profile, &s.Info,&s.Popup)
+			}else{
+				//Refresh our dynamic regions
+				s.Profile.Player = &s.Player
+				s.Profile.Refresh()
+				s.Info.Refresh()
+				//Refresh the full screen.
+				if(formerState == STATE_POPUP.Name){
+					s.Screen.Compile(&s.Level,&s.Profile, &s.Info)
+				}else{
+					s.Screen.Compile(&s.Profile, &s.Info)
+				}
+			}
 			s.Screen.Refresh()
 		}
 		core.HandleOutputToClient(s.Connection, 0, region.INFO_TOP+region.INFO_LINES+1, s.Screen.Get())

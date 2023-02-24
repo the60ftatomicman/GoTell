@@ -36,8 +36,8 @@ func handleInputStateSwitching(input string, s *Session) bool{
 		}
 		case "r":{
 			//	DEBUG ONLY TO REVIVE MYSELF!
-			if s.State.Name == STATE_DEAD.Name {
-				s.State = STATE_MOVING
+			if s.State.Name == STATE_MOVING.Name {
+				s.State = STATE_POPUP
 			}
 		}
 		default: {

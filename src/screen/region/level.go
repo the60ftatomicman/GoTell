@@ -44,9 +44,9 @@ func (m *Level) Initialize(b [][]tile.Tile) {
 				m.Buffer[rIdx][cIdx] = tile.BLANK
 				column = tile.BLANK
 			}
-			if(column == tile.BLANK){
-				m.Buffer[rIdx][cIdx] = tile.FOG
-			}
+			//if(column == tile.BLANK){
+			//	m.Buffer[rIdx][cIdx] = tile.FOG
+			//}
 
 		}
 	}

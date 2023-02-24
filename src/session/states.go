@@ -43,6 +43,11 @@ var STATE_SPELL = State {
 	validInputs: append([]string{"x","m"},KEY_DIRS...),
 	handleInput: handleInputSpell,
 }
+var STATE_POPUP = State {
+	Name: "popup",
+	validInputs: []string{"y","n"},
+	handleInput: handleInputPopup,
+}
 //Pass through states
 var STATE_DEAD = State {
 	Name: "dead",
