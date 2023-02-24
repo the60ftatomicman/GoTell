@@ -233,10 +233,12 @@ func (m *Level) assignItems(itemList []tile.Item) {
 	//Shuffle Items
 	rand.Shuffle(len(itemList), func(i, j int) { itemList[i], itemList[j] = itemList[j], itemList[i] })
 	for sIdx,spawn := range m.itemSpawns {
-		item := itemList[sIdx]
-		item.X = spawn[1]
-		item.Y = spawn[0]
-		placedItems= append(placedItems, item)
+		if(sIdx < len(itemList)){
+			item := itemList[sIdx]
+			item.X = spawn[1]
+			item.Y = spawn[0]
+			placedItems= append(placedItems, item)
+		}
 	}
 	m.Items = placedItems
 }

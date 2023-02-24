@@ -16,6 +16,7 @@
         font-size:  8px;
         border: 1px solid rgba(255, 255, 255, 0.5);
         cursor: crosshair;
+        user-select: none;
     }
     .current{
         border: 1px solid #ff0000 !important;
@@ -253,7 +254,8 @@ function parseCells(){
                 countOfsimilarTiles++;
             }else{
                 countycount = countOfsimilarTiles == 1 ? "" :countOfsimilarTiles.toString();
-                cellsCondensed[r].push(countycount+cells[r][c])
+                cellsCondensed[r].push(countycount+cells[r][c]);
+                countOfsimilarTiles = 1;
             }
         }
     }
