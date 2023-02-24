@@ -2,7 +2,7 @@
 name:Beginners Spelunk
 difficulty:Easy
 author:Andy Garber
-max_enemies:10
+max_enemies:15
 max_items:40
 #### LEVEL ####
 80w
@@ -31,8 +31,8 @@ boss:ENEMY_BOSS_MOLEMAN
 3,5:ENEMY_SNAKE
 2,4:ENEMY_GHOST
 #### ITEM ####
-2:ITEM_HP
-2:ITEM_MANA
+10:ITEM_HP
+10:ITEM_MANA
 1:ITEM_OFF_BOOST
 1:ITEM_DEF_BOOST
 1:ITEM_SPELL_DMG

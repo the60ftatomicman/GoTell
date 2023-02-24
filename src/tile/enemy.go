@@ -37,7 +37,11 @@ func (e *Enemy) Interaction(s *Stats) bool {
 	//Test if enemy is dead
 	if (e.Stats.Health <= 0) {
 		removeEnemy = true
-		s.ChangeXP(e.Stats.XP);
+		xpBoost := 0
+		if(e.Stats.Level > s.Level){
+			xpBoost = e.Stats.Level - s.Level
+		}
+		s.ChangeXP(e.Stats.XP+xpBoost);
 	}
 	return removeEnemy
 }

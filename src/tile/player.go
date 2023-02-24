@@ -20,6 +20,7 @@ func GeneratePlayer() Player {
 		Y:    5,
 		Stats: Stats{
 			Level:     1,
+			LevelMod:  10,
 			MaxHealth: 100,
 			MaxMana:   100,
 			Health:    100,
