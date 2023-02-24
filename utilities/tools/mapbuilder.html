@@ -117,6 +117,7 @@ const ITEM   = 'i'
 const ENEMY  = 'e'
 const NEWLINE = "\n";//"&#10;";
 var currentType   = 'b';
+var mouseIsDown = false
 //---------------------------------------
 //
 // Events
@@ -158,8 +159,20 @@ window.onload = function(){
         currentSquare['r'] = coordinates[0];
         currentSquare['c'] = coordinates[1];
         $("#r"+currentSquare['r']+'c'+currentSquare['c']).addClass("current");
+        if(mouseIsDown){
+            assignCellValue()
+        }
+    });
+    $(".col").mousedown(function(e) {
+        mouseIsDown = true;
+        assignCellValue();
     });
     $(".col").mouseup(function(e) {
+        mouseIsDown = false;
+        assignCellValue()
+    });
+};
+function assignCellValue(){
         let currentId        = "#r"+currentSquare['r']+'c'+currentSquare['c'];
         let currentCellValue = 0;
         $(currentId).attr('class', 'col empty current');
@@ -172,8 +185,7 @@ window.onload = function(){
             case ITEM  :{$(currentId).addClass("item");  s}break;
             case ENEMY :{$(currentId).addClass("enemy"); }break;
         }
-    });
-};
+}
 function load(){
     $("#name").text(jsonData.name+" by: "+jsonData.author);
     //
