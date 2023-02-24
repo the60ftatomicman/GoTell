@@ -3,7 +3,7 @@ name:Beginners Spelunk
 difficulty:Easy
 author:Andy Garber
 max_enemies:10
-max_items:2
+max_items:40
 #### LEVEL ####
 80w
 w,78b,w
