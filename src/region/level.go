@@ -2,7 +2,10 @@ package region
 
 import (
 	"bufio"
-	"example/gotell/src/tile"
+	"example/gotell/src/core/screen"
+	"example/gotell/src/core/tile"
+	overrides "example/gotell/src/core_overrides"
+	"example/gotell/src/object"
 	"math"
 	"math/rand"
 	"os"
@@ -25,40 +28,79 @@ const MAP_COLUMNS = 80
 type Level struct {
 	Name        string        `default:"Training"`
 	Filename    string        `default:"map.txt"`
-	Buffer      [][]tile.Tile
-	Enemies     []tile.Enemy
+	Player		*object.Player   // This is part of our remove from session refactor
+	Buffer      [][]tile.Cell // Welcome to PAIN COUNTRY! you are trying to port in the foreground logic and object logic (rightfully so) here.
+	Enemies     []object.Enemy
 	enemySpawns [][]int
 	maxEnemies  int
-	Items       []tile.Item
+	Items       []object.Item
 	itemSpawns  [][]int
 	maxItems    int
 }
 
 func (m *Level) Initialize(b [][]tile.Tile) {
-	m.Buffer  = initializeBuffer(MAP_LINES, MAP_COLUMNS, b,tile.BLANK)
-
-	//remove spawns add fog
-	for rIdx,row := range m.Buffer {
-		for cIdx,column := range row {
-			if(column == tile.ENEMY_SPAWN || column == tile.ITEM_SPAWN){
-				m.Buffer[rIdx][cIdx] = tile.BLANK
-				column = tile.BLANK
+	initalTiles := screen.InitializeBuffer(MAP_LINES, MAP_COLUMNS, b,tile.BLANK)
+	//-- Set all non objects, clear spawns as well
+	for rIdx,r := range initalTiles {
+		m.Buffer = append(m.Buffer, []tile.Cell{})
+		for cIdx,c := range r {
+			m.Buffer[rIdx] = append(m.Buffer[rIdx],tile.GenerateNewCell())
+			if(c.Name == overrides.ENEMY_SPAWN.Name || c.Name == overrides.ITEM_SPAWN.Name){
+				m.Buffer[rIdx][cIdx].Pop()
+			}else{
+				m.Buffer[rIdx][cIdx].Set(c)
 			}
-			if(column == tile.BLANK){
-				m.Buffer[rIdx][cIdx] = tile.FOG
-			}
-
 		}
 	}
+	//-- Place Enemies
+	for _,enemy := range m.Enemies {
+		m.Buffer[enemy.Y][enemy.X].Set(enemy.Tile)
+	}
+	//-- Place Items
+	for _,item := range m.Items {
+		m.Buffer[item.Y][item.X].Set(item.Tile)
+	}
+	//-- Now place player
+	m.Buffer[m.Player.Y][m.Player.X].Pop()
+	m.Buffer[m.Player.Y][m.Player.X].Set(m.Player.Tile)
+	//-- NOW fog.
+	vision := m.Player.Stats.Vision * 2
+	left  := m.Player.X-vision
+	if(left < 0){left = 0}
+	right := m.Player.X+vision
+	if(right > MAP_COLUMNS){right = MAP_COLUMNS}
+	up    := m.Player.Y-vision
+	if(up < 0){up = 0}
+	down  := m.Player.Y+vision
+	if(down > MAP_LINES){down = MAP_LINES}
 
+	for rIdx,r := range m.Buffer{
+		for cIdx,_ := range r {
+			inPlayerSpace := (cIdx > left && cIdx < right && rIdx > up && rIdx < down)
+			if(!inPlayerSpace){
+					m.Buffer[rIdx][cIdx].Set(overrides.FOG)
+			}
+		} 
+	}
 }
 
 func (m *Level) Get() (int, int, int, int, [][]tile.Tile) {
-	return MAP_LEFT, MAP_TOP, MAP_LINES, MAP_COLUMNS, m.Buffer
+	bufferTop := [][]tile.Tile{}
+	for rIdx,r := range m.Buffer{
+		bufferTop = append(bufferTop,[]tile.Tile{})
+		for _,c := range r {
+			bufferTop[rIdx] = append(bufferTop[rIdx],c.Get())
+		} 
+	}
+	return MAP_LEFT, MAP_TOP, MAP_LINES, MAP_COLUMNS, bufferTop
 }
 
 func (m *Level) Refresh(){}
-
+//
+//
+//
+//
+//
 //TODO -- make this pull ALL 3 things
 func (m *Level) getFileRegions()[][]string {
 	fileData      := [][]string{}
@@ -103,19 +145,19 @@ func (m *Level) ReadDataFromFile() [][]tile.Tile {
 	for r,row := range fileData[1] {
 		var nextRow []tile.Tile = fileParser(row)
 		for c,nextCell := range nextRow{
-			if(nextCell.Name == tile.ENEMY_SPAWN.Name){
-				m.enemySpawns = append(m.enemySpawns, []int{r+MAP_TOP,c+MAP_LEFT})
+			if(nextCell.Name == overrides.ENEMY_SPAWN.Name){
+				m.enemySpawns = append(m.enemySpawns, []int{r,c})
 			}
-			if(nextCell.Name == tile.ITEM_SPAWN.Name){
-				m.itemSpawns = append(m.itemSpawns, []int{r+MAP_TOP,c+MAP_LEFT})
+			if(nextCell.Name == overrides.ITEM_SPAWN.Name){
+				m.itemSpawns = append(m.itemSpawns, []int{r,c})
 			}
 		}
 		tiles = append(tiles,nextRow)
 	}
 	//TODO -- write a parser class to make this cleaner. Think, we have to also parse player data
 	m.parseMetadata(fileData[0])
-	m.assignEnemies(tile.GenerateEnemiesFromFile(fileData[2]))
-	m.assignItems(tile.GenerateItemsFromFile(fileData[3]))
+	m.assignEnemies(object.GenerateEnemiesFromFile(fileData[2]))
+	m.assignItems(object.GenerateItemsFromFile(fileData[3]))
 	return tiles
 }
 //
@@ -124,11 +166,11 @@ func (m *Level) ReadDataFromFile() [][]tile.Tile {
 //
 //
 var dataConverter = map[string]tile.Tile{
-     "w": tile.WALL,
+     "w": overrides.WALL,
      "b": tile.BLANK,
-     "l": tile.LADDER,
-	"se": tile.ENEMY_SPAWN,
-	"si": tile.ITEM_SPAWN,
+     "l": overrides.LADDER,
+	"se": overrides.ENEMY_SPAWN,
+	"si": overrides.ITEM_SPAWN,
 }
 
 func fileParser(tileColVals string) []tile.Tile{
@@ -177,7 +219,7 @@ func (m *Level) parseMetadata(metaData []string) {
 	}
 }
 //TODO simplify this a bit.
-func (m *Level) assignEnemies(enemyList [10][]tile.Enemy) {
+func (m *Level) assignEnemies(enemyList [10][]object.Enemy) {
 	//Always assign a boss
 	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(len(m.enemySpawns), func(i, j int) { m.enemySpawns[i], m.enemySpawns[j] = m.enemySpawns[j], m.enemySpawns[i] })
@@ -185,7 +227,7 @@ func (m *Level) assignEnemies(enemyList [10][]tile.Enemy) {
 	if(len(m.enemySpawns) > m.maxEnemies){
 		m.enemySpawns = m.enemySpawns[:m.maxEnemies]
 	}
-	placedEnemies := []tile.Enemy{}
+	placedEnemies := []object.Enemy{}
 	//First set BOSS
 	enemyList[0][0].X           = m.enemySpawns[0][1]
 	enemyList[0][0].Y           = m.enemySpawns[0][0]
@@ -221,9 +263,9 @@ func (m *Level) assignEnemies(enemyList [10][]tile.Enemy) {
 	m.Enemies = placedEnemies
 }
 
-func (m *Level) assignItems(itemList []tile.Item) {
+func (m *Level) assignItems(itemList []object.Item) {
 	//Always assign a boss
-	placedItems := []tile.Item{}
+	placedItems := []object.Item{}
 	rand.Seed(time.Now().UnixNano())
 	//Shuffle and Truncate Spawns
 	rand.Shuffle(len(m.itemSpawns), func(i, j int) { m.itemSpawns[i], m.itemSpawns[j] = m.itemSpawns[j], m.itemSpawns[i] })

@@ -3,22 +3,23 @@ package session
 import (
 	"bufio"
 	"example/gotell/src/core"
-	"example/gotell/src/screen"
-	"example/gotell/src/screen/region"
-	"example/gotell/src/tile"
+	"example/gotell/src/core/screen"
+	"example/gotell/src/core/tile"
+	"example/gotell/src/object"
+	"example/gotell/src/region"
 	"fmt"
 	"net"
-	"strconv"
 	"strings"
 )
 
 type Session struct {
-	Player     tile.Player
+	Player     object.Player
 	Screen     screen.Screen
 	Header     region.Header
 	Level      region.Level
 	Profile    region.Profile
 	Info       region.Info
+	Popup      region.Popup
 	State      State
 	Connection net.Conn
 }
@@ -31,7 +32,7 @@ func (s *Session) Initialize(c *net.Conn) {
 	// Set Staet
 	s.State = STATE_MOVING
 	//---------- Generate Player tile
-	s.Player = tile.GeneratePlayer()
+	s.Player = object.GeneratePlayer()
 	s.Screen = screen.Screen{
 		Buffer: screen.BlankScreen(),
 		Raw:    "",
@@ -40,7 +41,7 @@ func (s *Session) Initialize(c *net.Conn) {
 	s.Header = region.Header{}
 	s.Header.Initialize([][]tile.Tile{})
 	// ---------- Generate Level region
-	s.Level = region.Level{}
+	s.Level = region.Level{Player: &s.Player}
 	s.Level.Initialize(s.Level.ReadDataFromFile())
 	// ------------ Generate Profile region
 	s.Profile = region.Profile{}
@@ -48,55 +49,16 @@ func (s *Session) Initialize(c *net.Conn) {
 	// ------------ Generate Info Region
 	s.Info = region.Info{}
 	s.Info.Initialize([][]tile.Tile{})
-
-}
-
-//TODO -- theseOUGHT to be a level region function
-func (s *Session) placeObject(interObj tile.IInteractiveObject)	{
-		objY,objX,objName,objTile := interObj.GetBufferData()
-		intendedType := s.Screen.Buffer[objY][objX].Get()
-		if (tile.CheckAttributes(intendedType,core.ATTR_SOLID)){
-			fmt.Println("ERROR placing item ["+objName+"] at location ["+strconv.Itoa(objY)+"]["+strconv.Itoa(objX)+"] do to ["+intendedType.Name+"] tile which is solid")
-		}
-		s.Screen.Buffer[objY][objX].Pop()
-		s.Screen.Buffer[objY][objX].Pop()
-		s.Screen.Set(objTile, objY,objX)
-		s.Screen.Set(tile.FOG, objY,objX)
-}
-
-//TODO -- get rid of this somehow? Keep sessions out of level logic
-func (s *Session) initializeObjects() {
-	//--Enemies
-	for _,enemy := range s.Level.Enemies {
-		s.placeObject(&enemy)
-	}
-	//--Items
-	for _,item := range s.Level.Items {
-		s.placeObject(&item)
-	}
-	//-- Remove initial Fog around player
-	for r:=s.Player.Stats.Vision * -1;r<s.Player.Stats.Vision ;r++{
-		for c:=s.Player.Stats.Vision * -1;c<s.Player.Stats.Vision ;c++{
-			visionR := r+s.Player.Y
-			visionC := c+s.Player.X
-			inColumn := visionC >=0 && visionC < region.MAP_LEFT+region.MAP_COLUMNS
-			inRow    := visionR >=0 && visionR < region.MAP_TOP+region.MAP_LINES
-			if(inColumn && inRow){
-				cell := s.Screen.Buffer[visionR][visionC].Get()
-				if(cell.Name == tile.FOG.Name){
-					s.Screen.Buffer[visionR][visionC].Pop()
-				}
-			}
-		}
-	}
-	//-- Now place player
-	s.Screen.Set(s.Player.Tile, s.Player.Y, s.Player.X)
+	// ------------ Generate Info Region
+	s.Popup = region.Popup{}
+	s.Popup.Initialize([][]tile.Tile{})
+	s.Popup.Set("Some dumb message")
+	s.Popup.Refresh()
 }
 
 func (s *Session) Handle() {
 	fmt.Printf("Serving %s\n", s.Connection.RemoteAddr().String())
 	s.Screen.Compile(&s.Header,&s.Level, &s.Profile, &s.Info)
-	s.initializeObjects()
 	s.Screen.Refresh()
 	core.HandleOutputToClient(s.Connection, 0, region.INFO_TOP+region.INFO_LINES+1, s.Screen.Get())
 	//Begin Game loop
@@ -108,16 +70,22 @@ func (s *Session) Handle() {
 			break
 		}
 		if handleInputStateSwitching(formattedData,s) || s.State.IsInputValid(formattedData){
-			if(s.State.handleInput(formattedData,s)){
-				//This is a hack for getItem and THAT IS IT.
+			//formerState := s.State.Name // Hack for popups
+
+			//This is a hack for getItem and THAT IS IT.
+			if(s.State.handleInput(formattedData,s) ){
 				s.State.handleInput(formattedData,s)
 			}
-			//Refresh our dynamic regions
-			s.Profile.Player = &s.Player
-			s.Profile.Refresh()
-			s.Info.Refresh()
-			//Refresh the full screen.
-			s.Screen.Compile(&s.Profile, &s.Info)
+			if(s.State.Name == STATE_POPUP.Name){
+				s.Popup.Refresh()
+				s.Screen.Compile(&s.Profile, &s.Info,&s.Popup)
+			}else{
+				//Refresh our dynamic regions
+				s.Level.Refresh()
+				s.Profile.Refresh()
+				s.Info.Refresh()
+				s.Screen.Compile(&s.Level,&s.Profile, &s.Info)
+			}
 			s.Screen.Refresh()
 		}
 		core.HandleOutputToClient(s.Connection, 0, region.INFO_TOP+region.INFO_LINES+1, s.Screen.Get())

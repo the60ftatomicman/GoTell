@@ -1,7 +1,7 @@
 package session
 
 import (
-	"example/gotell/src/screen/region"
+	"example/gotell/src/region"
 )
 
 func handleGlobalStateSwitching(input string, s *Session) bool{
@@ -36,8 +36,8 @@ func handleInputStateSwitching(input string, s *Session) bool{
 		}
 		case "r":{
 			//	DEBUG ONLY TO REVIVE MYSELF!
-			if s.State.Name == STATE_DEAD.Name {
-				s.State = STATE_MOVING
+			if s.State.Name == STATE_MOVING.Name {
+				s.State = STATE_POPUP
 			}
 		}
 		default: {
@@ -51,17 +51,17 @@ func handleInputStateSwitching(input string, s *Session) bool{
 }
 
 ///
-/// TODO -- this needs to go back into movement I think
+/// TODO -- this needs to go into level
 ///
 
 //TODO -- use this more!
 func getTileXY(playerX int,playerY int,colDelta int,rowDelta int) (int,int) {
 		tileX := playerX+colDelta;
-		if(tileX < region.MAP_LEFT){tileX = region.MAP_LEFT}
-		if(tileX > region.MAP_LEFT+region.MAP_COLUMNS){tileX = region.MAP_LEFT+region.MAP_COLUMNS}
+		if(tileX < 0){tileX = 0}
+		if(tileX >= region.MAP_COLUMNS){tileX = region.MAP_COLUMNS-1}
 		tileY := playerY+rowDelta;
-		if(tileY < region.MAP_TOP){tileY = region.MAP_TOP}
-		if(tileY > region.MAP_TOP+region.MAP_LINES){tileY = region.MAP_TOP+region.MAP_LINES}
+		if(tileY < 0){tileY = 0}
+		if(tileY >= region.MAP_LINES){tileY = region.MAP_LINES-1}
 		return tileX,tileY
 }
 
@@ -69,10 +69,10 @@ func getTileXY(playerX int,playerY int,colDelta int,rowDelta int) (int,int) {
 func removeFog(s *Session,colDelta int,rowDelta int) string{
 	p := &s.Player
 	tileX,tileY := getTileXY(p.X,p.Y,colDelta,rowDelta)
-	s.Screen.Buffer[tileY][tileX].Get()
+	s.Level.Buffer[tileY][tileX].Get()
 	//TODO -- hate this is hard coded
-	if (s.Screen.Buffer[tileY][tileX].Get().Name  == "FOG") {
-		s.Screen.Buffer[tileY][tileX].Pop()
+	if (s.Level.Buffer[tileY][tileX].Get().Name  == "FOG") {
+		s.Level.Buffer[tileY][tileX].Pop()
 		p.Stats.UpdateHealth(p.Stats.FogRet)
 		p.Stats.UpdateMana(p.Stats.FogRet)
 		// Update all those enemies health (dun dun dun)
@@ -83,5 +83,5 @@ func removeFog(s *Session,colDelta int,rowDelta int) string{
 		}
 	}
 	//return the value of the current tile
-	return s.Screen.Buffer[tileY][tileX].Get().Attribute
+	return s.Level.Buffer[tileY][tileX].Get().Attribute
 }

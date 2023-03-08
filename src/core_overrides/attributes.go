@@ -1,4 +1,4 @@
-package core
+package overrides
 
 // Attributes
 // These are used to put properties on a tile object.

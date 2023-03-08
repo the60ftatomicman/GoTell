@@ -1,8 +1,8 @@
 package session
 
 import (
-	"example/gotell/src/core"
-	"example/gotell/src/tile"
+	"example/gotell/src/core/tile"
+	overrides "example/gotell/src/core_overrides"
 	"strconv"
 )
 
@@ -13,7 +13,7 @@ func handleInputInventory(input string, s *Session) bool{
 	if(notInt == nil){
 		if(idx > 0 && idx <= len(s.Profile.Player.Items)){
 			s.Profile.SelectedItem = input
-			if(tile.CheckAttributes(s.Profile.Player.Items[idx-1].Tile,core.ATTR_SPELL)){
+			if(tile.CheckAttributes(s.Profile.Player.Items[idx-1].Tile,overrides.ATTR_SPELL)){
 				s.State = STATE_SPELL
 			}else{
 				s.State = STATE_ITEM

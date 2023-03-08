@@ -1,33 +1,29 @@
-package screen
-
-import (
-	"example/gotell/src/tile"
-)
+package tile
 
 // Cell
 // An array pointer of tiles so we can place
 // Tiles on the Z axis
 type Cell struct {
-	Tiles []tile.Tile
+	Tiles []Tile
 }
 
 // generateNewCell
-// Used to create a new cell and populates it with tile.Blank
-func generateNewCell() Cell{
+// Used to create a new cell and populates it with Blank
+func GenerateNewCell() Cell{
 	c := Cell{}
-	c.Tiles = []tile.Tile{tile.BLANK}
+	c.Tiles = []Tile{BLANK}
 	return c 
 }
 
 // Get
 // Returns the last tile in a cell
-func (c *Cell)Get() tile.Tile {
+func (c *Cell)Get() Tile {
 	return c.Tiles[len(c.Tiles)-1]
 }
 
 // Set
 // Push a tile to the end of the cell
-func (c *Cell)Set(t tile.Tile) {
+func (c *Cell)Set(t Tile) {
 	c.Tiles = append(c.Tiles,t);
 }
 
@@ -37,6 +33,6 @@ func (c *Cell)Set(t tile.Tile) {
 func (c *Cell)Pop() {
 	c.Tiles = c.Tiles[:len(c.Tiles)-1]
 	if (len(c.Tiles) == 0){
-		c.Set(tile.BLANK)
+		c.Set(BLANK)
 	}
 }
