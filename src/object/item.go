@@ -1,7 +1,8 @@
-package tile
+package object
 
 import (
-	"example/gotell/src/core"
+	"example/gotell/src/core/tile"
+	overrides "example/gotell/src/core_overrides"
 	"strconv"
 	"strings"
 )
@@ -17,7 +18,7 @@ const (
 const UNLIMITED_USES = -1 //TODO -- do we use this anymore?
 
 type Item struct {
-	Tile             Tile                `default:"Unknown Item"`
+	Tile             tile.Tile           `default:"Unknown Item"`
 	Name             string              `default:"OK"`
 	X,Y,Cost,Delta,ConversionPoints int  `default:0`
 	Uses             int                 `default:1`
@@ -29,11 +30,11 @@ func (i *Item) Interaction(s *Stats) bool{
 	if i.Uses > 0  || i.Uses == UNLIMITED_USES {
 		switch(i.Affects){
 			case Affects(Health) :{
-				s.RemoveEffects(core.ATTR_POISONOUS)
+				s.RemoveEffects(overrides.ATTR_POISONOUS)
 				s.UpdateHealth(i.Delta)
 			}
 			case Affects(Mana)   :{
-				s.RemoveEffects(core.ATTR_MANABURN)
+				s.RemoveEffects(overrides.ATTR_MANABURN)
 				s.UpdateMana(i.Delta)  
 			}
 			case Affects(Offense):{s.Offense += i.Delta }
@@ -52,7 +53,7 @@ func (i *Item) Interaction(s *Stats) bool{
 func (i *Item) Convert(s *Stats) {
 	s.ChangeXP(i.ConversionPoints)
 }
-func (i *Item) GetBufferData() (int,int,string,Tile) {
+func (i *Item) GetBufferData() (int,int,string,tile.Tile) {
 	return i.Y,i.X,i.Name,i.Tile
 }
 
@@ -104,7 +105,7 @@ var ITEM_HP = Item{
 	Delta:     25,
 	ConversionPoints: 1,
 	Affects:   Affects(Health),
-	Tile: POTION_HEALTH,
+	Tile: overrides.POTION_HEALTH,
 }
 var ITEM_MANA = Item{
 	Name:      "Mana Pot",
@@ -114,7 +115,7 @@ var ITEM_MANA = Item{
 	Delta:     25,
 	ConversionPoints: 1,
 	Affects:  Affects(Mana),
-	Tile: POTION_MANA,
+	Tile: overrides.POTION_MANA,
 }
 var ITEM_OFF_BOOST = Item{
 	Name:      "Pickaxe",
@@ -124,7 +125,7 @@ var ITEM_OFF_BOOST = Item{
 	Uses:      1,
 	ConversionPoints: 10,
 	Affects:   Affects(Offense),
-	Tile: EQUIPTMENT,
+	Tile: overrides.EQUIPTMENT,
 }
 var ITEM_DEF_BOOST = Item{
 	Name:      "Hard Hat",
@@ -134,7 +135,7 @@ var ITEM_DEF_BOOST = Item{
 	Uses:      1,
 	ConversionPoints: 10,
 	Affects:   Affects(Defense),
-	Tile: EQUIPTMENT,
+	Tile: overrides.EQUIPTMENT,
 }
 var ITEM_SPEED_BOOST = Item{
 	Name:      "Roller Blades",
@@ -144,7 +145,7 @@ var ITEM_SPEED_BOOST = Item{
 	Delta:     5,
 	ConversionPoints: 10,
 	Affects:   Affects(Speed),
-	Tile: EQUIPTMENT,
+	Tile: overrides.EQUIPTMENT,
 }
 var ITEM_SPELL_DMG = Item{
 	Name:      "Moose shot",
@@ -155,5 +156,5 @@ var ITEM_SPELL_DMG = Item{
 	Delta:     -5,
 	ConversionPoints: 10,
 	Affects:   Affects(Health),
-	Tile: SPELL,
+	Tile: overrides.SPELL,
 }

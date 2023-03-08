@@ -3,17 +3,17 @@ package session
 import (
 	"bufio"
 	"example/gotell/src/core"
-	"example/gotell/src/screen"
-	"example/gotell/src/screen/region"
-	"example/gotell/src/tile"
+	"example/gotell/src/core/screen"
+	"example/gotell/src/core/tile"
+	"example/gotell/src/object"
+	"example/gotell/src/region"
 	"fmt"
 	"net"
-	"strconv"
 	"strings"
 )
 
 type Session struct {
-	Player     tile.Player
+	Player     object.Player
 	Screen     screen.Screen
 	Header     region.Header
 	Level      region.Level
@@ -32,7 +32,7 @@ func (s *Session) Initialize(c *net.Conn) {
 	// Set Staet
 	s.State = STATE_MOVING
 	//---------- Generate Player tile
-	s.Player = tile.GeneratePlayer()
+	s.Player = object.GeneratePlayer()
 	s.Screen = screen.Screen{
 		Buffer: screen.BlankScreen(),
 		Raw:    "",
@@ -41,7 +41,7 @@ func (s *Session) Initialize(c *net.Conn) {
 	s.Header = region.Header{}
 	s.Header.Initialize([][]tile.Tile{})
 	// ---------- Generate Level region
-	s.Level = region.Level{}
+	s.Level = region.Level{Player: &s.Player}
 	s.Level.Initialize(s.Level.ReadDataFromFile())
 	// ------------ Generate Profile region
 	s.Profile = region.Profile{}
@@ -56,47 +56,8 @@ func (s *Session) Initialize(c *net.Conn) {
 	s.Popup.Refresh()
 }
 
-//TODO -- these OUGHT to be a level region function
-func (s *Session) placeObject(interObj tile.IInteractiveObject)	{
-		objY,objX,objName,objTile := interObj.GetBufferData()
-		intendedType := s.Screen.Buffer[objY][objX].Get()
-		if (tile.CheckAttributes(intendedType,core.ATTR_SOLID)){
-			fmt.Println("ERROR placing item ["+objName+"] at location ["+strconv.Itoa(objY)+"]["+strconv.Itoa(objX)+"] do to ["+intendedType.Name+"] tile which is solid")
-		}
-		s.Screen.Buffer[objY][objX].Pop()
-		s.Screen.Buffer[objY][objX].Pop()
-		s.Screen.Set(objTile, objY,objX)
-}
-
-//TODO -- Put this WHOOOOLE thing into the level logic. Leevl should just have a pointer to the player obj.
-func (s *Session) initializeObjects() {
-	//--Enemies
-	for _,enemy := range s.Level.Enemies {
-		s.placeObject(&enemy)
-	}
-	//--Items
-	for _,item := range s.Level.Items {
-		s.placeObject(&item)
-	}
-	//-- Now place player
-	s.Screen.Buffer[s.Player.Y][s.Player.X].Pop()
-	s.Screen.Set(s.Player.Tile, s.Player.Y, s.Player.X)
-
-	//-- Set FOG and other mask . Do not set fog around player
-	for r:=region.MAP_TOP;r < region.MAP_TOP+region.MAP_LINES;r++ {
-		for c:=region.MAP_LEFT;c < region.MAP_LEFT+region.MAP_COLUMNS;c++ {
-			inRow := r >= s.Player.Y - s.Player.Stats.Vision && r <= s.Player.Y + s.Player.Stats.Vision
-			inCol := c >= s.Player.X - s.Player.Stats.Vision && c <= s.Player.X + s.Player.Stats.Vision
-			if(!inRow || !inCol){
-				s.Screen.Buffer[r][c].Set(tile.FOG)
-			}
-		}
-	}
-}
-
 func (s *Session) Handle() {
 	fmt.Printf("Serving %s\n", s.Connection.RemoteAddr().String())
-	s.initializeObjects()
 	s.Screen.Compile(&s.Header,&s.Level, &s.Profile, &s.Info)
 	s.Screen.Refresh()
 	core.HandleOutputToClient(s.Connection, 0, region.INFO_TOP+region.INFO_LINES+1, s.Screen.Get())
@@ -130,6 +91,8 @@ func (s *Session) Handle() {
 					s.Screen.Compile(&s.Profile, &s.Info)
 				}
 			}
+			s.Level.Player = &s.Player
+			s.Screen.Compile(&s.Level,&s.Profile, &s.Info)
 			s.Screen.Refresh()
 		}
 		core.HandleOutputToClient(s.Connection, 0, region.INFO_TOP+region.INFO_LINES+1, s.Screen.Get())

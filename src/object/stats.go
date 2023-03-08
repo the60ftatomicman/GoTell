@@ -1,7 +1,7 @@
-package tile
+package object
 
 import (
-	"example/gotell/src/core"
+	overrides "example/gotell/src/core_overrides"
 	"strings"
 )
 
@@ -31,7 +31,7 @@ func statCalc_Battle(off int, def int, offMod int) int{
 }
 
 func (s *Stats) UpdateHealth(delta int) {
-	if s.checkEffects(core.ATTR_POISONOUS) && delta > 0 {
+	if s.checkEffects(overrides.ATTR_POISONOUS) && delta > 0 {
 		delta = 0
 	}
 	s.Health += delta
@@ -44,7 +44,7 @@ func (s *Stats) UpdateHealth(delta int) {
 }
 
 func (s *Stats) UpdateMana(delta int) {
-	if s.checkEffects(core.ATTR_MANABURN) && delta > 0 {
+	if s.checkEffects(overrides.ATTR_MANABURN) && delta > 0 {
 		delta = 0
 	}
 	s.Mana += delta

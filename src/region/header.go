@@ -2,7 +2,9 @@ package region
 
 import (
 	"example/gotell/src/core"
-	"example/gotell/src/tile"
+	"example/gotell/src/core/screen"
+	"example/gotell/src/core/tile"
+	overrides "example/gotell/src/core_overrides"
 	"strings"
 )
 
@@ -23,12 +25,12 @@ func (p *Header) Initialize(b [][]tile.Tile) {
 	p.Set("Some title v0.0.8 - MENUS: (Q)uit (i)ventory (m)ove")
 	b = p.compile()
 
-	p.Buffer = initializeBuffer(HEADER_LINES, HEADER_COLUMNS, b,tile.BLANK)
+	p.Buffer = screen.InitializeBuffer(HEADER_LINES, HEADER_COLUMNS, b,tile.BLANK)
 }
 
 func (p *Header) Refresh() {
 	b := p.compile()
-	p.Buffer = initializeBuffer(HEADER_LINES, HEADER_COLUMNS, b,tile.BLANK) // rename to generateBuffer?
+	p.Buffer = screen.InitializeBuffer(HEADER_LINES, HEADER_COLUMNS, b,tile.BLANK) // rename to generateBuffer?
 }
 
 func (p *Header) Get() (int, int, int, int, [][]tile.Tile) {
@@ -41,7 +43,7 @@ func (p *Header) Set(msgs string){
 
 func (p *Header) compile()[][]tile.Tile{
 	t := [][]tile.Tile{p.getBaseRow(1,p.Message,core.FgWhite)}
-	t = append(t, tile.GenerateHorizontalDivider(HEADER_COLUMNS,tile.BLANK,tile.INFO_H))
+	t = append(t, tile.GenerateHorizontalDivider(HEADER_COLUMNS,tile.BLANK,overrides.INFO_H))
 	return t
 }
 

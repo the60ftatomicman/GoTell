@@ -1,13 +1,14 @@
-package tile
+package object
 
 import (
-	"example/gotell/src/core"
+	"example/gotell/src/core/tile"
+	overrides "example/gotell/src/core_overrides"
 	"strconv"
 	"strings"
 )
 
 type Enemy struct {
-	Tile             Tile
+	Tile             tile.Tile
 	Status           string `default:""`
 	Name             string `default:""`
 	X,Y,XP           int    `default:0`
@@ -47,11 +48,11 @@ func (e *Enemy) Interaction(s *Stats) bool {
 }
 
 func (e *Enemy) applyEffects(s *Stats) {
-	if(CheckAttributes(e.Tile,core.ATTR_POISONOUS)){
-		s.AddEffects(core.ATTR_POISONOUS)
+	if(tile.CheckAttributes(e.Tile,overrides.ATTR_POISONOUS)){
+		s.AddEffects(overrides.ATTR_POISONOUS)
 	}
-	if(CheckAttributes(e.Tile,core.ATTR_MANABURN)){
-		s.AddEffects(core.ATTR_MANABURN)
+	if(tile.CheckAttributes(e.Tile,overrides.ATTR_MANABURN)){
+		s.AddEffects(overrides.ATTR_MANABURN)
 		s.Mana = 0
 	}
 } 
@@ -66,7 +67,7 @@ func (e *Enemy) CalcDefeat(s *Stats) int {
 
 func (e *Enemy) Convert(s *Stats) {}
 
-func (e *Enemy) GetBufferData() (int,int,string,Tile) {
+func (e *Enemy) GetBufferData() (int,int,string,tile.Tile) {
 	return e.Y,e.X,e.Name,e.Tile
 }
 func generateEnemy(x int,y int,l int,e Enemy) Enemy {
@@ -126,7 +127,7 @@ func fileParserEnemy(enemyVals string) ([]string,[]Enemy){
 //
 //
 //
-func getEnemyTile(t Tile, attrs ...string) Tile{
+func getEnemyTile(t tile.Tile, attrs ...string) tile.Tile{
 	for _,attr := range attrs{
 		t.Attribute += attr
 	}
@@ -144,7 +145,7 @@ var ENEMY_MOLEMAN = Enemy{
 		FogRet:    20,
 		XP:         5,
 	},
-	Tile : getEnemyTile(ENEMY_BASIC),
+	Tile : getEnemyTile(overrides.ENEMY_BASIC),
 }
 
 // Boss of the basic grunts
@@ -159,7 +160,7 @@ var ENEMY_BOSS_MOLEMAN = Enemy{
 		FogRet:    20,
 		XP:         5,
 	},
-	Tile: getEnemyTile(ENEMY_BOSS),
+	Tile: getEnemyTile(overrides.ENEMY_BOSS),
 }
 
 // Poisonous! TODO, make this a more generic to get the tiles....
@@ -174,7 +175,7 @@ var ENEMY_SNAKE = Enemy{
 		FogRet:    20,
 		XP:         5,
 	},
-	Tile : getEnemyTile(ENEMY_BASIC,core.ATTR_POISONOUS),
+	Tile : getEnemyTile(overrides.ENEMY_BASIC,overrides.ATTR_POISONOUS),
 }
 
 // Poisonous! TODO, make this a more generic to get the tiles....
@@ -189,5 +190,5 @@ var ENEMY_GHOST = Enemy{
 		FogRet:    20,
 		XP:        5,
 	},
-	Tile : getEnemyTile(ENEMY_BASIC,core.ATTR_MANABURN),
+	Tile : getEnemyTile(overrides.ENEMY_BASIC,overrides.ATTR_MANABURN),
 }
