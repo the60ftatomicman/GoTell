@@ -39,7 +39,7 @@ func GeneratePlayer() Player {
 			Name:      "PLAYER",
 			Icon:      tile.Icons(overrides.ICON_PLAYER),
 			Color:     core.TermCodes(core.FgGreen),
-			Attribute: overrides.ATTR_SOLID,
+			Attribute: tile.GenerateAttributes(overrides.ATTR_SOLID),
 		},
 	}
 }

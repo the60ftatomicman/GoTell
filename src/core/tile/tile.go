@@ -22,7 +22,7 @@ var BLANK = Tile{
 	Icon: 	   Icons(ICON_BLANK),
 	Color:     core.TermCodes(core.BgBlack),
 	BGColor:   core.TermCodes(core.BgBlack),
-	Attribute: "",
+	Attribute: GenerateAttributes(ATTR_EXAMPLE),
 }
 var NULL = Tile{
 	Name:      "NULL",
@@ -60,4 +60,7 @@ func GenerateHorizontalDivider(length int,bookend Tile,fill Tile) []Tile {
 
 func CheckAttributes(t Tile, attr string) bool{
 	return strings.Contains(t.Attribute, attr)
+}
+func CheckAttributez(t Tile, attr Attributes) bool{
+	return strings.Contains(t.Attribute, string(Attributes(attr)))
 }

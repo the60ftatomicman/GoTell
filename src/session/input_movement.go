@@ -6,7 +6,6 @@ import (
 	"example/gotell/src/region"
 	"math"
 	"strconv"
-	"strings"
 )
 
 
@@ -130,7 +129,8 @@ func handleInputMoving(input string,s *Session) bool{
 //
 func preventMovement(tA *tile.Tile, tB *tile.Tile) bool {
 	var prevent bool = false
-	if strings.Contains(tA.Attribute, overrides.ATTR_SOLID) && strings.Contains(tB.Attribute, overrides.ATTR_SOLID) {
+	//if strings.Contains(tA.Attribute, overrides.ATTR_SOLID) && strings.Contains(tB.Attribute, overrides.ATTR_SOLID) {
+	if(tile.CheckAttributes(*tA,string(overrides.ATTR_SOLID)) && tile.CheckAttributes(*tB,string(overrides.ATTR_SOLID))) {
 		prevent = true
 	}
 
