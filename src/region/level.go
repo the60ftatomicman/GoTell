@@ -60,8 +60,9 @@ func (m *Level) Initialize(b [][]tile.Tile) {
 	for _,item := range m.Items {
 		m.Buffer[item.Y][item.X].Set(item.Tile)
 	}
-	//-- Now place player
-	m.Buffer[m.Player.Y][m.Player.X].Pop()
+	//-- Now place player and the ladder underneath them!
+	m.Buffer[m.Player.Y][m.Player.X].Clear()
+	m.Buffer[m.Player.Y][m.Player.X].Set(overrides.LADDER)
 	m.Buffer[m.Player.Y][m.Player.X].Set(m.Player.Tile)
 	//-- NOW fog.
 	vision := m.Player.Stats.Vision * 2

@@ -7,6 +7,8 @@ import (
 	"strconv"
 )
 
+//TODO 3/8/2023 -- add initializer to this class and allow for dynamic WIDTH and HEIGHT. See popup region for details
+
 const SCREEN_WIDTH = 100 // How many COLUMNS of characters the screen is
 const SCREEN_HEIGHT = 29 // How many LINES of characters the screen is
 
@@ -17,8 +19,8 @@ const SCREEN_HEIGHT = 29 // How many LINES of characters the screen is
 // The game logic should interact with the buffer and the Raw property
 // is the compiled text to send to the client
 type Screen struct {
-	Buffer [SCREEN_HEIGHT][SCREEN_WIDTH]tile.Cell // Collection of Cells containing Z amount of tiles
-	Raw    string                                 `default:""` // Represents the raw ANSI text we wish to send to the terminal
+	Buffer [SCREEN_HEIGHT][SCREEN_WIDTH] tile.Cell    // Collection of Cells containing Z amount of tiles
+	Raw    string                        `default:""` // Represents the raw ANSI text we wish to send to the terminal
 }
 
 // BlankScreen

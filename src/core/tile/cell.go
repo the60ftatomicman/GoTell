@@ -8,7 +8,7 @@ type Cell struct {
 }
 
 // generateNewCell
-// Used to create a new cell and populates it with Blank
+// Used to create a new cell and populates it with a Blank tile
 func GenerateNewCell() Cell{
 	c := Cell{}
 	c.Tiles = []Tile{BLANK}
@@ -35,4 +35,10 @@ func (c *Cell)Pop() {
 	if (len(c.Tiles) == 0){
 		c.Set(BLANK)
 	}
+}
+
+// Clear
+// For when you REALLY want to remove everything.
+func (c *Cell) Clear() {
+	c.Tiles = []Tile{BLANK}
 }
