@@ -70,7 +70,7 @@ func (s *Session) Handle() {
 			break
 		}
 		if handleInputStateSwitching(formattedData,s) || s.State.IsInputValid(formattedData){
-			formerState := s.State.Name // Hack for popups
+			//formerState := s.State.Name // Hack for popups
 
 			//This is a hack for getItem and THAT IS IT.
 			if(s.State.handleInput(formattedData,s) ){
@@ -81,18 +81,11 @@ func (s *Session) Handle() {
 				s.Screen.Compile(&s.Profile, &s.Info,&s.Popup)
 			}else{
 				//Refresh our dynamic regions
-				s.Profile.Player = &s.Player
+				s.Level.Refresh()
 				s.Profile.Refresh()
 				s.Info.Refresh()
-				//Refresh the full screen.
-				if(formerState == STATE_POPUP.Name){
-					s.Screen.Compile(&s.Level,&s.Profile, &s.Info)
-				}else{
-					s.Screen.Compile(&s.Profile, &s.Info)
-				}
+				s.Screen.Compile(&s.Level,&s.Profile, &s.Info)
 			}
-			s.Level.Player = &s.Player
-			s.Screen.Compile(&s.Level,&s.Profile, &s.Info)
 			s.Screen.Refresh()
 		}
 		core.HandleOutputToClient(s.Connection, 0, region.INFO_TOP+region.INFO_LINES+1, s.Screen.Get())

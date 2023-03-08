@@ -95,10 +95,7 @@ func (m *Level) Get() (int, int, int, int, [][]tile.Tile) {
 	return MAP_LEFT, MAP_TOP, MAP_LINES, MAP_COLUMNS, bufferTop
 }
 
-func (m *Level) Refresh(){
-	m.Buffer[m.Player.Y][m.Player.X].Pop()
-	m.Buffer[m.Player.Y][m.Player.X].Set(m.Player.Tile)
-}
+func (m *Level) Refresh(){}
 //
 //
 //
