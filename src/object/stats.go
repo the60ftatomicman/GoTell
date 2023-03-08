@@ -22,6 +22,21 @@ type Stats struct {
 	Effects   string `default:"'` // Like attributes
 }
 
+//TODO -- at the moment this "works" but my enemies and player need to have their stats modified
+// to really make this AOK
+func statCalc_Battle_Percentage(off int, def int, offMod int,defHP int) int{
+	dmg := 0
+	if((off * offMod) > def) {
+		var offPercentage float64   = (float64(off) * float64(offMod)) / 100.0
+		var defPercentage float64   = float64(def) / 100.0
+		var deltaPercentage float64 = offPercentage - defPercentage
+		var healthPoints    float64 = float64(defHP) * deltaPercentage
+		if healthPoints < 1.0 {healthPoints = 1}
+		dmg = int(healthPoints)
+	}
+	return dmg
+}
+
 func statCalc_Battle(off int, def int, offMod int) int{
 	dmg := 0
 	if((off * offMod) > def){
@@ -30,6 +45,7 @@ func statCalc_Battle(off int, def int, offMod int) int{
 	return dmg
 }
 
+//convert to %
 func (s *Stats) UpdateHealth(delta int) {
 	if s.checkEffects(overrides.ATTR_POISONOUS) && delta > 0 {
 		delta = 0
@@ -43,6 +59,7 @@ func (s *Stats) UpdateHealth(delta int) {
 	}
 }
 
+//convert to %
 func (s *Stats) UpdateMana(delta int) {
 	if s.checkEffects(overrides.ATTR_MANABURN) && delta > 0 {
 		delta = 0

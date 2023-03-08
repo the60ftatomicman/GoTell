@@ -63,9 +63,9 @@ func handleInputMoving(input string,s *Session) bool{
 		enemyXdelta    := enemy.X - s.Player.X
 		enemyYdelta    := enemy.Y - s.Player.Y
 		delta          := math.Abs(float64(enemyXdelta)) + math.Abs(float64(enemyYdelta))
-		base_enemy_msg := "Enemy ["+enemy.Name+"] Level ["+strconv.Itoa(enemy.Stats.Level)+"] Health ["+strconv.Itoa(enemy.Stats.Health)+"] Hits ["+strconv.Itoa(enemy.CalcDefeat(&s.Player.Stats))+"]"
 
 		if (delta < 2) {
+			base_enemy_msg := "Enemy ["+enemy.Name+"] Level ["+strconv.Itoa(enemy.Stats.Level)+"] Health ["+strconv.Itoa(enemy.Stats.Health)+"] Hits ["+strconv.Itoa(enemy.CalcDefeat(&s.Player.Stats))+"]"
 			if (delta == 0) {
 				//FIGHTING!
 				removeEnemy     := s.Level.Enemies[idx].Interaction(&s.Player.Stats)
@@ -83,6 +83,9 @@ func handleInputMoving(input string,s *Session) bool{
 				if(enemyXdelta > 0){enemy_msgs = append(enemy_msgs,"EAST: "+base_enemy_msg)}
 				if(enemyYdelta < 0){enemy_msgs = append(enemy_msgs,"NORTH: "+base_enemy_msg)}
 				if(enemyYdelta > 0){enemy_msgs = append(enemy_msgs,"SOUTH: "+base_enemy_msg)}
+				if(tile.CheckAttributes(enemy.Tile,overrides.ATTR_BOSS)){
+					s.Popup.Set("I AM THe BOSS!")
+				}
 			}
 			if(enemy_msgs[0] != "" || len(enemy_msgs) > 1){
 				s.Info.Set(enemy_msgs...)

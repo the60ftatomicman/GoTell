@@ -37,6 +37,7 @@ func handleInputStateSwitching(input string, s *Session) bool{
 		case "r":{
 			//	DEBUG ONLY TO REVIVE MYSELF!
 			if s.State.Name == STATE_MOVING.Name {
+				s.Popup.Set("I am ddebug")
 				s.State = STATE_POPUP
 			}
 		}

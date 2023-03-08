@@ -52,8 +52,6 @@ func (s *Session) Initialize(c *net.Conn) {
 	// ------------ Generate Info Region
 	s.Popup = region.Popup{}
 	s.Popup.Initialize([][]tile.Tile{})
-	s.Popup.Set("Some dumb message")
-	s.Popup.Refresh()
 }
 
 func (s *Session) Handle() {
@@ -70,11 +68,14 @@ func (s *Session) Handle() {
 			break
 		}
 		if handleInputStateSwitching(formattedData,s) || s.State.IsInputValid(formattedData){
-			//formerState := s.State.Name // Hack for popups
 
 			//This is a hack for getItem and THAT IS IT.
 			if(s.State.handleInput(formattedData,s) ){
 				s.State.handleInput(formattedData,s)
+			}
+			//TODO -- make "has messages" method and clear method
+			if(s.Popup.HasMessages()){
+				s.State = STATE_POPUP
 			}
 			if(s.State.Name == STATE_POPUP.Name){
 				s.Popup.Refresh()

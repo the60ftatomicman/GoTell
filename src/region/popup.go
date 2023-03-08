@@ -21,12 +21,16 @@ type Popup struct {
 	Commands string
 	Buffer  [][]tile.Tile
 }
-
+//
+//
+//
+//
+//
 func (p *Popup) Initialize(b [][]tile.Tile) {
-	p.Set("")
+	p.ClearMessages()
 	b = p.compile()
 
-	p.Buffer = screen.InitializeBuffer(POPUP_LINES(), POPUP_COLUMNS(len(p.Messages[0])), b,tile.BLANK)
+	p.Buffer = screen.InitializeBuffer(POPUP_LINES(), POPUP_COLUMNS(0), b,tile.BLANK)
 }
 
 func (p *Popup) Refresh() {
@@ -45,7 +49,9 @@ func (p *Popup) Set(msgs string){
 
 func (p *Popup) compile()[][]tile.Tile{
 	t := [][]tile.Tile{tile.GenerateHorizontalDivider(POPUP_COLUMNS(len(p.Messages)),tile.BLANK,overrides.INFO_H)}
-	t = append(t,p.getBaseRow(1,p.Messages[0],core.FgWhite))
+	if(p.HasMessages()){
+		t = append(t,p.getBaseRow(1,p.Messages[0],core.FgWhite))
+	}
 	t = append(t, tile.GenerateHorizontalDivider(POPUP_COLUMNS(len(p.Messages)),tile.BLANK,overrides.INFO_H))
 	return t
 }
@@ -67,4 +73,15 @@ func (p *Popup) getBaseRow(colIdx int, extraMsg string,color core.TermCodes ) []
 		}
 	}
 	return t
+}
+//
+//
+//
+//
+//
+func (p *Popup) HasMessages() bool{
+	return len(p.Messages) > 0
+}
+func (p *Popup) ClearMessages() {
+	p.Messages = []string{}
 }
