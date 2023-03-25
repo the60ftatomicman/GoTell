@@ -107,8 +107,14 @@ func (m *Level) getFileRegions()[][]string {
 	fileData      := [][]string{}
 	currentRegion := -1
 	skipLine      := false
-	readFile,err := os.Open("./utilities/data/demolevel.txt")
+	// -- DOCKER
+	// ex,_          := os.Executable()
+	// exPath        := filepath.Dir(ex)
+	// readFile,err  := os.Open(exPath+"/utilities/data/demolevel.txt") 
+	// -- LOCAL
+	readFile,err  := os.Open("./utilities/data/demolevel.txt")
 	if(err != nil){
+		print(err)
 		panic(err)
 	}
     fileScanner := bufio.NewScanner(readFile)

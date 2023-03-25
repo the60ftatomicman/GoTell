@@ -9,7 +9,7 @@ run:
 
 build-app:
 	- docker stop gotell && docker rm -f gotell && docker image rm --force gotell
-	docker build -t gotell .
+	docker build -t gotell ./
 
 run-app: 
 	- docker stop gotell && docker rm -f gotell
@@ -17,3 +17,5 @@ run-app:
 
 run-docker: build-app run-app
 
+get-ip:
+	docker inspect gotell | grep IPAddress
