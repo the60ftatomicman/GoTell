@@ -8,8 +8,6 @@ import (
 	"strconv"
 )
 
-
-
 func handleInputMoving(input string,s *Session) bool{
 	s.Info.Set(MENU_MOVING("")...)
 	PrvY := s.Player.Y
@@ -83,7 +81,10 @@ func handleInputMoving(input string,s *Session) bool{
 				if(enemyYdelta < 0){enemy_msgs = append(enemy_msgs,"NORTH: "+base_enemy_msg)}
 				if(enemyYdelta > 0){enemy_msgs = append(enemy_msgs,"SOUTH: "+base_enemy_msg)}
 				if(tile.CheckAttributes(enemy.Tile,overrides.ATTR_BOSS)){
-					s.Popup.Set("I AM THe BOSS!")
+					if(s.Level.BossMessage != ""){
+						s.Popup.Set(s.Level.BossMessage)
+						s.Level.BossMessage = ""
+					}
 				}
 			}
 			if(enemy_msgs[0] != "" || len(enemy_msgs) > 1){

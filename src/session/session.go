@@ -50,7 +50,6 @@ func (s *Session) Initialize(c *net.Conn) {
 	s.Info = region.Info{}
 	s.Info.Initialize([][]tile.Tile{})
 	// ------------ Generate Info Region
-	s.Popup = region.Popup{}
 	s.Popup.Initialize([][]tile.Tile{})
 }
 

@@ -36,6 +36,7 @@ type Level struct {
 	Items       []object.Item
 	itemSpawns  [][]int
 	maxItems    int
+	BossMessage string
 }
 
 func (m *Level) Initialize(b [][]tile.Tile) {
@@ -221,6 +222,11 @@ func (m *Level) parseMetadata(metaData []string) {
 			case "max_items":{
 				val,_ := strconv.Atoi(keyVal[1])
 				m.maxItems = val
+			}
+			case "boss_message":{
+				if(len(keyVal) > 1){
+					m.BossMessage = keyVal[1]
+				}
 			}
 		}
 	}
