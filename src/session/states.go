@@ -23,6 +23,11 @@ func (s *State) IsInputValid(input string) bool{
 var KEY_DIRS = []string{"w","a","s","d"}
 var KEY_QUIT = "Q"
 
+var STATE_TITLE = State {
+	Name: "title",
+	validInputs: KEY_DIRS,
+	handleInput: handleInputSplash,
+}
 var STATE_MOVING = State {
 	Name: "moving",
 	validInputs: KEY_DIRS,

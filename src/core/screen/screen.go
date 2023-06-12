@@ -8,6 +8,7 @@ import (
 )
 
 //TODO 3/8/2023 -- add initializer to this class and allow for dynamic WIDTH and HEIGHT. See popup region for details
+//TODO 6/9/2023 -- why did I make this width and height, not column and lines?
 
 const SCREEN_WIDTH = 100 // How many COLUMNS of characters the screen is
 const SCREEN_HEIGHT = 29 // How many LINES of characters the screen is

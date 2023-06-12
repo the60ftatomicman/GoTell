@@ -17,7 +17,7 @@ func POPUP_COLUMNS (msglen int) int { return msglen+2 }
 // Used to display a one time menu
 type Popup struct {
 	Title string
-	Messages []string //TODO - fix this to be used!
+	Messages []string
 	Commands string
 	Buffer  [][]tile.Tile
 }

@@ -50,7 +50,9 @@ func handleInputStateSwitching(input string, s *Session) bool{
 	}
 	return previousState != s.State.Name
 }
-
+func handleInputSplash(input string, s *Session)bool{
+	return true;
+}
 ///
 /// TODO -- this needs to go into level
 ///

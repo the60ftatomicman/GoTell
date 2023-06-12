@@ -20,6 +20,7 @@ type Session struct {
 	Profile    region.Profile
 	Info       region.Info
 	Popup      region.Popup
+	Title      region.Splash
 	State      State
 	Connection net.Conn
 }
@@ -29,8 +30,12 @@ func (s *Session) Initialize(c *net.Conn) {
 	s.Connection = *c
 	//S etup window
 	core.HandleOutputToClient(s.Connection, 0, 0, core.Clear()+core.ResizeTerminal(screen.SCREEN_HEIGHT, screen.SCREEN_WIDTH))
-	// Set Staet
-	s.State = STATE_MOVING
+	// Set all of our SPLASH Screens
+	s.Title = region.Splash{FilePath: "/Users/andrew.garber/repo/funksi/GoTell/src/region/splash_screens/title.splash",}
+	s.Title.Initialize([][]tile.Tile{})
+	s.State = STATE_TITLE
+	// Set State
+	//s.State = STATE_MOVING
 	//---------- Generate Player tile
 	s.Player = object.GeneratePlayer()
 	s.Screen = screen.Screen{
@@ -53,9 +58,13 @@ func (s *Session) Initialize(c *net.Conn) {
 	s.Popup.Initialize([][]tile.Tile{})
 }
 
+
+//TODO -- have a map or function to determine which REGIONS we need to draw based on STATE.
+// Maybe add to state?
 func (s *Session) Handle() {
 	fmt.Printf("Serving %s\n", s.Connection.RemoteAddr().String())
-	s.Screen.Compile(&s.Header,&s.Level, &s.Profile, &s.Info)
+	s.Screen.Compile(&s.Title) // -- actual prod
+	//s.Screen.Compile(&s.Header,&s.Level, &s.Profile, &s.Info) // -- debugging gameplay
 	s.Screen.Refresh()
 	core.HandleOutputToClient(s.Connection, 0, region.INFO_TOP+region.INFO_LINES+1, s.Screen.Get())
 	//Begin Game loop
@@ -72,13 +81,14 @@ func (s *Session) Handle() {
 			if(s.State.handleInput(formattedData,s) ){
 				s.State.handleInput(formattedData,s)
 			}
-			//TODO -- make "has messages" method and clear method
 			if(s.Popup.HasMessages()){
 				s.State = STATE_POPUP
 			}
 			if(s.State.Name == STATE_POPUP.Name){
 				s.Popup.Refresh()
 				s.Screen.Compile(&s.Profile, &s.Info,&s.Popup)
+			}else if (s.State.Name == STATE_TITLE.Name){
+				s.Screen.Compile(&s.Title)
 			}else{
 				//Refresh our dynamic regions
 				s.Level.Refresh()

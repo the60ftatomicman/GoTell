@@ -77,7 +77,7 @@ func (m *Level) Initialize(b [][]tile.Tile) {
 	if(down > MAP_LINES){down = MAP_LINES}
 
 	for rIdx,r := range m.Buffer{
-		for cIdx,_ := range r {
+		for cIdx := range r {
 			inPlayerSpace := (cIdx > left && cIdx < right && rIdx > up && rIdx < down)
 			if(!inPlayerSpace){
 					m.Buffer[rIdx][cIdx].Set(overrides.FOG)
