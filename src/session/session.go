@@ -84,6 +84,7 @@ func (s *Session) Handle() {
 			if(s.Popup.HasMessages()){
 				s.State = STATE_POPUP
 			}
+			//TDO -- handle this a bit better....
 			if(s.State.Name == STATE_POPUP.Name){
 				s.Popup.Refresh()
 				s.Screen.Compile(&s.Profile, &s.Info,&s.Popup)
@@ -94,7 +95,7 @@ func (s *Session) Handle() {
 				s.Level.Refresh()
 				s.Profile.Refresh()
 				s.Info.Refresh()
-				s.Screen.Compile(&s.Level,&s.Profile, &s.Info)
+				s.Screen.Compile(&s.Level,&s.Profile, &s.Info, &s.Header)
 			}
 			s.Screen.Refresh()
 		}

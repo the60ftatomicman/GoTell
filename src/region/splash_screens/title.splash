@@ -1,17 +1,17 @@
 blank
-100,ww, ;
+100,gg, ;
 blank
 blank
 blank
 blank
 blank
-1,ee, ;2,ww, ;4,ee, ;2,ww, ;2,ee, ;2,ww, ;87,ee, ;
-10,ww, ;1,ee, ;2,ww, ;87,ee, ;
-3,ww, ;1,ee, ;2,ww, ;1,ee, ;3,ww, ;1,ee, ;2,ww, ;87,ee, ;
-3,ww, ;1,ee, ;2,ww, ;1,ee, ;3,ww, ;1,ee, ;2,ww, ;87,ee, ;
-3,ww, ;1,ee, ;2,ww, ;1,ee, ;3,ww, ;1,ee, ;2,ww, ;87,ee, ;
-3,ww, ;1,ee, ;2,ww, ;1,ee, ;3,ww, ;1,ee, ;2,ww, ;87,ee, ;
-3,ww, ;4,ee, ;3,ww, ;1,ee, ;2,ww, ;87,ee, ;
+1,ee, ;2,ww, ;4,ee, ;2,ww, ;2,ee, ;2,ww, ;1,ee, ;4,ww, ;2,ee, ;6,ww, ;74,ee, ;
+10,ww, ;1,ee, ;2,ww, ;1,ee, ;4,ww, ;2,ee, ;6,ww, ;74,ee, ;
+3,ww, ;1,ee, ;2,ww, ;1,ee, ;3,ww, ;1,ee, ;2,ww, ;1,ee, ;2,ww, ;1,ee, ;2,ww, ;1,ee, ;2,ww, ;79,ee, ;
+3,ww, ;1,ee, ;2,ww, ;1,ee, ;3,ww, ;1,ee, ;2,ww, ;1,ee, ;2,ww, ;1,ee, ;2,ww, ;1,ee, ;6,ww, ;75,ee, ;
+3,ww, ;1,ee, ;2,ww, ;1,ee, ;3,ww, ;1,ee, ;2,ww, ;1,ee, ;2,ww, ;1,ee, ;2,ww, ;1,ee, ;2,ww, ;79,ee, ;
+3,ww, ;1,ee, ;2,ww, ;1,ee, ;3,ww, ;1,ee, ;2,ww, ;1,ee, ;2,ww, ;1,ee, ;2,ww, ;1,ee, ;6,ww, ;75,ee, ;
+3,ww, ;4,ee, ;3,ww, ;1,ee, ;2,ww, ;1,ee, ;2,ww, ;1,ee, ;2,ww, ;1,ee, ;6,ww, ;75,ee, ;
 blank
 100,ww,.;
 100,ww,.;
@@ -26,4 +26,4 @@ blank
 43,ee,.;1,we,By:  Garbtronix;42,ee,.;
 44,ee,.;1,we,Press Any Key;43,ee,.;
 blank
-100,ww, ;
+100,gg, ;
