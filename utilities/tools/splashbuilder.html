@@ -81,6 +81,7 @@
     }
     #grid{
         background-color: rgb(180, 178, 178);
+        user-select: none;
     }
     #cursor{
         min-width : 24px;
@@ -106,7 +107,7 @@
     }
 </STYLE>
 </head>
-<body>
+<body oncontextmenu="return false">
 
     <div id="color">
         <label>Text Color</label><select id="Fore">
@@ -165,11 +166,14 @@ var mouseIsDown = false
 $(document).on("keydown keyup", function(e) {
 let   textcolor  = 49, // 1
       backcolor  = 50; // 2
+      white      = 87;
+    $("#keycode").text("Keycode: "+e.keyCode);
     if ( e.type === 'keyup' ) {
         let menuId = '#';
         switch(e.keyCode){
             case textcolor : { menuId+='Fore';}break;
             case backcolor : { menuId+='Back';}break;
+            case white     : { }break; // MAcro to select WHITE22
         }
         var nextIdx = 0;
         $(menuId).children().each(function(idx,opt)
@@ -180,8 +184,7 @@ let   textcolor  = 49, // 1
             }
         });
         nextIdx = nextIdx == $(menuId).children().length ? 0 : nextIdx;
-        $(menuId).children()[nextIdx].selected = true;
-        $("#keycode").text("Keycode: "+e.keyCode);
+        $(menuId).children()[nextIdx].selected = true;   
     }
 });
 
@@ -199,29 +202,34 @@ window.onload = function(){
         currentSquare['c'] = coordinates[1];
         $("#r"+currentSquare['r']+'c'+currentSquare['c']).addClass("current");
         if(mouseIsDown){
-            assignCellValue()
+            assignCellValue(e)
         }
     });
     $(".col").mousedown(function(e) {
         mouseIsDown = true;
-        assignCellValue();
+        assignCellValue(e);
     });
     $(".col").mouseup(function(e) {
         mouseIsDown = false;
-        assignCellValue()
+        assignCellValue(e)
     });
 };
 function getValueFromSelectFromClass(selector,cls){
     return $('#'+selector+' option').filter(function () { return $(this).text() == cls; }).val();
 }
-function assignCellValue(){
+function assignCellValue(e){
         let currentId        = "#r"+currentSquare['r']+'c'+currentSquare['c'];
         let currentCellValue = 0;
         $(currentId).attr('class', 'col current');
-        let fgClass = $( "#Fore option:selected" ).text();
-        let bgClass = $( "#Back option:selected" ).text();
-        $(currentId).addClass("fg"+fgClass);
-        $(currentId).addClass("bg"+bgClass);
+        if(e.which == 1){
+            let fgClass = $( "#Fore option:selected" ).text();
+            let bgClass = $( "#Back option:selected" ).text();
+            $(currentId).addClass("fg"+fgClass);
+            $(currentId).addClass("bg"+bgClass);
+        }else{
+            $(currentId).addClass("fgBlack");
+            $(currentId).addClass("bgBlack");
+        }
 }
 function load(){
     let rowCount = 29;
