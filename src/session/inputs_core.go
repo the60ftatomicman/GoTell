@@ -45,6 +45,7 @@ func handleInputStateSwitching(input string, s *Session) bool{
 			//For passthrough states like picking up an item
 			switch s.State.Name {
 				case STATE_GETITEM.Name: {s.State = STATE_MOVING}
+				case STATE_TITLE.Name: {s.State = STATE_MOVING}
 			}
 		}
 	}
