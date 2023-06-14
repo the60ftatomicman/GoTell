@@ -137,7 +137,8 @@
     <div id="tools">
         <div id="grid"></div>
         <div id="keycode">Nothing Yet!</div>
-        <button id="JSON" onclick="printJSONToConsole()">PRINT JSON</button>
+        <button id="JSON" onclick="printJSONToConsole()">PRINT CODE</button>
+        <button id="COPY" onclick="copyJSONToGrid()">LOAD CODE</button>
         <!-- <button id="JSON" onclick="copyBlob()">COPY JSON</button> -->
         <div>
         <p>Instructions:</p>
@@ -217,19 +218,22 @@ window.onload = function(){
 function getValueFromSelectFromClass(selector,cls){
     return $('#'+selector+' option').filter(function () { return $(this).text() == cls; }).val();
 }
+function getClassFromSelectValue(selector,v){
+    return $('#'+selector+' option').filter(function () { return $(this).val() == v; }).text();
+}
 function assignCellValue(e){
-        let currentId        = "#r"+currentSquare['r']+'c'+currentSquare['c'];
-        let currentCellValue = 0;
-        $(currentId).attr('class', 'col current');
-        if(e.which == 1){
-            let fgClass = $( "#Fore option:selected" ).text();
-            let bgClass = $( "#Back option:selected" ).text();
-            $(currentId).addClass("fg"+fgClass);
-            $(currentId).addClass("bg"+bgClass);
-        }else{
-            $(currentId).addClass("fgBlack");
-            $(currentId).addClass("bgBlack");
-        }
+    let currentId        = "#r"+currentSquare['r']+'c'+currentSquare['c'];
+    let currentCellValue = 0;
+    $(currentId).attr('class', 'col current');
+    if(e.which == 1){
+        let fgClass = $( "#Fore option:selected" ).text();
+        let bgClass = $( "#Back option:selected" ).text();
+        $(currentId).addClass("fg"+fgClass);
+        $(currentId).addClass("bg"+bgClass);
+    }else{
+        $(currentId).addClass("fgBlack");
+        $(currentId).addClass("bgBlack");
+    }
 }
 function load(){
     let rowCount = 29;
@@ -301,6 +305,48 @@ function printJSONToConsole(){
     //console.log(jsonBlob);
     //console.log(mapData);
     $("#output").val(jsonBlob);
+}
+function copyJSONToGrid(){
+    var rows = $("#output").val().split(NEWLINE);
+    for(var r=0;r<rows.length;r++){
+        if(rows[r] != "blank"){
+            var cols = rows[r].split(';');
+            var currentCol=0;
+            for(var c=0;c<cols.length;c++){
+                let grouping = cols[c].split(',');
+                let groupLen = parseInt(grouping[0]);
+                for(let t=0;t<groupLen;t++){
+                    let currentId = "#r"+r+'c'+(currentCol+t);
+                    $(currentId).attr('class', 'col');
+                    let colors  = grouping[1].split("");
+                    let fgClass = "fg"+getClassFromSelectValue("Fore",colors[0])
+                    let bgClass = "bg"+getClassFromSelectValue("Fore",colors[1])
+                    $(currentId).addClass(fgClass);
+                    $(currentId).addClass(bgClass);
+                }
+                currentCol+=groupLen;
+            }
+            //pad rest in black
+            for(let t=0;t<100-currentCol;t++){
+                let currentId = "#r"+r+'c'+(currentCol+t);
+                $(currentId).attr('class', 'col');
+                let fgClass = "fgBlack";
+                let bgClass = "bgBlack";
+                $(currentId).addClass(fgClass);
+                $(currentId).addClass(bgClass);
+            }
+        }else{
+            //Blank line!
+            for(let t=0;t<100;t++){
+                let currentId = "#r"+r+'c'+t;
+                $(currentId).attr('class', 'col');
+                let fgClass = "fgBlack";
+                let bgClass = "bgBlack";
+                $(currentId).addClass(fgClass);
+                $(currentId).addClass(bgClass);
+            }
+        }
+    }
 }
 //
 //
