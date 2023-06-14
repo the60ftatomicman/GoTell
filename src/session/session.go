@@ -21,6 +21,7 @@ type Session struct {
 	Info       region.Info
 	Popup      region.Popup
 	Title      region.Splash
+	Story      region.Splash
 	State      State
 	Connection net.Conn
 }
@@ -33,9 +34,15 @@ func (s *Session) Initialize(c *net.Conn) {
 	// Set all of our SPLASH Screens
 	s.Title = region.Splash{FilePath: "/Users/andrew.garber/repo/funksi/GoTell/src/region/splash_screens/title.splash",}
 	s.Title.Initialize([][]tile.Tile{})
-	s.State = STATE_TITLE
+	
+	s.Story = region.Splash{FilePath: "/Users/andrew.garber/repo/funksi/GoTell/src/region/splash_screens/story_1.splash",}
+	s.Story.Initialize([][]tile.Tile{})
+	
 	// Set State
-	//s.State = STATE_MOVING
+	s.State = STATE_TITLE
+	
+	//s.State = STATE_MOVING // -- DEBUG!
+	
 	//---------- Generate Player tile
 	s.Player = object.GeneratePlayer()
 	s.Screen = screen.Screen{
