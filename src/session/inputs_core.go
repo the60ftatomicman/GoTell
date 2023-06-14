@@ -6,10 +6,14 @@ import (
 
 func handleGlobalStateSwitching(input string, s *Session) bool{
 	switch input {
-		case "Q":
-			{
+		case "Q":{
+				return true
+		}
+		case "q":{
+			if s.State.Name == STATE_TITLE.Name{
 				return true
 			}
+		}
 	}
 	return false
 }
@@ -45,15 +49,12 @@ func handleInputStateSwitching(input string, s *Session) bool{
 			//For passthrough states like picking up an item
 			switch s.State.Name {
 				case STATE_GETITEM.Name: {s.State = STATE_MOVING}
-				case STATE_TITLE.Name: {s.State = STATE_MOVING}
 			}
 		}
 	}
 	return previousState != s.State.Name
 }
-func handleInputSplash(input string, s *Session)bool{
-	return true;
-}
+
 ///
 /// TODO -- this needs to go into level
 ///

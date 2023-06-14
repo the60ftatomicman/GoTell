@@ -25,8 +25,8 @@ var KEY_QUIT = "Q"
 
 var STATE_TITLE = State {
 	Name: "title",
-	validInputs: KEY_DIRS,
-	handleInput: handleInputSplash,
+	validInputs: []string{"b","B","h","H","s","S","q","Q"},
+	handleInput: handleInputTitle,
 }
 var STATE_MOVING = State {
 	Name: "moving",
