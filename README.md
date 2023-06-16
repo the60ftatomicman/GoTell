@@ -21,20 +21,25 @@ Using "Cells" "Tiles" and "Regions" you can build a screen.
 ### MAIN DEMO ###
 - v0.0.1 Initial Commit
 - ![image description](docs/imgs/v0.0.1.gif)
+
 - v0.0.3 Better coloring, Now have most "in game" regions defined.
 - ![image description](docs/imgs/v0.0.3.gif)
+
 - v0.0.4 We have COOOOMBAT now.
+
 - v0.0.5 Fog exist! Health returned on fog.
 -- Stats for players and enemies exist as well
 -- examples of how to update screens now implemented
 -- switched to CELLS which are just stacks of tiles
 - ![image description](docs/imgs/v0.0.5.gif)
+
 - v0.0.6 Items-a-palooza
 -- Items are now a thing to pickup and uses
 -- this includes potions, equiptment AND spells
 -- One spell implemented
 -- ton of refactor work
 - ![image description](docs/imgs/v0.0.6.gif)
+
 - v0.0.7 The Great Last Refactor
 -- Refactored input and a ton of other code
 -- Finally added file parsing for levels and items
@@ -45,12 +50,21 @@ Using "Cells" "Tiles" and "Regions" you can build a screen.
 -- Modfied other regions
 -- added menus (just static text things)
 - ![image description](docs/imgs/v0.0.7.gif)
+
 - v0.0.8 Great Refactor 2
 -- This will be refactoring how we handle file parsing
 -- There are things I put into core which seem stupid to do so in hindsight so ill be moving them
--- I will have a title and level select at this point!
--- Maybe gods will be added?
+-- Pop ups are now useful!
 -- Generate a static HTML file for level editing
+-- Generate a static HTML file for splash screen editing
+- ![image description](docs/imgs/v0.0.8.gif)
+
+- v0.0.9 Main menus and story
+-- We will write out the story
+-- A main menu for game selection will be implemented
+-- Classes for the hero will now be a thing
+-- signs in levels for pop ups will be a thing
+-- Maybe gods will be added?
 
 ### MAIN STRUCTS ###
 - Screen
@@ -73,31 +87,17 @@ Thus far I have:
 level (aka map)
 profile (aka user info area)
 
-### What is DONE ###
-1) Can draw to screen
- - with color (foreground background)
- - icons are in solo file
-2) Can do input
-- nice
-3) detect wall collision
-4) detect enemy collision
-5) Fog exist
-6) Code is generic RPG in terms of text but the theme has been decided:
-Taking place during the golden age of invention (this is just a fancy way to say steampunk)
-a railroad mogul buys up a town with a mine in hopes to uncover it's treasures.
-You select a class to take on a mission; attempt to conquer the map and return with riches.
-7) Magic and items integrated
-8) Level,enemies and items from file completed.
-9) Randomized spawns completed.
-
-
 ### TODO ###
-1) Make input it's own class thingy
 2) Enemy Drops
-3) Intro screen and map selection
+3) map selection / main menu
 4) Add FOG wall detection (cannot see through walls)
 5) Start thinking about town hub interactions.
-6) Popup messages
 7) Multi-layered levels? Multi BOSS levels?
 8) End conditions for beating the level
-9) Fix fog after popups. Just need to transfer a ton of logic INTO the level region
+9) Gods or deities for interesting gameplay
+10) Refactor damage to be based on percent NOT on static amount!
+11) Finish story
+12) Finish how to play
+13) Test with multiple connections
+14) Save state
+15) Try finding a way to host this
