@@ -132,6 +132,10 @@
             <option value="y">Yellow</option>
             <option value="d">Grey</option>
         </select><br/>
+        <label>Mode</label><select id="mode">
+            <option value="color">Color</option>
+            <option value="text">Text</option>
+        </select><br/>
     </div>
     <br/>
     <div id="tools">
@@ -144,6 +148,7 @@
         <p>Instructions:</p>
         <p><b>Press 1:</b> Toggle Text Color</p>
         <p><b>Press 2:</b> Toggle Background Color</p>
+        <p><b>Press 3:</b> Toggle Mode</p>
         </div>
     </div>
     <textarea id="output"></textarea>
@@ -155,37 +160,56 @@
 //
 //---------------------------------------
 
-var splashMap = "";
 var currentSquare = { 'r':0,'c':0};
 const NEWLINE = "\n";//"&#10;";
+const COLOR_MODE = "color";
+const TEXT_MODE = "text";
+var mode = COLOR_MODE;
 var mouseIsDown = false
+
 //---------------------------------------
 //
 // Events
 //
 //---------------------------------------
 $(document).on("keydown keyup", function(e) {
-let   textcolor  = 49, // 1
-      backcolor  = 50; // 2
-      white      = 87;
-    $("#keycode").text("Keycode: "+e.keyCode);
-    if ( e.type === 'keyup' ) {
-        let menuId = '#';
-        switch(e.keyCode){
-            case textcolor : { menuId+='Fore';}break;
-            case backcolor : { menuId+='Back';}break;
-            case white     : { }break; // MAcro to select WHITE22
-        }
-        var nextIdx = 0;
-        $(menuId).children().each(function(idx,opt)
-        {
-            if(opt.selected){
-                nextIdx = idx+1;
-                opt.selected = false;
+    if(mode == COLOR_MODE){
+        let   textcolor  = 49, // 1
+              backcolor  = 50; // 2
+              modechange = 51; // 3
+        $("#keycode").text("Keycode: "+e.keyCode);
+        if ( e.type === 'keyup' ) {
+            let menuId = '#';
+            switch(e.keyCode){
+                case textcolor : { menuId+='Fore';}break;
+                case backcolor : { menuId+='Back';}break;
+                case modechange :{ menuId+='mode';}break;
             }
-        });
-        nextIdx = nextIdx == $(menuId).children().length ? 0 : nextIdx;
-        $(menuId).children()[nextIdx].selected = true;   
+            if(menuId != "#"){
+                var nextIdx = 0;
+                $(menuId).children().each(function(idx,opt)
+                {
+                    if(opt.selected){
+                        nextIdx = idx+1;
+                        opt.selected = false;
+                    }
+                });
+                nextIdx = nextIdx == $(menuId).children().length ? 0 : nextIdx;
+                $(menuId).children()[nextIdx].selected = true;  
+            }
+        }
+    }
+    if(mode == TEXT_MODE){
+        if(e.key.length == 1){
+            //console.log(e.key);
+            let row = 
+            let currentId = "#r"+currentSquare['r']+'c'+currentSquare['c'];
+            $(currentId).removeClass("current");
+            $(currentId).text(e.key);
+            let col = parseInt( currentSquare['c']);
+            currentSquare['c'] = (col+1 < 100 ? col+1 : col).toString();
+            $("#r"+currentSquare['r']+'c'+currentSquare['c']).addClass("current");
+        }
     }
 });
 
@@ -197,22 +221,44 @@ let   textcolor  = 49, // 1
 window.onload = function(){
     load();
     $(".col").mouseenter(function(e) {
-        let coordinates = e.currentTarget.id.replace("r","").split("c");
-        $("#r"+currentSquare['r']+'c'+currentSquare['c']).removeClass("current");
-        currentSquare['r'] = coordinates[0];
-        currentSquare['c'] = coordinates[1];
-        $("#r"+currentSquare['r']+'c'+currentSquare['c']).addClass("current");
-        if(mouseIsDown){
-            assignCellValue(e)
+        if(mode == COLOR_MODE){
+            let coordinates = e.currentTarget.id.replace("r","").split("c");
+            $("#r"+currentSquare['r']+'c'+currentSquare['c']).removeClass("current");
+            currentSquare['r'] = coordinates[0];
+            currentSquare['c'] = coordinates[1];
+            $("#r"+currentSquare['r']+'c'+currentSquare['c']).addClass("current");
+            if(mouseIsDown){
+                assignCellValue(e)
+            }
         }
     });
     $(".col").mousedown(function(e) {
-        mouseIsDown = true;
-        assignCellValue(e);
+        if(mode == COLOR_MODE){
+            mouseIsDown = true;
+            assignCellValue(e);
+        }else{
+                    let coordinates = e.currentTarget.id.replace("r","").split("c");
+            $("#r"+currentSquare['r']+'c'+currentSquare['c']).removeClass("current");
+            currentSquare['r'] = coordinates[0];
+            currentSquare['c'] = coordinates[1];
+            $("#r"+currentSquare['r']+'c'+currentSquare['c']).addClass("current");
+        }
     });
     $(".col").mouseup(function(e) {
-        mouseIsDown = false;
-        assignCellValue(e)
+        if(mode == COLOR_MODE){
+            mouseIsDown = false;
+            assignCellValue(e)
+        }else{
+                    let coordinates = e.currentTarget.id.replace("r","").split("c");
+            $("#r"+currentSquare['r']+'c'+currentSquare['c']).removeClass("current");
+            currentSquare['r'] = coordinates[0];
+            currentSquare['c'] = coordinates[1];
+            $("#r"+currentSquare['r']+'c'+currentSquare['c']).addClass("current");
+        }
+    });
+    $("#mode").on('change', function() {
+        console.log("Setting too: "+$(this).val());
+        mode = $(this).val();
     });
 };
 function getValueFromSelectFromClass(selector,cls){
@@ -222,8 +268,7 @@ function getClassFromSelectValue(selector,v){
     return $('#'+selector+' option').filter(function () { return $(this).val() == v; }).text();
 }
 function assignCellValue(e){
-    let currentId        = "#r"+currentSquare['r']+'c'+currentSquare['c'];
-    let currentCellValue = 0;
+    let currentId = "#r"+currentSquare['r']+'c'+currentSquare['c'];
     $(currentId).attr('class', 'col current');
     if(e.which == 1){
         let fgClass = $( "#Fore option:selected" ).text();
