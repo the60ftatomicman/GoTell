@@ -1,0 +1,288 @@
+<html>
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
+    <title>MAPBUILDER PRO</title>
+<STYLE>
+	body{
+		background-color: #ffffff;
+	}
+    .col{
+        display:    inline-block;
+        min-width:  10px;
+        min-height: 12px;
+        height:     12px;
+        width:      10px;
+        text-align: center;
+        font-size:  8px;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        cursor: crosshair;
+        user-select: none;
+    }
+    .current{
+        border: 1px solid #ff0000 !important;
+    }
+    .open{
+        border: 1px solid #000000;
+        color: rgba(255, 255, 255, 0.0)
+    }
+    .empty{
+        color: rgba(255, 255, 255, 0.0);
+        opacity: 1.0;
+    }
+    .wall{
+        color:            #0000ff !important;
+        background-color: #0000ff !important;
+    }
+    .enemy{
+        color:            #ffffff !important;
+        background-color: #ff0000 !important;
+    }
+    .item{
+        color:            #00ff00 !important;
+        background-color: #000000 !important;
+    }
+    .player{
+        color:            #ff00ff!important;
+        background-color: #000000 !important;
+    }
+    #grid{
+        background-color: rgba(0, 0, 0, 1.0);
+    }
+    #cursor{
+        min-width : 24px;
+        min-height: 24px;
+        height    : 24px;
+        width     : 24px;
+        position  : absolute;
+        text-align: center;
+        color     : rgba(255, 0, 0, 0.0);
+        background-image: url("images/pen24.png");
+        
+    }
+    #keycode{
+        display: inline-block;
+    }
+    #output{
+        display: inline-block;
+        white-space: pre-wrap;
+    }
+    #tools{
+        vertical-align: top;
+        display: inline-block;
+    }
+</STYLE>
+</head>
+<body>
+    <div id="metadata">
+        <label>Level Name</label><input id="Name" value="Dev Test Puzzle"></input><br/>
+        <label>Level Author</label><input id="Author" value="Andy Garber"></input><br/>
+        <label>Level Difficulty</label><input id="Difficulty" value="Easy"></input><br/>
+        <label>Level Maxes</label>Items<input id="Items" value="10"></input>Enemies<input id="Enemies" value="10"></input>
+    </div>
+    <br/>
+    <div id="tools">
+        <div id="grid"></div>
+        <div id="keycode">Nothing Yet!</div>
+        <button id="JSON" onclick="printJSONToConsole()">PRINT JSON</button>
+        <!-- <button id="JSON" onclick="copyBlob()">COPY JSON</button> -->
+        <div>
+        <p>Instructions:</p>
+        <p>hovering over a tile with your mouse selects it</p>
+        <p><b>W:</b> Sets wall <b>B</b> Sets Blank</p>
+        <p><b>E:</b> Sets Enemy Spawn <b>I:</b> Sets Item Spawn <b>P:</b> Sets Player Spawn</p>
+        </div>
+    </div>
+    <textarea id="output"></textarea>
+</body>
+<SCRIPT>
+//---------------------------------------
+//
+// GLOBALS
+//
+//---------------------------------------
+
+var jsonData = JSON.parse('{'
++   '"name":"Dev Test Puzzle",'
++   '"author":"Andy Garber",'
++   '"map":['
++   ']'
++   '}');
+var puzzleMap = jsonData.map;
+var startSquare   = getSpecialTile(puzzleMap,-1);
+var endSquare     = getSpecialTile(puzzleMap,-2);
+var currentSquare = { 'r':startSquare['r'],'c':startSquare['c'] };
+const BLANK  = 'b'
+const WALL   = 'w'
+const PLAYER = 'p'
+const ITEM   = 'i'
+const ENEMY  = 'e'
+const NEWLINE = "\n";//"&#10;";
+var currentType   = 'b';
+var mouseIsDown = false
+//---------------------------------------
+//
+// Events
+//
+//---------------------------------------
+$(document).on("keydown keyup", function(e) {
+let   wall   = 87, // W
+      blank  = 66, // B
+      player = 80, // P
+      item   = 73, // I
+      enemy  = 69; // E
+    if ( e.type === 'keyup' ) {
+        let currentId        = "#r"+currentSquare['r']+'c'+currentSquare['c'];
+        let currentCellValue = 0;
+        currentType          = BLANK;
+        let type             = 'BLANK';
+        $(currentId).attr('class', 'col empty current');
+        switch(e.keyCode){
+            case blank : {currentType = BLANK;  type = 'BLANK';       }break;
+            case wall  : {currentType = WALL;   type = 'WALL';        }break;
+            case player: {currentType = PLAYER; type = 'PLAYER SPAWN';}break;
+            case item  : {currentType = ITEM;   type = 'ITEM SPAWN';  }break;
+            case enemy : {currentType = ENEMY;  type = 'ENEMY SPAWN'; }break;
+        }
+        $("#keycode").text("Keycode: "+e.keyCode+" Type: "+type);
+    }
+});
+
+//---------------------------------------
+//
+// Load
+//
+//---------------------------------------
+window.onload = function(){
+    load();
+    $(".col").mouseenter(function(e) {
+        let coordinates = e.currentTarget.id.replace("r","").split("c");
+        $("#r"+currentSquare['r']+'c'+currentSquare['c']).removeClass("current");
+        currentSquare['r'] = coordinates[0];
+        currentSquare['c'] = coordinates[1];
+        $("#r"+currentSquare['r']+'c'+currentSquare['c']).addClass("current");
+        if(mouseIsDown){
+            assignCellValue()
+        }
+    });
+    $(".col").mousedown(function(e) {
+        mouseIsDown = true;
+        assignCellValue();
+    });
+    $(".col").mouseup(function(e) {
+        mouseIsDown = false;
+        assignCellValue()
+    });
+};
+function assignCellValue(){
+        let currentId        = "#r"+currentSquare['r']+'c'+currentSquare['c'];
+        let currentCellValue = 0;
+        $(currentId).attr('class', 'col empty current');
+        $(currentId).text(currentType);
+        $(currentId).removeClass("empty");
+        switch(currentType){
+            case BLANK :{$(currentId).addClass("blank"); }break;
+            case WALL  :{$(currentId).addClass("wall");  }break;
+            case PLAYER:{$(currentId).addClass("player");}break;
+            case ITEM  :{$(currentId).addClass("item");  s}break;
+            case ENEMY :{$(currentId).addClass("enemy"); }break;
+        }
+}
+function load(){
+    $("#name").text(jsonData.name+" by: "+jsonData.author);
+    //
+    let rowCount = 20;
+    let colCount = 80;
+    
+    $("#grid").empty();
+    for (r=0;r<rowCount;r++){
+        let row = document.createElement("div");
+        row.id = "r"+r;
+        row.className += "row";
+        for (c=0;c<colCount;c++){
+            let col = document.createElement("div");
+            col.id = "r"+r+"c"+c;
+            col.innerHTML  = BLANK;
+            col.className += "col blank";
+            $(row).append(col);
+        }
+        $("#grid").append(row);
+
+    }
+    //
+    let tileWidth  = $("#r0c0").width();
+    let tileHeight = $("#r0c0").height();
+    $("#output").width(colCount  * (tileWidth * 1.1));
+    $("#output").height(rowCount * (tileHeight+1));
+}
+//
+//
+function getSpecialTile(puzzleMap,specialCount){
+    let tile = {'r':-1,'c':-1};
+    for(var i=0;i<puzzleMap.length;i++){
+        if(puzzleMap[i].count == specialCount){
+            tile['r'] = puzzleMap[i]['r'];
+            tile['c'] = puzzleMap[i]['c'];
+        }
+    }
+    return tile;
+}
+//
+//
+function parseCells(){
+    cells    = [];
+    currentR = -1;
+    $(".col").each(function(idx,t){
+        let val = !!t.innerHTML && t.innerHTML != "" && t.innerHTML != "0" ? t.innerHTML : BLANK;
+        val = val == 'i' || val == 'e' ? 's'+val : val;
+        if(val != '0'){
+            let coord = t.id.replace("r","").split("c");
+            currentR = parseInt(coord[0]);
+            if(!cells[currentR]){
+                cells.push([]);
+            }
+            cells[currentR].push(val);
+        }
+    });
+    //Now condense
+    cellsCondensed = [];
+    for(let r=0;r<cells.length;r++){
+        cellsCondensed.push([]);
+        countOfsimilarTiles = 1;
+        for(let c=0;c<cells[r].length;c++){
+            nextC = cells[r][c+1]
+            if(!!nextC && nextC == cells[r][c]){
+                countOfsimilarTiles++;
+            }else{
+                countycount = countOfsimilarTiles == 1 ? "" :countOfsimilarTiles.toString();
+                cellsCondensed[r].push(countycount+cells[r][c]);
+                countOfsimilarTiles = 1;
+            }
+        }
+    }
+    return cellsCondensed;
+}
+function printJSONToConsole(){
+    let mapData = parseCells()
+    let jsonBlob = '{"name":"Dev Test Puzzle","author":"Andy Garber","map":['+NEWLINE;
+    for(var r=0;r<mapData.length;r++){
+        jsonBlob += mapData[r].join(',')
+        jsonBlob += NEWLINE
+    }
+    jsonBlob += ']}';
+    
+    //console.log(jsonBlob);
+    console.log(mapData);
+    $("#output").val(jsonBlob);
+}
+//
+//
+function copyBlob(){
+    printJSONToConsole();
+    navigator.clipboard.writeText($("#output").val()).then(function () {
+        alert('Text copied')
+    }, function () {
+        alert('Failure to copy. Check permissions for clipboard')
+    });
+}
+</SCRIPT>
+</html>

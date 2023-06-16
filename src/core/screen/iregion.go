@@ -1,6 +1,6 @@
-package region
+package screen
 
-import "example/gotell/src/tile"
+import "example/gotell/src/core/tile"
 
 // IRegion
 // This interface is intended to help build and manage regions of tiles
@@ -11,7 +11,7 @@ type IRegion interface {
 	Refresh()
 }
 
-func initializeBuffer(lines int, columns int, data [][]tile.Tile, defaultTile tile.Tile) [][]tile.Tile {
+func InitializeBuffer(lines int, columns int, data [][]tile.Tile, defaultTile tile.Tile) [][]tile.Tile{
 	buffer := [][]tile.Tile{}
 	for l := 0; l < lines; l++ {
 		tileLine := []tile.Tile{}

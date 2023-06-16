@@ -1,8 +1,8 @@
 package session
 
 import (
-	"example/gotell/src/screen/region"
-	"example/gotell/src/tile"
+	"example/gotell/src/object"
+	"example/gotell/src/region"
 	"strconv"
 )
 
@@ -19,7 +19,7 @@ func MENU_SPELL(hasMana bool,attacked []string) []string {
 	return menu
 }
 
-func MENU_ITEM(item *tile.Item)[]string{
+func MENU_ITEM(item *object.Item)[]string{
 	menu := []string{
 		"["+item.Name+"] selected.",
 		"Press (u) to USE",

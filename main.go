@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	HOST = "localhost"
+	HOST = "localhost" // "0.0.0.0" -- if docker.
 	PORT = "9002"
 	TYPE = "tcp"
 )

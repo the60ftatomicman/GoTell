@@ -23,6 +23,16 @@ func (s *State) IsInputValid(input string) bool{
 var KEY_DIRS = []string{"w","a","s","d"}
 var KEY_QUIT = "Q"
 
+var STATE_TITLE = State {
+	Name: "title",
+	validInputs: []string{"b","B","h","H","s","S","q","Q"},
+	handleInput: handleInputTitle,
+}
+var STATE_STORY = State {
+	Name: "story",
+	validInputs: []string{"a","A","d","D","q"},
+	handleInput: handleInputStory,
+}
 var STATE_MOVING = State {
 	Name: "moving",
 	validInputs: KEY_DIRS,
@@ -42,6 +52,11 @@ var STATE_SPELL = State {
 	Name: "castingspell",
 	validInputs: append([]string{"x","m"},KEY_DIRS...),
 	handleInput: handleInputSpell,
+}
+var STATE_POPUP = State {
+	Name: "popup",
+	validInputs: []string{"y","n"},
+	handleInput: handleInputPopup,
 }
 //Pass through states
 var STATE_DEAD = State {

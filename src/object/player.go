@@ -1,9 +1,13 @@
-package tile
+package object
 
-import "example/gotell/src/core"
+import (
+	"example/gotell/src/core"
+	"example/gotell/src/core/tile"
+	overrides "example/gotell/src/core_overrides"
+)
 
 type Player struct {
-	Tile             Tile
+	Tile             tile.Tile
 	Name             string `default:""`
 	Class            string `default:""`
 	Dir              string `default:""`
@@ -20,6 +24,7 @@ func GeneratePlayer() Player {
 		Y:    5,
 		Stats: Stats{
 			Level:     1,
+			LevelMod:  10,
 			MaxHealth: 100,
 			MaxMana:   100,
 			Health:    100,
@@ -30,11 +35,11 @@ func GeneratePlayer() Player {
 			FogRet:   10, // how much MANA and HEALTH we get back when uncovering FOG
 			Vision:   3,  // how FAR into fog we can see
 		},
-		Tile: Tile{
+		Tile: tile.Tile{
 			Name:      "PLAYER",
-			Icon:      core.Icons(core.ICON_PLAYER),
+			Icon:      tile.Icons(overrides.ICON_PLAYER),
 			Color:     core.TermCodes(core.FgGreen),
-			Attribute: core.ATTR_SOLID,
+			Attribute: tile.GenerateAttributes(overrides.ATTR_SOLID),
 		},
 	}
 }

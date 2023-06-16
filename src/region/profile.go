@@ -2,7 +2,10 @@ package region
 
 import (
 	"example/gotell/src/core"
-	"example/gotell/src/tile"
+	"example/gotell/src/core/screen"
+	"example/gotell/src/core/tile"
+	overrides "example/gotell/src/core_overrides"
+	"example/gotell/src/object"
 	"strconv"
 	"strings"
 )
@@ -34,7 +37,7 @@ const LINE_VAR_ITEM_COUNT = 5  // How many item lines we'll display
 // This area gives detailed stats about the player
 // XP,Level,Health,Mana as well as the items the player currently has
 type Profile struct {
-	Player *tile.Player
+	Player *object.Player
 	SelectedItem string `default:""`
 	Buffer [][]tile.Tile
 }
@@ -44,25 +47,25 @@ func (p *Profile) Initialize(b [][]tile.Tile) {
 	//haha yeah I am going to ignore B passed in.
 	b = p.compile()
 
-	p.Buffer = initializeBuffer(PROFILE_LINES, PROFILE_COLUMNS, b,tile.BLANK)
+	p.Buffer = screen.InitializeBuffer(PROFILE_LINES, PROFILE_COLUMNS, b,tile.BLANK)
 }
 
 func (p *Profile) Get() (int, int, int, int, [][]tile.Tile) {
 	return PROFILE_LEFT, PROFILE_TOP, PROFILE_LINES, PROFILE_COLUMNS, p.Buffer
 }
 
-func (p *Profile) ReadDataFromPlayer(plyr *tile.Player) [][]tile.Tile {
+func (p *Profile) ReadDataFromPlayer(plyr *object.Player) [][]tile.Tile {
 	p.Player = plyr
 	return [][]tile.Tile{}
 }
 
 func (p *Profile)Refresh(){
-	p.Buffer = initializeBuffer(PROFILE_LINES, PROFILE_COLUMNS, p.compile(),tile.BLANK)
+	p.Buffer = screen.InitializeBuffer(PROFILE_LINES, PROFILE_COLUMNS, p.compile(),tile.BLANK)
 }
 
 func (p *Profile)compile()[][]tile.Tile{
 	t := [][]tile.Tile{{tile.BLANK}}
-	t = append(t, tile.GenerateHorizontalDivider(PROFILE_COLUMNS-2,tile.BLANK,tile.PROFILE_H))
+	t = append(t, tile.GenerateHorizontalDivider(PROFILE_COLUMNS-2,tile.BLANK,overrides.PROFILE_H))
 	for i := 0; i < PROFILE_LINES-3; i++ {
 		switch(i){
 			case LINE_VAR_NAME:{
@@ -113,12 +116,12 @@ func (p *Profile)compile()[][]tile.Tile{
 		}
 		
 	}
-	t = append(t, tile.GenerateHorizontalDivider(PROFILE_COLUMNS-2,tile.BLANK,tile.PROFILE_H))
+	t = append(t, tile.GenerateHorizontalDivider(PROFILE_COLUMNS-2,tile.BLANK,overrides.PROFILE_H))
 	return t
 }
 
 func (p *Profile)getBaseRow(colIdx int, extraMsg string,colors ...core.TermCodes ) []tile.Tile {
-	t        := []tile.Tile{tile.PROFILE_V}
+	t        := []tile.Tile{overrides.PROFILE_V}
 	msgArray := strings.Split(extraMsg, "")
 	endIdx   := colIdx+len(msgArray)
 
@@ -138,7 +141,7 @@ func (p *Profile)getBaseRow(colIdx int, extraMsg string,colors ...core.TermCodes
 			t = append(t, tile.GENERIC_TEXT(" ",colors[0],core.BgGrey))
 		}
 	}
-	t = append(t, tile.PROFILE_V)
+	t = append(t, overrides.PROFILE_V)
 	return t
 }
 

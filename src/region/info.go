@@ -2,7 +2,9 @@ package region
 
 import (
 	"example/gotell/src/core"
-	"example/gotell/src/tile"
+	"example/gotell/src/core/screen"
+	"example/gotell/src/core/tile"
+	overrides "example/gotell/src/core_overrides"
 	"strings"
 )
 
@@ -24,12 +26,12 @@ func (p *Info) Initialize(b [][]tile.Tile) {
 	p.Set("By Andrew Garber")
 	b = p.compile()
 
-	p.Buffer = initializeBuffer(INFO_LINES, INFO_COLUMNS, b,tile.BLANK)
+	p.Buffer = screen.InitializeBuffer(INFO_LINES, INFO_COLUMNS, b,tile.BLANK)
 }
 
 func (p *Info) Refresh() {
 	b := p.compile()
-	p.Buffer = initializeBuffer(INFO_LINES, INFO_COLUMNS, b,tile.BLANK) // rename to generateBuffer?
+	p.Buffer = screen.InitializeBuffer(INFO_LINES, INFO_COLUMNS, b,tile.BLANK) // rename to generateBuffer?
 }
 
 func (p *Info) Get() (int, int, int, int, [][]tile.Tile) {
@@ -47,16 +49,16 @@ func (p *Info) Set(msgs ...string){
 }
 
 func (p *Info) compile()[][]tile.Tile{
-	t := [][]tile.Tile{tile.GenerateHorizontalDivider(INFO_COLUMNS-2,tile.BLANK,tile.INFO_H)}
+	t := [][]tile.Tile{tile.GenerateHorizontalDivider(INFO_COLUMNS-2,tile.BLANK,overrides.INFO_H)}
 	for i := 0; i < len(p.Message); i++ {
 		t = append(t, p.getBaseRow(1,p.Message[i],core.FgWhite))
 	}
-	t = append(t, tile.GenerateHorizontalDivider(INFO_COLUMNS-2,tile.BLANK,tile.INFO_H))
+	t = append(t, tile.GenerateHorizontalDivider(INFO_COLUMNS-2,tile.BLANK,overrides.INFO_H))
 	return t
 }
 
 func (p *Info) getBaseRow(colIdx int, extraMsg string,color core.TermCodes ) []tile.Tile {
-	t        := []tile.Tile{tile.INFO_V}
+	t        := []tile.Tile{overrides.INFO_V}
 	msgArray := strings.Split(extraMsg, "")
 	endIdx   := colIdx+len(msgArray)
 
@@ -71,6 +73,6 @@ func (p *Info) getBaseRow(colIdx int, extraMsg string,color core.TermCodes ) []t
 			t = append(t, tile.GENERIC_TEXT(" ",color,core.BgBlack))
 		}
 	}
-	t = append(t, tile.INFO_V)
+	t = append(t, overrides.INFO_V)
 	return t
 }

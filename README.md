@@ -100,3 +100,4 @@ You select a class to take on a mission; attempt to conquer the map and return w
 6) Popup messages
 7) Multi-layered levels? Multi BOSS levels?
 8) End conditions for beating the level
+9) Fix fog after popups. Just need to transfer a ton of logic INTO the level region

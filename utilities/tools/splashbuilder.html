@@ -1,0 +1,418 @@
+<html>
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
+    <title>SPLASHBUILDER PRO</title>
+<STYLE>
+	body{
+		background-color: #ffffff;
+	}
+    .row{
+        min-height: 14px;
+        height:     14px;
+    }
+    .col{
+        display:    table-cell;
+        min-width:  10px;
+        min-height: 12px;
+        height:     12px;
+        width:      10px;
+        text-align: center;
+        font-size:  10px;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        cursor: crosshair;
+        user-select: none;
+    }
+    .current{
+        border: 1px solid #ff0000 !important;
+    }
+    .open{
+        border: 1px solid #000000;
+        color: rgb(180, 178, 178);
+    }
+    .fgWhite{
+        color: white !important;
+    }
+    .fgBlack{
+        color: black !important;
+    }
+    .fgBlue{
+        color: blue !important;
+    }
+    .fgCyan{
+        color: cyan !important;
+    }
+    .fgGreen{
+        color: green !important;
+    }
+    .fgMagenta{
+        color: magenta !important;
+    }
+    .fgRed{
+        color: red !important;
+    }
+    .fgYellow{
+        color: yellow !important;
+    }
+    .fgGrey{
+        color: grey !important;
+    }
+    .bgWhite{
+        background-color: white !important;
+    }
+    .bgBlack{
+        background-color: black !important;
+    }
+    .bgBlue{
+        background-color: blue !important;
+    }
+    .bgCyan{
+        background-color: cyan !important;
+    }
+    .bgGreen{
+        background-color: green !important;
+    }
+    .bgMagenta{
+        background-color: magenta !important;
+    }
+    .bgRed{
+        background-color: red !important;
+    }
+    .bgYellow{
+        background-color: yellow !important;
+    }
+    .bgGrey{
+        background-color: grey !important;
+    }
+    #grid{
+        background-color: rgb(180, 178, 178);
+        user-select: none;
+    }
+    #cursor{
+        min-width : 24px;
+        min-height: 24px;
+        height    : 24px;
+        width     : 24px;
+        position  : absolute;
+        text-align: center;
+        color     : rgba(255, 0, 0, 0.0);
+        background-image: url("images/pen24.png");
+        
+    }
+    #keycode{
+        display: inline-block;
+    }
+    #output{
+        display: inline-block;
+        white-space: pre-wrap;
+    }
+    #tools{
+        vertical-align: top;
+        display: inline-block;
+    }
+</STYLE>
+</head>
+<body oncontextmenu="return false">
+
+    <div id="color">
+        <label>Text Color</label><select id="Fore">
+            <option value="w">White</option>
+            <option value="e">Black</option>
+            <option value="b">Blue</option>
+            <option value="c">Cyan</option>
+            <option value="g">Green</option>
+            <option value="m">Magenta</option>
+            <option value="r">Red</option>
+            <option value="y">Yellow</option>
+            <option value="d">Grey</option>
+        </select><br/>
+        <label>Background Color</label><select id="Back">
+            <option value="e">Black</option>
+            <option value="w">White</option>
+            <option value="b">Blue</option>
+            <option value="c">Cyan</option>
+            <option value="g">Green</option>
+            <option value="m">Magenta</option>
+            <option value="r">Red</option>
+            <option value="y">Yellow</option>
+            <option value="d">Grey</option>
+        </select><br/>
+        <label>Mode</label><select id="mode">
+            <option value="color">Color</option>
+            <option value="text">Text</option>
+        </select><br/>
+    </div>
+    <br/>
+    <div id="tools">
+        <div id="grid"></div>
+        <div id="keycode">Nothing Yet!</div>
+        <button id="JSON" onclick="printJSONToConsole()">PRINT CODE</button>
+        <button id="COPY" onclick="copyJSONToGrid()">LOAD CODE</button>
+        <!-- <button id="JSON" onclick="copyBlob()">COPY JSON</button> -->
+        <div>
+        <p>Instructions:</p>
+        <p><b>Press 1:</b> Toggle Text Color</p>
+        <p><b>Press 2:</b> Toggle Background Color</p>
+        <p><b>Press 3:</b> Toggle Mode</p>
+        </div>
+    </div>
+    <br/>
+    <textarea id="output"></textarea>
+</body>
+<SCRIPT>
+//---------------------------------------
+//
+// GLOBALS
+//
+//---------------------------------------
+
+var currentSquare = { 'r':0,'c':0};
+const NEWLINE = "\n";//"&#10;";
+const COLOR_MODE = "color";
+const TEXT_MODE = "text";
+var mode = COLOR_MODE;
+var mouseIsDown = false
+
+//---------------------------------------
+//
+// Events
+//
+//---------------------------------------
+// -- stop scrollbar movement
+window.addEventListener('keydown', function(e) {
+  if(e.keyCode == 32 && e.target == document.body) {
+    e.preventDefault();
+  }
+});
+$(document).on("keyup", function(e) {
+    if(mode == COLOR_MODE){
+        let   textcolor  = 49, // 1
+              backcolor  = 50; // 2
+              modechange = 51; // 3
+        $("#keycode").text("Keycode: "+e.keyCode);
+        //if ( e.type === 'keyup' ) {
+            let menuId = '#';
+            switch(e.keyCode){
+                case textcolor : { menuId+='Fore';}break;
+                case backcolor : { menuId+='Back';}break;
+                case modechange :{ menuId+='mode';}break;
+            }
+            if(menuId != "#"){
+                var nextIdx = 0;
+                $(menuId).children().each(function(idx,opt)
+                {
+                    if(opt.selected){
+                        nextIdx = idx+1;
+                        opt.selected = false;
+                    }
+                });
+                nextIdx = nextIdx == $(menuId).children().length ? 0 : nextIdx;
+                $(menuId).children()[nextIdx].selected = true;  
+            }
+        //}
+    }
+    if(mode == TEXT_MODE){
+        if(e.key.length == 1){
+            //console.log(e.key);
+            let currentId = "#r"+currentSquare['r']+'c'+currentSquare['c'];
+            $(currentId).removeClass("current");
+            $(currentId).text(e.key);
+            let col = parseInt( currentSquare['c']);
+            currentSquare['c'] = (col+1 < 100 ? col+1 : col).toString();
+            $("#r"+currentSquare['r']+'c'+currentSquare['c']).addClass("current");
+            e.preventDefault();
+        }
+    }
+});
+
+//---------------------------------------
+//
+// Load
+//
+//---------------------------------------
+window.onload = function(){
+    load();
+    $(".col").mouseenter(function(e) {
+        if(mode == COLOR_MODE){
+            let coordinates = e.currentTarget.id.replace("r","").split("c");
+            $("#r"+currentSquare['r']+'c'+currentSquare['c']).removeClass("current");
+            currentSquare['r'] = coordinates[0];
+            currentSquare['c'] = coordinates[1];
+            $("#r"+currentSquare['r']+'c'+currentSquare['c']).addClass("current");
+            if(mouseIsDown){
+                assignCellValue(e)
+            }
+        }
+    });
+    $(".col").mousedown(function(e) {
+        if(mode == COLOR_MODE){
+            mouseIsDown = true;
+            assignCellValue(e);
+        }else{
+                    let coordinates = e.currentTarget.id.replace("r","").split("c");
+            $("#r"+currentSquare['r']+'c'+currentSquare['c']).removeClass("current");
+            currentSquare['r'] = coordinates[0];
+            currentSquare['c'] = coordinates[1];
+            $("#r"+currentSquare['r']+'c'+currentSquare['c']).addClass("current");
+        }
+    });
+    $(".col").mouseup(function(e) {
+        if(mode == COLOR_MODE){
+            mouseIsDown = false;
+            assignCellValue(e)
+        }else{
+                    let coordinates = e.currentTarget.id.replace("r","").split("c");
+            $("#r"+currentSquare['r']+'c'+currentSquare['c']).removeClass("current");
+            currentSquare['r'] = coordinates[0];
+            currentSquare['c'] = coordinates[1];
+            $("#r"+currentSquare['r']+'c'+currentSquare['c']).addClass("current");
+        }
+    });
+    $("#mode").on('change', function() {
+        console.log("Setting too: "+$(this).val());
+        mode = $(this).val();
+    });
+};
+function getValueFromSelectFromClass(selector,cls){
+    return $('#'+selector+' option').filter(function () { return $(this).text() == cls; }).val();
+}
+function getClassFromSelectValue(selector,v){
+    return $('#'+selector+' option').filter(function () { return $(this).val() == v; }).text();
+}
+function assignCellValue(e){
+    let currentId = "#r"+currentSquare['r']+'c'+currentSquare['c'];
+    $(currentId).attr('class', 'col current');
+    if(e.which == 1){
+        let fgClass = $( "#Fore option:selected" ).text();
+        let bgClass = $( "#Back option:selected" ).text();
+        $(currentId).addClass("fg"+fgClass);
+        $(currentId).addClass("bg"+bgClass);
+    }else{
+        $(currentId).addClass("fgBlack");
+        $(currentId).addClass("bgBlack");
+    }
+}
+function load(){
+    let rowCount = 29;
+    let colCount = 100;
+    
+    $("#grid").empty();
+    for (r=0;r<rowCount;r++){
+        let row = document.createElement("div");
+        row.id = "r"+r;
+        row.className += "row";
+        for (c=0;c<colCount;c++){
+            let col = document.createElement("div");
+            col.id = "r"+r+"c"+c;
+            col.innerHTML  = "o";
+            col.className += "col fgBlack bgBlack";
+            $(row).append(col);
+        }
+        $("#grid").append(row);
+
+    }
+    //
+    let tileWidth  = $("#r0c0").width();
+    let tileHeight = $("#r0c0").height();
+    $("#output").width(colCount  * (tileWidth * 1.1));
+    $("#output").height(rowCount * (tileHeight+1));
+}
+//
+//
+function parseCells(){
+    let gridTiles = [];
+    $(".row").each(function(currentR,r){
+        var rowTiles  = [];
+        $(r).children().each(function(currentC,c){
+            let classNames = $(c).attr('class').split(' ');
+            let fgTag = classNames[1].replace('fg','');
+            let bgTag = classNames[2].replace('bg','');
+            let fgSymbol = getValueFromSelectFromClass("Fore",fgTag);
+            let bgSymbol = getValueFromSelectFromClass("Back",bgTag);
+            let colors = fgSymbol+bgSymbol;
+            rowTiles.push(colors)
+        });
+        let rowString    = "";
+        let currentCount = 0;
+        let currentCode  = "ee";
+        rowTiles.forEach(function(tileCode,tIdx){
+            if (tileCode == currentCode){
+                currentCount++;
+            }else{
+                rowString   += currentCount.toString()+','+currentCode+', ;' // Always add blank for now
+                currentCode  = tileCode;
+                currentCount = 1;
+            }
+            if(tIdx == rowTiles.length-1){
+                rowString += currentCount.toString()+','+currentCode+', ;' // Always add blank for now
+            }
+        });
+        gridTiles.push(rowString);
+    });
+    return gridTiles;
+}
+function printJSONToConsole(){
+    let mapData = parseCells()
+    let jsonBlob = '';
+    for(var r=0;r<mapData.length;r++){
+        rowData   = mapData[r] == '100,ee, ;' ? 'blank':mapData[r];
+        jsonBlob += rowData
+        jsonBlob += NEWLINE
+    }
+    //console.log(jsonBlob);
+    //console.log(mapData);
+    $("#output").val(jsonBlob);
+}
+function copyJSONToGrid(){
+    var rows = $("#output").val().split(NEWLINE);
+    for(var r=0;r<rows.length;r++){
+        if(rows[r] != "blank"){
+            var cols = rows[r].split(';');
+            var currentCol=0;
+            for(var c=0;c<cols.length;c++){
+                let grouping = cols[c].split(',');
+                let groupLen = parseInt(grouping[0]);
+                for(let t=0;t<groupLen;t++){
+                    let currentId = "#r"+r+'c'+(currentCol+t);
+                    $(currentId).attr('class', 'col');
+                    let colors  = grouping[1].split("");
+                    let fgClass = "fg"+getClassFromSelectValue("Fore",colors[0])
+                    let bgClass = "bg"+getClassFromSelectValue("Fore",colors[1])
+                    $(currentId).addClass(fgClass);
+                    $(currentId).addClass(bgClass);
+                }
+                currentCol+=groupLen;
+            }
+            //pad rest in black
+            for(let t=0;t<100-currentCol;t++){
+                let currentId = "#r"+r+'c'+(currentCol+t);
+                $(currentId).attr('class', 'col');
+                let fgClass = "fgBlack";
+                let bgClass = "bgBlack";
+                $(currentId).addClass(fgClass);
+                $(currentId).addClass(bgClass);
+            }
+        }else{
+            //Blank line!
+            for(let t=0;t<100;t++){
+                let currentId = "#r"+r+'c'+t;
+                $(currentId).attr('class', 'col');
+                let fgClass = "fgBlack";
+                let bgClass = "bgBlack";
+                $(currentId).addClass(fgClass);
+                $(currentId).addClass(bgClass);
+            }
+        }
+    }
+}
+//
+//
+function copyBlob(){
+    printJSONToConsole();
+    navigator.clipboard.writeText($("#output").val()).then(function () {
+        alert('Text copied')
+    }, function () {
+        alert('Failure to copy. Check permissions for clipboard')
+    });
+}
+</SCRIPT>
+</html>

@@ -1,15 +1,12 @@
 package session
 
 import (
-	"example/gotell/src/core"
-	"example/gotell/src/screen/region"
-	"example/gotell/src/tile"
+	"example/gotell/src/core/tile"
+	overrides "example/gotell/src/core_overrides"
+	"example/gotell/src/region"
 	"math"
 	"strconv"
-	"strings"
 )
-
-
 
 func handleInputMoving(input string,s *Session) bool{
 	s.Info.Set(MENU_MOVING("")...)
@@ -63,16 +60,16 @@ func handleInputMoving(input string,s *Session) bool{
 		enemyXdelta    := enemy.X - s.Player.X
 		enemyYdelta    := enemy.Y - s.Player.Y
 		delta          := math.Abs(float64(enemyXdelta)) + math.Abs(float64(enemyYdelta))
-		base_enemy_msg := "Enemy ["+enemy.Name+"] Level ["+strconv.Itoa(enemy.Stats.Level)+"] Health ["+strconv.Itoa(enemy.Stats.Health)+"] Hits ["+strconv.Itoa(enemy.CalcDefeat(&s.Player.Stats))+"]"
 
 		if (delta < 2) {
+			base_enemy_msg := "Enemy ["+enemy.Name+"] Level ["+strconv.Itoa(enemy.Stats.Level)+"] Health ["+strconv.Itoa(enemy.Stats.Health)+"] Hits ["+strconv.Itoa(enemy.CalcDefeat(&s.Player.Stats))+"]"
 			if (delta == 0) {
 				//FIGHTING!
 				removeEnemy     := s.Level.Enemies[idx].Interaction(&s.Player.Stats)
 				enemy_msgs[0]    = "ATTACKED ["+s.Player.GetDirString()+"]: "+base_enemy_msg
 				if(removeEnemy){
 					enemy_msgs[0] = "DEFEATED ["+enemy.Name+"]"
-					s.Screen.Buffer[s.Player.Y][s.Player.X].Pop()
+					s.Level.Buffer[s.Player.Y][s.Player.X].Pop()
 					s.Level.Enemies = append(s.Level.Enemies[:idx], s.Level.Enemies[idx+1:]...)
 				}
 
@@ -83,6 +80,12 @@ func handleInputMoving(input string,s *Session) bool{
 				if(enemyXdelta > 0){enemy_msgs = append(enemy_msgs,"EAST: "+base_enemy_msg)}
 				if(enemyYdelta < 0){enemy_msgs = append(enemy_msgs,"NORTH: "+base_enemy_msg)}
 				if(enemyYdelta > 0){enemy_msgs = append(enemy_msgs,"SOUTH: "+base_enemy_msg)}
+				if(tile.CheckAttributes(enemy.Tile,overrides.ATTR_BOSS)){
+					if(s.Level.BossMessage != ""){
+						s.Popup.Set(s.Level.BossMessage)
+						s.Level.BossMessage = ""
+					}
+				}
 			}
 			if(enemy_msgs[0] != "" || len(enemy_msgs) > 1){
 				s.Info.Set(enemy_msgs...)
@@ -100,14 +103,14 @@ func handleInputMoving(input string,s *Session) bool{
 		s.Player.Y = PrvY
 	}else{
 		// -- We are not dead nor did we fight. movement time
-		nextTile := s.Screen.Buffer[s.Player.Y][s.Player.X].Get()
+		nextTile := s.Level.Buffer[s.Player.Y][s.Player.X].Get()
 		if preventMovement(&s.Player.Tile, &nextTile) {
 			s.Player.X = PrvX
 			s.Player.Y = PrvY
 		}
 		// -- now do the player placement
-		s.Screen.Buffer[PrvY][PrvX].Pop()
-		s.Screen.Buffer[s.Player.Y][s.Player.X].Set(s.Player.Tile);
+		s.Level.Buffer[PrvY][PrvX].Pop()
+		s.Level.Buffer[s.Player.Y][s.Player.X].Set(s.Player.Tile);
 		// -- remove any fog, loop to see who is nearby
 		//TODO -- block based on who is nearby
 		xStart,xEnd,xInc,yStart,yEnd,yInc := s.Player.GetViewRanges()
@@ -117,6 +120,7 @@ func handleInputMoving(input string,s *Session) bool{
 			}
 		}
 	}
+
 	return false
 }
 //
@@ -126,7 +130,7 @@ func handleInputMoving(input string,s *Session) bool{
 //
 func preventMovement(tA *tile.Tile, tB *tile.Tile) bool {
 	var prevent bool = false
-	if strings.Contains(tA.Attribute, core.ATTR_SOLID) && strings.Contains(tB.Attribute, core.ATTR_SOLID) {
+	if(tile.CheckAttributes(*tA,overrides.ATTR_SOLID) && tile.CheckAttributes(*tB,overrides.ATTR_SOLID)) {
 		prevent = true
 	}
 
