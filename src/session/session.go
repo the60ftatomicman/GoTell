@@ -21,7 +21,8 @@ type Session struct {
 	Info       region.Info
 	Popup      region.Popup
 	Title      region.Splash
-	Story      region.Splash
+	Story      []region.Splash
+	currStory  int
 	State      State
 	Connection net.Conn
 }
@@ -35,8 +36,14 @@ func (s *Session) Initialize(c *net.Conn) {
 	s.Title = region.Splash{FilePath: "/Users/andrew.garber/repo/funksi/GoTell/src/region/splash_screens/title.splash",}
 	s.Title.Initialize([][]tile.Tile{})
 	
-	s.Story = region.Splash{FilePath: "/Users/andrew.garber/repo/funksi/GoTell/src/region/splash_screens/story_1.splash",}
-	s.Story.Initialize([][]tile.Tile{})
+	s.currStory = 0
+	s.Story = []region.Splash{
+		{FilePath: "/Users/andrew.garber/repo/funksi/GoTell/src/region/splash_screens/story_0.splash",},
+		{FilePath: "/Users/andrew.garber/repo/funksi/GoTell/src/region/splash_screens/story_1.splash",},
+	}
+	for i := 0;i<len(s.Story);i++ {
+		s.Story[i].Initialize([][]tile.Tile{})
+	}
 	
 	// Set State
 	s.State = STATE_TITLE
@@ -91,18 +98,24 @@ func (s *Session) Handle() {
 			if(s.Popup.HasMessages()){
 				s.State = STATE_POPUP
 			}
-			//TDO -- handle this a bit better....
-			if(s.State.Name == STATE_POPUP.Name){
-				s.Popup.Refresh()
-				s.Screen.Compile(&s.Profile, &s.Info,&s.Popup)
-			}else if (s.State.Name == STATE_TITLE.Name){
-				s.Screen.Compile(&s.Title)
-			}else{
-				//Refresh our dynamic regions
-				s.Level.Refresh()
-				s.Profile.Refresh()
-				s.Info.Refresh()
-				s.Screen.Compile(&s.Level,&s.Profile, &s.Info, &s.Header)
+			switch(s.State.Name){
+				case STATE_POPUP.Name:{
+					s.Popup.Refresh()
+					s.Screen.Compile(&s.Profile, &s.Info,&s.Popup)
+				}
+				case STATE_TITLE.Name:{
+					s.Screen.Compile(&s.Title)
+				}
+				case STATE_STORY.Name:{
+					s.Screen.Compile(&s.Story[s.currStory])
+				}
+				default:{
+					//On map!
+					s.Level.Refresh()
+					s.Profile.Refresh()
+					s.Info.Refresh()
+					s.Screen.Compile(&s.Level,&s.Profile, &s.Info, &s.Header)
+				}
 			}
 			s.Screen.Refresh()
 		}

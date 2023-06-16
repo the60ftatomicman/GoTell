@@ -28,6 +28,11 @@ var STATE_TITLE = State {
 	validInputs: []string{"b","B","h","H","s","S","q","Q"},
 	handleInput: handleInputTitle,
 }
+var STATE_STORY = State {
+	Name: "story",
+	validInputs: []string{"a","A","d","D","q"},
+	handleInput: handleInputStory,
+}
 var STATE_MOVING = State {
 	Name: "moving",
 	validInputs: KEY_DIRS,
