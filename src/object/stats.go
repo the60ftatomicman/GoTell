@@ -86,6 +86,7 @@ func (s *Stats)ChangeXP(deltaXP int) {
 func (s *Stats)checkEffects(attr string) bool{
 	return strings.Contains(s.Effects, attr)
 }
+
 func (s *Stats)AddEffects(attrs ...string){
 	for _,attr := range attrs{
 		if(!s.checkEffects(attr)){
@@ -93,6 +94,7 @@ func (s *Stats)AddEffects(attrs ...string){
 		}
 	}
 }
+
 func (s *Stats)RemoveEffects(attrs ...string){
 	for _,attr := range attrs{
 		s.Effects = strings.Replace(s.Effects,attr,"",1)

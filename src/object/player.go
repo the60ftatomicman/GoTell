@@ -19,7 +19,7 @@ type Player struct {
 func GeneratePlayer() Player {
 	return Player{
 		Name: "Billsy",
-		Class: "Hero",
+		Class: "Unmolded",
 		X:    1,
 		Y:    5,
 		Stats: Stats{

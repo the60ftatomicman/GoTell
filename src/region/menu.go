@@ -19,7 +19,11 @@ const MENU_COLUMNS = 100
 
 const MENU_LINE_VAR_CLASS = 1 // Line for selecting a class
 const MENU_LINE_VAR_LEVEL = 3 // Line for selecting the level
-var MENU_OPTIONS_CLASS  = []string{"Option A","Option B","Option C"} //TODO -- obviously this is getting turned into a struct! 
+var MENU_OPTIONS_CLASS  = []object.PlayerClass{
+	object.CLASS_PHYSICAL,
+	object.CLASS_MAGIC,
+	object.CLASS_SPEED,
+}
 var MENU_OPTIONS_LEVEL  = []string{"demolevel","Level B","Level C"} //TODO -- obviously this is getting turned into a struct! 
 
 // Menu
@@ -27,7 +31,6 @@ var MENU_OPTIONS_LEVEL  = []string{"demolevel","Level B","Level C"} //TODO -- ob
 // This area gives details on what the player is about to suggest.
 type Menu struct {
 	Player *object.Player
-	SelectedItem string `default:""`
 	CursorIdx int `default:0`
 	CursorClass int `default:0`
 	CursorLevel int `default:0`
@@ -100,8 +103,9 @@ func (p *Menu)compile()[][]tile.Tile{
 					fgColor = core.FgBlue
 					bgColor = core.BgWhite		
 				}
-				t = append(t, p.getBaseRow(1," CLASS: "+MENU_OPTIONS_CLASS[p.CursorClass],core.TermCodes(fgColor),core.TermCodes(bgColor)))
-				p.Player.Class = MENU_OPTIONS_CLASS[p.CursorClass]
+				t = append(t, p.getBaseRow(1," CLASS: "+MENU_OPTIONS_CLASS[p.CursorClass].Name,core.TermCodes(fgColor),core.TermCodes(bgColor)))
+				p.Player.Class = MENU_OPTIONS_CLASS[p.CursorClass].Name
+				p.Player.Stats = MENU_OPTIONS_CLASS[p.CursorClass].Stats
 			}
 			case MENU_LINE_VAR_LEVEL:{
 				fgColor := core.FgWhite
