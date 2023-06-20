@@ -23,25 +23,30 @@ var MENU_OPTIONS_CLASS  = []object.PlayerClass{
 	object.CLASS_PHYSICAL,
 	object.CLASS_MAGIC,
 	object.CLASS_SPEED,
+	object.CLASS_EXP,
+	object.CLASS_FOG,
 }
 var MENU_OPTIONS_LEVEL  = []string{"demolevel","Level B","Level C"} //TODO -- obviously this is getting turned into a struct! 
-
+const MENU_CURSOR_MENU  = 0
+const MENU_CURSOR_CLASS = 1
+const MENU_CURSOR_LEVEL = 2
 // Menu
 // Where we are going to setup our character
 // This area gives details on what the player is about to suggest.
 type Menu struct {
 	Player *object.Player
-	CursorIdx int `default:0`
-	CursorClass int `default:0`
-	CursorLevel int `default:0`
+	Cursors []int
 	Buffer [][]tile.Tile
 }
 
 func (p *Menu) Initialize(b [][]tile.Tile) {
+	// 0 == current menu selection
+	// 1 == CLASS menu seletion
+	// 2 == LEVEL menu selection
+	p.Cursors = []int{0,0,0}
 
 	//haha yeah I am going to ignore B passed in.
 	b = p.compile()
-	p.CursorIdx = 0
 	p.Buffer = screen.InitializeBuffer(MENU_LINES, MENU_COLUMNS, b,tile.BLANK)
 }
 
@@ -49,34 +54,29 @@ func (p *Menu) Get() (int, int, int, int, [][]tile.Tile) {
 	return MENU_LEFT, MENU_TOP, MENU_LINES, MENU_COLUMNS, p.Buffer
 }
 
-func (p *Menu) MoveCursor(delta int) {
-	p.CursorIdx += delta
-	menuItems := 1 // total minus 1
-	if (p.CursorIdx < 0){
-		p.CursorIdx = menuItems
-	} else if (p.CursorIdx > menuItems){
-		p.CursorIdx = 0
+func (p *Menu) updateCursor(cursoridx int, maxLimit int,delta int) {
+	p.Cursors[cursoridx] += delta
+	if (p.Cursors[cursoridx] < 0){
+		p.Cursors[cursoridx] = maxLimit
+	} else if (p.Cursors[cursoridx] > maxLimit){
+		p.Cursors[cursoridx] = 0
 	}
+}
+
+func (p *Menu) ChangeSelection(delta int) {
+	p.updateCursor(MENU_CURSOR_MENU,1,delta)
+}
+
+func (p *Menu) GetSelection() int {
+	return p.Cursors[MENU_CURSOR_MENU]
 }
 
 func (p *Menu) ChangeClass(delta int) {
-	p.CursorClass += delta
-	menuItems := 2 // total minus 1
-	if (p.CursorClass < 0){
-		p.CursorClass = menuItems
-	} else if (p.CursorClass > menuItems){
-		p.CursorClass = 0
-	}
+	p.updateCursor(MENU_CURSOR_CLASS,len(MENU_OPTIONS_CLASS)-1,delta)
 }
 
 func (p *Menu) ChangeLevel(delta int) {
-	p.CursorLevel += delta
-	menuItems := 2 // total minus 1
-	if (p.CursorLevel < 0){
-		p.CursorLevel = menuItems
-	} else if (p.CursorLevel > menuItems){
-		p.CursorLevel = 0
-	}
+	p.updateCursor(MENU_CURSOR_LEVEL,len(MENU_OPTIONS_LEVEL)-1,delta)
 }
 
 
@@ -99,22 +99,22 @@ func (p *Menu)compile()[][]tile.Tile{
 			case MENU_LINE_VAR_CLASS:{
 				fgColor := core.FgWhite
 				bgColor := core.BgBlack
-				if(p.CursorIdx == 0){
+				if(p.Cursors[MENU_CURSOR_MENU] == 0){
 					fgColor = core.FgBlue
 					bgColor = core.BgWhite		
 				}
-				t = append(t, p.getBaseRow(1," CLASS: "+MENU_OPTIONS_CLASS[p.CursorClass].Name,core.TermCodes(fgColor),core.TermCodes(bgColor)))
-				p.Player.Class = MENU_OPTIONS_CLASS[p.CursorClass].Name
-				p.Player.Stats = MENU_OPTIONS_CLASS[p.CursorClass].Stats
+				t = append(t, p.getBaseRow(1," CLASS: "+MENU_OPTIONS_CLASS[p.Cursors[MENU_CURSOR_CLASS]].Name,core.TermCodes(fgColor),core.TermCodes(bgColor)))
+				p.Player.Class = MENU_OPTIONS_CLASS[p.Cursors[MENU_CURSOR_CLASS]].Name
+				p.Player.Stats = MENU_OPTIONS_CLASS[p.Cursors[MENU_CURSOR_CLASS]].Stats
 			}
 			case MENU_LINE_VAR_LEVEL:{
 				fgColor := core.FgWhite
 				bgColor := core.BgBlack
-				if(p.CursorIdx == 1){
+				if(p.Cursors[MENU_CURSOR_MENU] == 1){
 					fgColor = core.FgBlue
 					bgColor = core.BgWhite		
 				}
-				t = append(t, p.getBaseRow(1," LEVEL: "+MENU_OPTIONS_LEVEL[p.CursorLevel],core.TermCodes(fgColor),core.TermCodes(bgColor)))
+				t = append(t, p.getBaseRow(1," LEVEL: "+MENU_OPTIONS_LEVEL[p.Cursors[MENU_CURSOR_LEVEL]],core.TermCodes(fgColor),core.TermCodes(bgColor)))
 			}
 			default: {
 				t = append(t, tile.GenerateHorizontalDivider(MENU_COLUMNS-2,

@@ -53,3 +53,35 @@ var CLASS_SPEED = PlayerClass{
 		Vision:    4,  // how FAR into fog we can see
 	},
 }
+var CLASS_EXP = PlayerClass{
+	Name: "Scholar",
+	Stats: Stats{
+		Level:     1,
+		LevelMod:  5,
+		MaxHealth: 100,
+		MaxMana:   100,
+		Health:    100,
+		Mana:      100,
+		Defense:   1,
+		Offense:   1,
+		Speed:     2,
+		FogRet:    25, // how much MANA and HEALTH we get back when uncovering FOG
+		Vision:    3,  // how FAR into fog we can see
+	},
+}
+var CLASS_FOG = PlayerClass{
+	Name: "Detective",
+	Stats: Stats{
+		Level:     1,
+		LevelMod:  10,
+		MaxHealth: 110,
+		MaxMana:   110,
+		Health:    110,
+		Mana:      110,
+		Defense:   1,
+		Offense:   1,
+		Speed:     1,
+		FogRet:    50, // how much MANA and HEALTH we get back when uncovering FOG
+		Vision:    3,  // how FAR into fog we can see
+	},
+}
