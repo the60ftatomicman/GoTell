@@ -21,6 +21,7 @@ type Session struct {
 	Info       region.Info
 	Popup      region.Popup
 	Title      region.Splash
+	Menu       region.Menu
 	Story      []region.Splash
 	currStory  int
 	State      State
@@ -48,6 +49,9 @@ func (s *Session) Initialize(c *net.Conn) {
 	// Set State
 	s.State = STATE_TITLE
 	
+
+	s.Menu = region.Menu{}
+	s.Menu.Initialize([][]tile.Tile{})
 	//s.State = STATE_MOVING // -- DEBUG!
 	
 	//---------- Generate Player tile
@@ -108,6 +112,9 @@ func (s *Session) Handle() {
 				}
 				case STATE_STORY.Name:{
 					s.Screen.Compile(&s.Story[s.currStory])
+				}
+				case STATE_MENU.Name:{
+					s.Screen.Compile(&s.Menu)
 				}
 				default:{
 					//On map!

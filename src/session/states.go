@@ -21,6 +21,7 @@ func (s *State) IsInputValid(input string) bool{
 }
 
 var KEY_DIRS = []string{"w","a","s","d"}
+var KEY_MENU = []string{"w","a","s","d","b"}
 var KEY_QUIT = "Q"
 
 var STATE_TITLE = State {
@@ -32,6 +33,11 @@ var STATE_STORY = State {
 	Name: "story",
 	validInputs: []string{"a","A","d","D","q"},
 	handleInput: handleInputStory,
+}
+var STATE_MENU = State {
+	Name: "menu",
+	validInputs: KEY_MENU,
+	handleInput: handleInputMenu,
 }
 var STATE_MOVING = State {
 	Name: "moving",
