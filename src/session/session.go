@@ -49,13 +49,15 @@ func (s *Session) Initialize(c *net.Conn) {
 	// Set State
 	s.State = STATE_TITLE
 	
-
-	s.Menu = region.Menu{}
+	//---------- Generate Player tile
+	s.Player = object.GeneratePlayer()
+	s.Menu = region.Menu{
+		Player: &s.Player,
+	}
 	s.Menu.Initialize([][]tile.Tile{})
 	//s.State = STATE_MOVING // -- DEBUG!
 	
-	//---------- Generate Player tile
-	s.Player = object.GeneratePlayer()
+
 	s.Screen = screen.Screen{
 		Buffer: screen.BlankScreen(),
 		Raw:    "",
@@ -114,6 +116,7 @@ func (s *Session) Handle() {
 					s.Screen.Compile(&s.Story[s.currStory])
 				}
 				case STATE_MENU.Name:{
+					s.Menu.Refresh()
 					s.Screen.Compile(&s.Menu)
 				}
 				default:{

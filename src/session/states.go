@@ -21,7 +21,7 @@ func (s *State) IsInputValid(input string) bool{
 }
 
 var KEY_DIRS = []string{"w","a","s","d"}
-var KEY_MENU = []string{"w","a","s","d","b"}
+var KEY_MENU = []string{"w","a","s","d","g"}
 var KEY_QUIT = "Q"
 
 var STATE_TITLE = State {
