@@ -30,6 +30,9 @@ func handleInputMenu(input string, s *Session) bool{
 		case "s":{s.Menu.ChangeSelection(1)}
 		case "g":{
 			s.Player = *s.Menu.Player
+			s.Level[s.currLevel].Player = &s.Player
+			//TODO this is dumb
+			s.Level[s.currLevel].Initialize(s.Level[s.currLevel].ReadDataFromFile())
 			s.State = STATE_MOVING
 		}
 		default: {}

@@ -48,7 +48,7 @@ func handleInputMoving(input string,s *Session) bool{
 	}
 	//New potential coordinates chosen.
 	// Check Items
-	for _,item := range s.Level.Items {
+	for _,item := range s.Level[s.currLevel].Items {
 		if (item.X == s.Player.X && item.Y == s.Player.Y){
 			s.Info.Set(MENU_MOVING(item.Name)...)
 		}
@@ -56,7 +56,7 @@ func handleInputMoving(input string,s *Session) bool{
 	// Test if we are fighting
 	prev_status   := s.Info.Message[0];
 	enemy_msgs    := []string{prev_status}
-	for idx,enemy := range s.Level.Enemies {
+	for idx,enemy := range s.Level[s.currLevel].Enemies {
 		enemyXdelta    := enemy.X - s.Player.X
 		enemyYdelta    := enemy.Y - s.Player.Y
 		delta          := math.Abs(float64(enemyXdelta)) + math.Abs(float64(enemyYdelta))
@@ -69,12 +69,12 @@ func handleInputMoving(input string,s *Session) bool{
 			}
 			if (delta == 0) {
 				//FIGHTING!
-				removeEnemy     := s.Level.Enemies[idx].Interaction(&s.Player.Stats)
+				removeEnemy     := s.Level[s.currLevel].Enemies[idx].Interaction(&s.Player.Stats)
 				enemy_msgs[0]    = "ATTACKED ["+s.Player.GetDirString()+"]: "+base_enemy_msg
 				if(removeEnemy){
 					enemy_msgs[0] = "DEFEATED ["+enemy.Name+"]"
-					s.Level.Buffer[s.Player.Y][s.Player.X].Pop()
-					s.Level.Enemies = append(s.Level.Enemies[:idx], s.Level.Enemies[idx+1:]...)
+					s.Level[s.currLevel].Buffer[s.Player.Y][s.Player.X].Pop()
+					s.Level[s.currLevel].Enemies = append(s.Level[s.currLevel].Enemies[:idx], s.Level[s.currLevel].Enemies[idx+1:]...)
 				}
 
 			}
@@ -85,9 +85,9 @@ func handleInputMoving(input string,s *Session) bool{
 				if(enemyYdelta < 0){enemy_msgs = append(enemy_msgs,"NORTH: "+base_enemy_msg)}
 				if(enemyYdelta > 0){enemy_msgs = append(enemy_msgs,"SOUTH: "+base_enemy_msg)}
 				if(tile.CheckAttributes(enemy.Tile,overrides.ATTR_BOSS)){
-					if(s.Level.BossMessage != ""){
-						s.Popup.Set(s.Level.BossMessage)
-						s.Level.BossMessage = ""
+					if(s.Level[s.currLevel].BossMessage != ""){
+						s.Popup.Set(s.Level[s.currLevel].BossMessage)
+						s.Level[s.currLevel].BossMessage = ""
 					}
 				}
 			}
@@ -107,14 +107,14 @@ func handleInputMoving(input string,s *Session) bool{
 		s.Player.Y = PrvY
 	}else{
 		// -- We are not dead nor did we fight. movement time
-		nextTile := s.Level.Buffer[s.Player.Y][s.Player.X].Get()
+		nextTile := s.Level[s.currLevel].Buffer[s.Player.Y][s.Player.X].Get()
 		if preventMovement(&s.Player.Tile, &nextTile) {
 			s.Player.X = PrvX
 			s.Player.Y = PrvY
 		}
 		// -- now do the player placement
-		s.Level.Buffer[PrvY][PrvX].Pop()
-		s.Level.Buffer[s.Player.Y][s.Player.X].Set(s.Player.Tile);
+		s.Level[s.currLevel].Buffer[PrvY][PrvX].Pop()
+		s.Level[s.currLevel].Buffer[s.Player.Y][s.Player.X].Set(s.Player.Tile);
 		// -- remove any fog, loop to see who is nearby
 		//TODO -- block based on who is nearby
 		xStart,xEnd,xInc,yStart,yEnd,yInc := s.Player.GetViewRanges()

@@ -96,7 +96,8 @@ func (p *Menu)compile()[][]tile.Tile{
 		getBorderTile(),
 	))
 
-	t = append(t, p.getBaseRow(1,-1,"----- Choose your settings ----- ",core.FgWhite))
+	// Draw LEFT side
+	t = append(t, p.getBaseRow(1,"----- Choose your settings ----- ",core.FgWhite))
 	for i := 0; i < MENU_LINES-4; i++ {
 		switch(i){
 			case MENU_LINE_VAR_CLASS:{
@@ -106,7 +107,7 @@ func (p *Menu)compile()[][]tile.Tile{
 					fgColor = core.FgBlue
 					bgColor = core.BgWhite		
 				}
-				t = append(t, p.getBaseRow(1,i," CLASS: "+MENU_OPTIONS_CLASS[p.Cursors[MENU_CURSOR_CLASS]].Name,core.TermCodes(fgColor),core.TermCodes(bgColor)))
+				t = append(t, p.getBaseRow(1," CLASS: "+MENU_OPTIONS_CLASS[p.Cursors[MENU_CURSOR_CLASS]].Name,core.TermCodes(fgColor),core.TermCodes(bgColor)))
 				p.Player.Class = MENU_OPTIONS_CLASS[p.Cursors[MENU_CURSOR_CLASS]].Name
 				p.Player.Stats = MENU_OPTIONS_CLASS[p.Cursors[MENU_CURSOR_CLASS]].Stats
 			}
@@ -117,13 +118,36 @@ func (p *Menu)compile()[][]tile.Tile{
 					fgColor = core.FgBlue
 					bgColor = core.BgWhite		
 				}
-				t = append(t, p.getBaseRow(1,i," LEVEL: "+MENU_OPTIONS_LEVEL[p.Cursors[MENU_CURSOR_LEVEL]],core.TermCodes(fgColor),core.TermCodes(bgColor)))
+				t = append(t, p.getBaseRow(1," LEVEL: "+MENU_OPTIONS_LEVEL[p.Cursors[MENU_CURSOR_LEVEL]],core.TermCodes(fgColor),core.TermCodes(bgColor)))
 			}
 			default: {
-				t = append(t, p.getBaseRow(1,i," ",core.FgWhite,core.FgBlack))
+				t = append(t, p.getBaseRow(1," ",core.FgWhite,core.BgBlack))
 			}
 		}
-
+	}
+	t[2][MENU_COL_DIVIDER] = tile.GENERIC_TEXT("|",core.FgCyan,core.BgBlack)
+	t[2] = p.putMessageInTiles(t[2],MENU_COL_DIVIDER+1,"----- Details-----",core.FgWhite)
+	t[3][MENU_COL_DIVIDER] = tile.GENERIC_TEXT("|",core.FgCyan,core.BgBlack)
+	t[3] = p.putMessageInTiles(t[3],MENU_COL_DIVIDER+1,"----- Class",core.FgWhite)
+	nextLine:= 4
+	// Draw RIGHT side
+	classDesc := MENU_OPTIONS_CLASS[p.Cursors[MENU_CURSOR_CLASS]].Description
+	for i := 0; i < len(classDesc); i++ {
+		idx:= nextLine+i
+		t[idx][MENU_COL_DIVIDER] = tile.GENERIC_TEXT("|",core.FgCyan,core.BgBlack)
+		t[idx] = p.putMessageInTiles(t[idx],MENU_COL_DIVIDER+1,classDesc[i],core.FgGrey)
+	}
+	nextLine+=len(classDesc)
+	t[nextLine][MENU_COL_DIVIDER] = tile.GENERIC_TEXT("|",core.FgCyan,core.BgBlack)
+	nextLine++
+	t[nextLine][MENU_COL_DIVIDER] = tile.GENERIC_TEXT("|",core.FgCyan,core.BgBlack)
+	t[nextLine] = p.putMessageInTiles(t[nextLine],MENU_COL_DIVIDER+1,"----- Level",core.FgWhite) 
+	nextLine++
+	levelDesc := []string{"Blah Blah Blah","Some Default Text Here"}//MENU_OPTIONS_CLASS[p.Cursors[MENU_CURSOR_LEVEL]].
+	for i := 0; i < len(levelDesc); i++ {
+		idx:= nextLine+i
+		t[idx][MENU_COL_DIVIDER] = tile.GENERIC_TEXT("|",core.FgCyan,core.BgBlack)
+		t[idx] = p.putMessageInTiles(t[idx],MENU_COL_DIVIDER+1,levelDesc[i],core.FgGrey)
 	}
 
 	t = append(t, tile.GenerateHorizontalDivider(MENU_COLUMNS-2,
@@ -134,13 +158,13 @@ func (p *Menu)compile()[][]tile.Tile{
 	return t
 }
 
-func (p *Menu)getBaseRow(colIdx int, rowIdx int,extraMsg string,colors ...core.TermCodes ) []tile.Tile {
+func (p *Menu)getBaseRow(colIdx int,extraMsg string,colors ...core.TermCodes ) []tile.Tile {
 	t        := []tile.Tile{tile.BLANK}
 	msgArray := strings.Split(extraMsg, "")
 	endIdx   := colIdx+len(msgArray)
 
-	if(endIdx > MENU_COL_DIVIDER){
-		endIdx = MENU_COL_DIVIDER
+	if(endIdx > MENU_COLUMNS-1){
+		endIdx = MENU_COLUMNS-1
 	}
 
 	var bgColor core.TermCodes = core.BgBlack
@@ -148,36 +172,33 @@ func (p *Menu)getBaseRow(colIdx int, rowIdx int,extraMsg string,colors ...core.T
 		bgColor = colors[1]
 	}
 	//Draw and populate our left Side
-	for i := 0; i <= MENU_COL_DIVIDER; i++ {
+	for i := 0; i < MENU_COLUMNS-1; i++ {
 		if(i >= colIdx && i < endIdx){
 			t = append(t, tile.GENERIC_TEXT(msgArray[i-colIdx],colors[0],bgColor))
-		}else if i == MENU_COL_DIVIDER {
-			t = append(t, tile.GENERIC_TEXT("|",core.FgCyan,core.BgBlack))
-		}else{
+		}else {
 			t = append(t, tile.GENERIC_TEXT(" ",colors[0],core.BgBlack))
 		}
 	}
+	return t
+}
 
-	
-	if(rowIdx > -1 && rowIdx < len(MENU_OPTIONS_CLASS[p.Cursors[MENU_CURSOR_CLASS]].Description)){
-		classDesc := strings.Split(MENU_OPTIONS_CLASS[p.Cursors[MENU_CURSOR_CLASS]].Description[rowIdx],"")
-		endIdx = len(classDesc)
-		if(endIdx > MENU_COLUMNS-1){
-			endIdx = MENU_COLUMNS-1
-		}
-		//Draw and populate our right Side
-		currentChar := 0
-		for i := MENU_COL_DIVIDER+1; i < MENU_COLUMNS-1; i++ {
-			if(currentChar < endIdx){
-				t = append(t, tile.GENERIC_TEXT(classDesc[currentChar],core.FgWhite,core.BgBlack))
-				currentChar++
-			}else{
-				t = append(t, tile.GENERIC_TEXT(" ",colors[0],core.BgBlack))
-			}
-		}
+func (p *Menu)putMessageInTiles(t []tile.Tile,colIdx int,extraMsg string,colors ...core.TermCodes)[]tile.Tile{
+	msgArray := strings.Split(extraMsg, "")
+	endIdx   := len(msgArray)
+
+	if(colIdx+endIdx > MENU_COLUMNS-1){
+		endIdx = MENU_COLUMNS-1-colIdx
+	}
+
+	var bgColor core.TermCodes = core.BgBlack
+	if(len(colors) > 1){
+		bgColor = colors[1]
+	}
+	//Draw and populate our left Side
+	for i := 0; i < endIdx; i++ {
+		t[colIdx+i] = tile.GENERIC_TEXT(msgArray[i],colors[0],bgColor)
 	}
 	return t
-
 }
 
 func getBorderTile() tile.Tile {

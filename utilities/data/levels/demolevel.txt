@@ -5,6 +5,9 @@ author:Andy Garber
 max_enemies:15
 max_items:40
 boss_message: HA, you think you can defeat ME?
+#### SUMMARY ####
+It is the demo level.
+Play it wont ya?
 #### LEVEL ####
 80w
 10w,27b,6w,27b,10w

@@ -16,7 +16,9 @@ type Session struct {
 	Player     object.Player
 	Screen     screen.Screen
 	Header     region.Header
-	Level      region.Level
+	//Level      region.Level
+	currLevel  int
+	Level      []region.Level
 	Profile    region.Profile
 	Info       region.Info
 	Popup      region.Popup
@@ -64,8 +66,13 @@ func (s *Session) Initialize(c *net.Conn) {
 	s.Header = region.Header{}
 	s.Header.Initialize([][]tile.Tile{})
 	// ---------- Generate Level region
-	s.Level = region.Level{Player: &s.Player}
-	s.Level.Initialize(s.Level.ReadDataFromFile())
+	//s.Level = region.Level{Player: &s.Player}
+	//s.Level.Initialize(s.Level.ReadDataFromFile())
+	s.currLevel = 0
+	s.Level = []region.Level{
+		{Filename: "./utilities/data/levels/demolevel.txt"},
+		{Filename: "./utilities/data/levels/demolevel.txt"},
+	}
 	// ------------ Generate Profile region
 	s.Profile = region.Profile{}
 	s.Profile.Initialize(s.Profile.ReadDataFromPlayer(&s.Player))
@@ -119,10 +126,10 @@ func (s *Session) Handle() {
 				}
 				default:{
 					//On map!
-					s.Level.Refresh()
+					s.Level[s.currLevel].Refresh()
 					s.Profile.Refresh()
 					s.Info.Refresh()
-					s.Screen.Compile(&s.Level,&s.Profile, &s.Info, &s.Header)
+					s.Screen.Compile(&s.Level[s.currLevel],&s.Profile, &s.Info, &s.Header)
 				}
 			}
 			s.Screen.Refresh()
