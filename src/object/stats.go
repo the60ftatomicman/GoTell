@@ -2,6 +2,7 @@ package object
 
 import (
 	overrides "example/gotell/src/core_overrides"
+	"math"
 	"strings"
 )
 
@@ -14,7 +15,9 @@ type Stats struct {
 	LevelMod  int `default:10`  // Amount of XP required for entity to reach the next level
 	XP        int `default:0`   // Current XP
 	Defense   int `default:1`   // Used in calculating how much dmg an entity takes
+	DefMod    int `default:1`   // Is multiplied by level than added to Defense.
 	Offense   int `default:1`   // Use in calculating how much dmg an entity gives
+	OffMod    int `default:1`   // Is multiplied by level than added to Offense.
 	Speed     int `default:1`   // Determines turn order in combat
 	Favor     int `default:0`   // Like mana for Gods. TODO -- implement using this!
 	FogRet    int `default:25`  // How much HEALTH and MANA is returned when a FOG tile is removed
@@ -24,20 +27,19 @@ type Stats struct {
 
 //TODO -- at the moment this "works" but my enemies and player need to have their stats modified
 // to really make this AOK
-func statCalc_Battle_Percentage(off int, def int, offMod int,defHP int) int{
+func statCalc_Battle_Percentage(off int, offMod int,offLevel int,def int, defMod, defLevel int,defHP int) int{
 	dmg := 0
-	if((off * offMod) > def) {
-		var offPercentage float64   = (float64(off) * float64(offMod)) / 100.0
-		var defPercentage float64   = float64(def) / 100.0
-		var deltaPercentage float64 = offPercentage - defPercentage
-		var healthPoints    float64 = float64(defHP) * deltaPercentage
-		if healthPoints < 1.0 {healthPoints = 1}
-		dmg = int(healthPoints)
+	var offPercentage int = off + (offMod * (offLevel-1))
+	var defPercentage int = def + (defMod * (defLevel-1))
+	if(offPercentage > defPercentage) {
+		var deltaCalc       float64 = float64(offPercentage - defPercentage)
+		var deltaPercentage float64 = deltaCalc / 100
+		dmg = int(math.Ceil(float64(defHP) * deltaPercentage))
 	}
 	return dmg
 }
 
-func statCalc_Battle(off int, def int, offMod int) int{
+func statCalc_Battle_Static(off int, def int, offMod int) int{
 	dmg := 0
 	if((off * offMod) > def){
 		dmg = (off * offMod) - def

@@ -18,15 +18,21 @@ type Enemy struct {
 func (e *Enemy) Interaction(s *Stats) bool {
 	removeEnemy := false
 	// Do dmg
+	playerDmg := statCalc_Battle_Percentage(
+					s.Offense,s.OffMod,s.Level,
+					e.Stats.Defense,e.Stats.DefMod,e.Stats.Level,e.Stats.MaxHealth)
+	enemyDmg  := statCalc_Battle_Percentage(
+					e.Stats.Offense,e.Stats.OffMod,e.Stats.Level,
+					s.Defense,s.DefMod,s.Level,s.MaxHealth)
 	if(s.Speed >= e.Stats.Speed){
-		e.Stats.UpdateHealth(statCalc_Battle(s.Offense,e.Stats.Defense,s.Level) * -1)
+		e.Stats.UpdateHealth(playerDmg * -1)
 		if (e.Stats.Health > 0) {
-			s.UpdateHealth(statCalc_Battle(e.Stats.Offense,s.Defense,e.Stats.Level) * -1)
+			s.UpdateHealth(enemyDmg * -1)
 		}
 	}else{
-		s.UpdateHealth(statCalc_Battle(e.Stats.Offense,s.Defense,e.Stats.Level) * -1)
+		s.UpdateHealth(enemyDmg * -1)
 		if (s.Health > 0) {
-			e.Stats.UpdateHealth(statCalc_Battle(s.Offense,e.Stats.Defense,s.Level) * -1)
+			e.Stats.UpdateHealth(playerDmg * -1)
 		}
 	}
 	//Did player die?
@@ -57,12 +63,22 @@ func (e *Enemy) applyEffects(s *Stats) {
 	}
 } 
 
-func (e *Enemy) CalcDefeat(s *Stats) int {
-	hits := e.Stats.Health / statCalc_Battle(s.Offense,e.Stats.Defense,s.Level)
+func (e *Enemy) CalcDefeat(s *Stats) (int,bool) {
+	//hits := e.Stats.Health / statCalc_Battle(s.Offense,e.Stats.Defense,s.Level)
+	playerDmg := statCalc_Battle_Percentage(
+								s.Offense,s.OffMod,s.Level,
+								e.Stats.Defense,e.Stats.DefMod,e.Stats.Level,e.Stats.MaxHealth)
+	enemyDmg := statCalc_Battle_Percentage(
+								e.Stats.Offense,e.Stats.OffMod,e.Stats.Level,
+								s.Defense,s.DefMod,s.Level,s.MaxHealth)
+	if playerDmg == 0 {
+		playerDmg++
+	}
+	hits := e.Stats.Health / playerDmg
 	if hits < 1 {
 		hits = 1
 	}
-	return hits
+	return hits,(enemyDmg > s.Health)
 }
 
 func (e *Enemy) Convert(s *Stats) {}
@@ -139,8 +155,8 @@ var ENEMY_MOLEMAN = Enemy{
 	Stats: Stats{
 		MaxHealth: 10,
 		Health:    10,
-		Defense:   0,
-		Offense:   5,
+		Defense:   10,
+		Offense:   40,
 		Speed:     1,
 		FogRet:    20,
 		XP:         5,
@@ -152,10 +168,10 @@ var ENEMY_MOLEMAN = Enemy{
 var ENEMY_BOSS_MOLEMAN = Enemy{
 	Name:      "Boss Moleman",
 	Stats: Stats{
-		MaxHealth: 10,
-		Health:    10,
-		Defense:   0,
-		Offense:   5,
+		MaxHealth: 20,
+		Health:    20,
+		Defense:   50,
+		Offense:   50,
 		Speed:     1,
 		FogRet:    20,
 		XP:         5,
@@ -167,10 +183,10 @@ var ENEMY_BOSS_MOLEMAN = Enemy{
 var ENEMY_SNAKE = Enemy{
 	Name: "Snake",
 	Stats: Stats{
-		MaxHealth: 5,
-		Health:    5,
-		Defense:   0,
-		Offense:   5,
+		MaxHealth: 10,
+		Health:    10,
+		Defense:   10,
+		Offense:   20,
 		Speed:     5,
 		FogRet:    20,
 		XP:         5,
@@ -178,14 +194,14 @@ var ENEMY_SNAKE = Enemy{
 	Tile : getEnemyTile(overrides.ENEMY_BASIC,overrides.ATTR_POISONOUS),
 }
 
-// Poisonous! TODO, make this a more generic to get the tiles....
+// Mana Burn!
 var ENEMY_GHOST = Enemy{
 	Name: "Ghost",
 	Stats: Stats{
-		MaxHealth: 5,
-		Health:    5,
-		Defense:   0,
-		Offense:   5,
+		MaxHealth: 10,
+		Health:    10,
+		Defense:   10,
+		Offense:   20,
 		Speed:     5,
 		FogRet:    20,
 		XP:        5,

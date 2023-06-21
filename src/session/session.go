@@ -34,13 +34,13 @@ func (s *Session) Initialize(c *net.Conn) {
 	//S etup window
 	core.HandleOutputToClient(s.Connection, 0, 0, core.Clear()+core.ResizeTerminal(screen.SCREEN_HEIGHT, screen.SCREEN_WIDTH))
 	// Set all of our SPLASH Screens
-	s.Title = region.Splash{FilePath: "/Users/andrew.garber/repo/funksi/GoTell/src/region/splash_screens/title.splash",}
+	s.Title = region.Splash{FilePath: "/Users/andrew.garber/repo/funksi/GoTell/utilities/data/splash_screens/title.splash",}
 	s.Title.Initialize([][]tile.Tile{})
 	
 	s.currStory = 0
 	s.Story = []region.Splash{
-		{FilePath: "/Users/andrew.garber/repo/funksi/GoTell/src/region/splash_screens/story_0.splash",},
-		{FilePath: "/Users/andrew.garber/repo/funksi/GoTell/src/region/splash_screens/story_1.splash",},
+		{FilePath: "/Users/andrew.garber/repo/funksi/GoTell/utilities/data/splash_screens/story_0.splash",},
+		{FilePath: "/Users/andrew.garber/repo/funksi/GoTell/utilities/data/splash_screens/story_1.splash",},
 	}
 	for i := 0;i<len(s.Story);i++ {
 		s.Story[i].Initialize([][]tile.Tile{})
@@ -55,8 +55,6 @@ func (s *Session) Initialize(c *net.Conn) {
 		Player: &s.Player,
 	}
 	s.Menu.Initialize([][]tile.Tile{})
-	//s.State = STATE_MOVING // -- DEBUG!
-	
 
 	s.Screen = screen.Screen{
 		Buffer: screen.BlankScreen(),

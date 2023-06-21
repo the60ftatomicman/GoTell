@@ -113,7 +113,7 @@ func (m *Level) getFileRegions()[][]string {
 	// exPath        := filepath.Dir(ex)
 	// readFile,err  := os.Open(exPath+"/utilities/data/demolevel.txt") 
 	// -- LOCAL
-	readFile,err  := os.Open("./utilities/data/demolevel.txt")
+	readFile,err  := os.Open("./utilities/data/levels/demolevel.txt")
 	if(err != nil){
 		print(err)
 		panic(err)
