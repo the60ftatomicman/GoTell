@@ -62,11 +62,11 @@ func handleInputMoving(input string,s *Session) bool{
 		delta          := math.Abs(float64(enemyXdelta)) + math.Abs(float64(enemyYdelta))
 
 		if (delta < 2) {
-			hitsToDefeat,willIDie := enemy.CalcDefeat(&s.Player.Stats)
-			base_enemy_msg := "Enemy ["+enemy.Name+"] Level ["+strconv.Itoa(enemy.Stats.Level)+"] Health ["+strconv.Itoa(enemy.Stats.Health)+"] Hits ["+strconv.Itoa(hitsToDefeat)+"]"
-			if willIDie {
-				base_enemy_msg += " THIS'll KILL YOU"
-			}
+			pDmg,eDmg := enemy.CalcDefeat(&s.Player.Stats)
+			base_enemy_msg := "Enemy ["+enemy.Name+"] Lvl ["+strconv.Itoa(enemy.Stats.Level)+"] " 
+			base_enemy_msg += "Hp ["+strconv.Itoa(enemy.Stats.Health)+"/"+strconv.Itoa(enemy.Stats.GetHealthWithMod())+"] "
+			base_enemy_msg +="Dmg you ["+strconv.Itoa(eDmg)+"] "
+			base_enemy_msg +="Dmg them ["+strconv.Itoa(pDmg)+"]"
 			if (delta == 0) {
 				//FIGHTING!
 				removeEnemy     := s.Level[s.currLevel].Enemies[idx].Interaction(&s.Player.Stats)

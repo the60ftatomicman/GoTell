@@ -18,12 +18,12 @@ type Enemy struct {
 func (e *Enemy) Interaction(s *Stats) bool {
 	removeEnemy := false
 	// Do dmg
-	playerDmg := statCalc_Battle_Percentage(
+	playerDmg := statCalc_Battle(
 					s.Offense,s.OffMod,s.Level,
-					e.Stats.Defense,e.Stats.DefMod,e.Stats.Level,e.Stats.MaxHealth)
-	enemyDmg  := statCalc_Battle_Percentage(
+					e.Stats.Defense,e.Stats.DefMod,e.Stats.Level)
+	enemyDmg  := statCalc_Battle(
 					e.Stats.Offense,e.Stats.OffMod,e.Stats.Level,
-					s.Defense,s.DefMod,s.Level,s.MaxHealth)
+					s.Defense,s.DefMod,s.Level)
 	if(s.Speed >= e.Stats.Speed){
 		e.Stats.UpdateHealth(playerDmg * -1)
 		if (e.Stats.Health > 0) {
@@ -63,22 +63,15 @@ func (e *Enemy) applyEffects(s *Stats) {
 	}
 } 
 
-func (e *Enemy) CalcDefeat(s *Stats) (int,bool) {
-	//hits := e.Stats.Health / statCalc_Battle(s.Offense,e.Stats.Defense,s.Level)
-	playerDmg := statCalc_Battle_Percentage(
+func (e *Enemy) CalcDefeat(s *Stats) (int,int) {
+	playerDmg := statCalc_Battle(
 								s.Offense,s.OffMod,s.Level,
-								e.Stats.Defense,e.Stats.DefMod,e.Stats.Level,e.Stats.MaxHealth)
-	enemyDmg := statCalc_Battle_Percentage(
+								e.Stats.Defense,e.Stats.DefMod,e.Stats.Level)
+	enemyDmg := statCalc_Battle(
 								e.Stats.Offense,e.Stats.OffMod,e.Stats.Level,
-								s.Defense,s.DefMod,s.Level,s.MaxHealth)
-	if playerDmg == 0 {
-		playerDmg++
-	}
-	hits := e.Stats.Health / playerDmg
-	if hits < 1 {
-		hits = 1
-	}
-	return hits,(enemyDmg > s.Health)
+								s.Defense,s.DefMod,s.Level)
+
+	return playerDmg,enemyDmg
 }
 
 func (e *Enemy) Convert(s *Stats) {}
@@ -116,10 +109,10 @@ func GenerateEnemiesFromFile(fileData []string) [10][]Enemy {
 //
 //
 var dataConverterEnemy = map[string]Enemy{
-     "ENEMY_BOSS_MOLEMAN": ENEMY_BOSS_MOLEMAN,
-     "ENEMY_MOLEMAN"     : ENEMY_MOLEMAN,
-	 "ENEMY_SNAKE"       : ENEMY_SNAKE,
-	 "ENEMY_GHOST"       : ENEMY_GHOST,
+     "ENEMY_BOSS_MELEE" : ENEMY_BOSS_MELEE,
+     "ENEMY_MELEE"      : ENEMY_MELEE,
+	 "ENEMY_POISON"     : ENEMY_POISON,
+	 "ENEMY_MANABURN"   : ENEMY_MANABURN,
 }
 
 func fileParserEnemy(enemyVals string) ([]string,[]Enemy){
@@ -150,60 +143,72 @@ func getEnemyTile(t tile.Tile, attrs ...string) tile.Tile{
 	return t
 }
 // Basic Grunt
-var ENEMY_MOLEMAN = Enemy{
+var ENEMY_MELEE = Enemy{
 	Name: "Moleman",
 	Stats: Stats{
-		MaxHealth: 10,
-		Health:    10,
-		Defense:   10,
-		Offense:   40,
-		Speed:     1,
-		FogRet:    20,
-		XP:         5,
+		MaxHealth: 50,
+		HealthMod: 5,
+		Health:    50,
+		Defense:   5,
+		DefMod:    11,
+		Offense:   5,
+		OffMod:    11,
+		Speed:     2,
+		FogRet:    30, 
+		XP:        5,
 	},
 	Tile : getEnemyTile(overrides.ENEMY_BASIC),
 }
 
 // Boss of the basic grunts
-var ENEMY_BOSS_MOLEMAN = Enemy{
-	Name:      "Boss Moleman",
+var ENEMY_BOSS_MELEE = Enemy{
+	Name: "Boss Moleman",
 	Stats: Stats{
-		MaxHealth: 20,
-		Health:    20,
-		Defense:   50,
-		Offense:   50,
-		Speed:     1,
-		FogRet:    20,
-		XP:         5,
+		MaxHealth: 50,
+		HealthMod: 5,
+		Health:    50,
+		Defense:   5,
+		DefMod:    11,
+		Offense:   5,
+		OffMod:    11,
+		Speed:     2,
+		FogRet:    30, 
+		XP:        5,
 	},
 	Tile: getEnemyTile(overrides.ENEMY_BOSS),
 }
 
 // Poisonous! TODO, make this a more generic to get the tiles....
-var ENEMY_SNAKE = Enemy{
+var ENEMY_POISON = Enemy{
 	Name: "Snake",
 	Stats: Stats{
-		MaxHealth: 10,
-		Health:    10,
-		Defense:   10,
-		Offense:   20,
-		Speed:     5,
-		FogRet:    20,
-		XP:         5,
+		MaxHealth: 60,
+		HealthMod: 5,
+		Health:    60,
+		Defense:   1,
+		DefMod:    5,
+		Offense:   15,
+		OffMod:    11,
+		Speed:     3,
+		FogRet:    25, 
+		XP:        5,
 	},
 	Tile : getEnemyTile(overrides.ENEMY_BASIC,overrides.ATTR_POISONOUS),
 }
 
 // Mana Burn!
-var ENEMY_GHOST = Enemy{
+var ENEMY_MANABURN = Enemy{
 	Name: "Ghost",
 	Stats: Stats{
-		MaxHealth: 10,
-		Health:    10,
-		Defense:   10,
-		Offense:   20,
-		Speed:     5,
-		FogRet:    20,
+		MaxHealth: 60,
+		HealthMod: 5,
+		Health:    60,
+		Defense:   1,
+		DefMod:    5,
+		Offense:   15,
+		OffMod:    11,
+		Speed:     3,
+		FogRet:    25, 
 		XP:        5,
 	},
 	Tile : getEnemyTile(overrides.ENEMY_BASIC,overrides.ATTR_MANABURN),

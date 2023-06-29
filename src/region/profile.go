@@ -75,10 +75,10 @@ func (p *Profile)compile()[][]tile.Tile{
 				t = append(t, p.getBaseRow(1,"CLASS: "+p.Player.Class,core.FgWhite))
 			}
 			case LINE_VAR_HEALTH:{
-				t = append(t, p.getBaseRow(1,"   HP: "+strconv.Itoa(p.Player.Stats.Health),core.FgRed))
+				t = append(t, p.getBaseRow(1,"   HP: "+strconv.Itoa(p.Player.Stats.Health)+"/"+strconv.Itoa(p.Player.Stats.GetHealthWithMod()),core.FgRed))
 			}
 			case LINE_VAR_MANA:{
-				t = append(t, p.getBaseRow(1," MANA: "+strconv.Itoa(p.Player.Stats.Mana),core.FgBlue))
+				t = append(t, p.getBaseRow(1," MANA: "+strconv.Itoa(p.Player.Stats.Mana)+"/"+strconv.Itoa(p.Player.Stats.GetManaWithMod()),core.FgBlue))
 			}
 			case LINE_VAR_LEVEL:{
 				t = append(t, p.getBaseRow(1,"LEVEL: "+strconv.Itoa(p.Player.Stats.Level),core.FgYellow))
