@@ -48,6 +48,15 @@ func handleInputSpell(input string, s *Session) bool{
 				item.Interaction(&s.Level[s.currLevel].Enemies[idx].Stats)
 				s.Player.Stats.UpdateMana(item.Cost)
 				if s.Level[s.currLevel].Enemies[idx].Stats.Health <=0{
+					//Update XP!
+					if (s.Level[s.currLevel].Enemies[idx].Stats.Health <= 0) {
+						xpBoost := 0
+						if(s.Level[s.currLevel].Enemies[idx].Stats.Level > s.Player.Stats.Level){
+							xpBoost = s.Level[s.currLevel].Enemies[idx].Stats.Level - s.Player.Stats.Level
+						}
+						s.Player.Stats.ChangeXP(s.Level[s.currLevel].Enemies[idx].Stats.XP+xpBoost);
+					}
+					//Now remove it
 					s.Level[s.currLevel].Buffer[enemy.Y][enemy.X].Pop()
 					s.Level[s.currLevel].Enemies = append(s.Level[s.currLevel].Enemies[:idx], s.Level[s.currLevel].Enemies[idx+1:]...)
 					enemyStatus = "Killed"
