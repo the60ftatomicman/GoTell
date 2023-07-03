@@ -108,6 +108,12 @@ func (s *Stats)RemoveEffects(attrs ...string){
 	}
 }
 /// GETTERS
+func (s *Stats)IsPoisoned() bool {
+	return s.checkEffects(overrides.ATTR_POISONOUS)
+}
+func (s *Stats)IsManaBurned() bool {
+	return s.checkEffects(overrides.ATTR_MANABURN)
+}
 func (s *Stats)GetHealthWithMod() int {
 	return s.MaxHealth + s.HealthMod*(s.Level-1)
 }

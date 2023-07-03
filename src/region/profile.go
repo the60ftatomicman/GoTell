@@ -27,10 +27,13 @@ const LINE_VAR_OFFENSE    = 7  // Line for player OFFENSE stat
 const LINE_VAR_DEFENSE    = 8  // Line for player DEFENSE stat
 const LINE_VAR_LEVEL      = 10 // Line for player DEFENSE stat
 const LINE_VAR_XP         = 11 // Line for player XP stat
-const LINE_LBL_ITEMS      = 13 // Line for label to denote where items begin
-const LINE_VAR_ITEM       = 14 // Starting line for items
+const LINE_LBL_AILMENTS   = 13  // line for label to denote where ailments begin 
+const LINE_VAR_AILMENTS   = 14  // line for label to denote where ailments begin
+const LINE_VAR_AILMENT_COUNT = 2  // How many item lines we'll display
+const LINE_LBL_ITEMS      = 17 // Line for label to denote where items begin
+const LINE_VAR_ITEM       = 18 // Starting line for items
 const LINE_VAR_ITEM_COUNT = 5  // How many item lines we'll display
-//const LINE_VAR_GOLD = 6
+
 
 // Profile
 // Displays to the RIGHT of the level
@@ -97,6 +100,19 @@ func (p *Profile)compile()[][]tile.Tile{
 			//}
 			case LINE_LBL_ITEMS:{
 				t = append(t, p.getBaseRow(0," --- ITEMS --- ",core.FgCyan))
+			}
+			case LINE_LBL_AILMENTS:{
+				t = append(t, p.getBaseRow(0," - AILMENTS - ",core.FgMagenta))
+			}
+			case LINE_VAR_AILMENTS: {
+				if(p.Player.Stats.IsManaBurned()){
+					t = append(t, p.getBaseRow(0," o- ManaBurned ",core.FgBlue))
+				}
+			}
+			case LINE_VAR_AILMENTS+1: {
+				if(p.Player.Stats.IsPoisoned()){
+					t = append(t, p.getBaseRow(0," o- Poisoned ",core.FgGreen))
+				}
 			}
 			default:{
 				//Assuume bottom is for items.

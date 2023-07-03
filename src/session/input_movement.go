@@ -63,14 +63,18 @@ func handleInputMoving(input string,s *Session) bool{
 
 		if (delta < 2) {
 			pDmg,eDmg := enemy.CalcDefeat(&s.Player.Stats)
-			base_enemy_msg := "Enemy ["+enemy.Name+"] Lvl ["+strconv.Itoa(enemy.Stats.Level)+"] " 
-			base_enemy_msg += "Hp ["+strconv.Itoa(enemy.Stats.Health)+"/"+strconv.Itoa(enemy.Stats.GetHealthWithMod())+"] "
-			base_enemy_msg +="DMG: Take ["+strconv.Itoa(eDmg)+"] "
-			base_enemy_msg +="Give ["+strconv.Itoa(pDmg)+"]"
+			base_enemy_msg := "["+enemy.Name+"] Lvl ["+strconv.Itoa(enemy.Stats.Level)+"] " 
 			if (delta == 0) {
 				//FIGHTING!
-				removeEnemy     := s.Level[s.currLevel].Enemies[idx].Interaction(&s.Player.Stats)
-				enemy_msgs[0]    = "ATTACKED ["+s.Player.GetDirString()+"]: "+base_enemy_msg
+				removeEnemy   := s.Level[s.currLevel].Enemies[idx].Interaction(&s.Player.Stats)
+				enemy_msgs[0]  = "ATTACKED ["+s.Player.GetDirString()+"]: " + base_enemy_msg
+				enemy_msgs[0] += "Hp ["+strconv.Itoa(s.Level[s.currLevel].Enemies[idx].Stats.Health)+"/"+strconv.Itoa(s.Level[s.currLevel].Enemies[idx].Stats.GetHealthWithMod())+"] "
+				if(eDmg >= s.Player.Stats.Health){
+					enemy_msgs[0] += "DMG: [ This'll kill you ] "
+				}else{
+					enemy_msgs[0] += "DMG: Take ["+strconv.Itoa(eDmg)+"] "
+					enemy_msgs[0] += "Give ["+strconv.Itoa(pDmg)+"]"
+				}
 				if(removeEnemy){
 					enemy_msgs[0] = "DEFEATED ["+enemy.Name+"]"
 					s.Level[s.currLevel].Buffer[s.Player.Y][s.Player.X].Pop()
@@ -79,6 +83,13 @@ func handleInputMoving(input string,s *Session) bool{
 
 			}
 			if (delta == 1){
+				base_enemy_msg += "Hp ["+strconv.Itoa(enemy.Stats.Health)+"/"+strconv.Itoa(enemy.Stats.GetHealthWithMod())+"] "
+				if(eDmg >= s.Player.Stats.Health){
+					base_enemy_msg += "DMG: [ This'll kill you ] "
+				}else{
+					base_enemy_msg +="DMG: Take ["+strconv.Itoa(eDmg)+"] "
+					base_enemy_msg +="Give ["+strconv.Itoa(pDmg)+"]"
+				}
 				//We are near an enemy in the cardinal dir
 				if(enemyXdelta < 0){enemy_msgs = append(enemy_msgs,"WEST: "+base_enemy_msg)}
 				if(enemyXdelta > 0){enemy_msgs = append(enemy_msgs,"EAST: "+base_enemy_msg)}
