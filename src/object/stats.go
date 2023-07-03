@@ -114,3 +114,10 @@ func (s *Stats)GetHealthWithMod() int {
 func (s *Stats)GetManaWithMod() int {
 	return s.MaxMana + s.ManaMod*(s.Level-1)
 }
+/// GETTERS
+func (s *Stats)GetOffenseWithMod() int {
+	return s.Offense + s.OffMod*(s.Level-1)
+}
+func (s *Stats)GetDefenseWithMod() int {
+	return s.Defense + s.DefMod*(s.Level-1)
+}

@@ -84,13 +84,13 @@ func (p *Profile)compile()[][]tile.Tile{
 				t = append(t, p.getBaseRow(1,"LEVEL: "+strconv.Itoa(p.Player.Stats.Level),core.FgYellow))
 			}
 			case LINE_VAR_XP:{
-				t = append(t, p.getBaseRow(1,"   XP: "+strconv.Itoa(p.Player.Stats.XP),core.FgYellow))
+				t = append(t, p.getBaseRow(1,"   XP: "+strconv.Itoa(p.Player.Stats.XP)+"/"+strconv.Itoa(p.Player.Stats.LevelMod),core.FgYellow))
 			}
 			case LINE_VAR_OFFENSE:{
-				t = append(t, p.getBaseRow(1,"  OFF: "+strconv.Itoa(p.Player.Stats.Offense),core.FgWhite))
+				t = append(t, p.getBaseRow(1,"  OFF: "+strconv.Itoa(p.Player.Stats.GetOffenseWithMod()),core.FgWhite))
 			}
 			case LINE_VAR_DEFENSE:{
-				t = append(t, p.getBaseRow(1,"  DEF: "+strconv.Itoa(p.Player.Stats.Defense),core.FgWhite))
+				t = append(t, p.getBaseRow(1,"  DEF: "+strconv.Itoa(p.Player.Stats.GetDefenseWithMod()),core.FgWhite))
 			}
 			//case LINE_VAR_GOLD:{
 			//	t = append(t, p.getBaseRow(1,"GOLD: "+p.Gold,core.FgYellow))
