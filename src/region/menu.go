@@ -155,6 +155,12 @@ func (p *Menu)compile()[][]tile.Tile{
 		getBorderTile(),
 	))
 
+	msg := strings.Split("(w/s) change option. (a/d) change selection. Press (g) to begin!","")
+	for i:=0; i < len(msg) ; i++ {
+		t[len(t)-1][i+1] = tile.GENERIC_TEXT(msg[i],core.TermCodes(core.FgBlack),core.TermCodes(core.BgGreen))
+	}
+	
+
 	return t
 }
 
