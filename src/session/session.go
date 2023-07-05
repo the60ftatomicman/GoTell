@@ -103,9 +103,11 @@ func (s *Session) Handle() {
 		if handleInputStateSwitching(formattedData,s) || s.State.IsInputValid(formattedData){
 
 			//This is a hack for getItem and THAT IS IT.
-			if(s.State.handleInput(formattedData,s) ){
-				s.State.handleInput(formattedData,s)
+			loopBreaker := 4
+			for s.State.handleInput(formattedData,s) && loopBreaker > 0 {
+				loopBreaker--
 			}
+
 			if(s.Popup.HasMessages()){
 				s.State = STATE_POPUP
 			}

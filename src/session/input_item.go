@@ -33,8 +33,8 @@ func handleGetItem(input string, s *Session) bool{
 	return false
 }
 func handleItemAction(input string, s *Session) bool{
-	//s.State = STATE_INVENTORY
-	return false
+	s.State = STATE_MOVING // TODO -- moves you RIGHT :(
+	return true
 }
 func handleInputItem(input string, s *Session) bool{
 	idx,notInt    := strconv.Atoi(s.Profile.SelectedItem)
@@ -70,7 +70,7 @@ func handleInputItem(input string, s *Session) bool{
 				}
 			case "d":
 				{
-					if(!tile.CheckAttributes(item.Tile,overrides.ATTR_EQUIPTABLE)){
+					if(tile.CheckAttributes(item.Tile,overrides.ATTR_EQUIPTABLE)){
 						item.Delta *= -1 // switch to negative
 						item.Interaction(&s.Player.Stats)
 						item.Delta *= -1 // switch BACK to positive
