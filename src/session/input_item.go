@@ -32,10 +32,12 @@ func handleGetItem(input string, s *Session) bool{
 	s.State = STATE_MOVING
 	return false
 }
+
 func handleItemAction(input string, s *Session) bool{
 	s.State = STATE_MOVING // TODO -- moves you RIGHT :(
 	return true
 }
+
 func handleInputItem(input string, s *Session) bool{
 	idx,notInt    := strconv.Atoi(s.Profile.SelectedItem)
 	secondRefresh := false
@@ -52,11 +54,13 @@ func handleInputItem(input string, s *Session) bool{
 						//TODO -- this is a hack for now.
 						handleInputSpell(input, s)
 					}else{
-						if(item.Interaction(&s.Player.Stats)){
-							s.Player.Items = append(s.Player.Items[:idx], s.Player.Items[idx+1:]...)
-							s.Profile.SelectedItem = ""
-							secondRefresh = true
-							s.State = STATE_MOVING
+						if !tile.CheckAttributes(item.Tile,overrides.ATTR_EQUIPTABLE) {
+							if(item.Interaction(&s.Player.Stats)){
+								s.Player.Items = append(s.Player.Items[:idx], s.Player.Items[idx+1:]...)
+								s.Profile.SelectedItem = ""
+								secondRefresh = true
+								s.State = STATE_MOVING
+							}
 						}
 					}
 				}

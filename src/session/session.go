@@ -105,9 +105,10 @@ func (s *Session) Handle() {
 			//This is a hack for getItem and THAT IS IT.
 			loopBreaker := 4
 			for s.State.handleInput(formattedData,s) && loopBreaker > 0 {
+				formattedData = ""; // Clear this so we don't have reactions post this.
 				loopBreaker--
 			}
-
+			
 			if(s.Popup.HasMessages()){
 				s.State = STATE_POPUP
 			}
