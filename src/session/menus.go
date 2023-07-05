@@ -26,7 +26,7 @@ func MENU_ITEM(item *object.Item)[]string{
 	line_convert := "Press (c) to CONVERT for ["+strconv.Itoa(item.ConversionPoints)+"] XP"
 	line_drop := "Press (d) to DROP"
 	menu := []string{
-		"["+item.Name+"] selected.",
+		"["+item.Name+"] selected. ["+item.Description+"]",
 	}
 	if !tile.CheckAttributes(item.Tile,overrides.ATTR_EQUIPTABLE) {
 		menu = append(menu, line_use)

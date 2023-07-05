@@ -20,6 +20,7 @@ const UNLIMITED_USES = -1 //TODO -- do we use this anymore?
 type Item struct {
 	Tile             tile.Tile           `default:"Unknown Item"`
 	Name             string              `default:"OK"`
+	Description      string              `default:""`
 	X,Y,Cost,Delta,ConversionPoints int  `default:0`
 	Uses             int                 `default:1`
 	Affects          Affects
@@ -99,6 +100,7 @@ func fileParserItem(itemVals string) ([]Item){
 //
 var ITEM_HP = Item{
 	Name:      "HP Pot",
+	Description: "+25 HP",
 	X:         0,
 	Y:         0,
 	Uses:      1,
@@ -109,6 +111,7 @@ var ITEM_HP = Item{
 }
 var ITEM_MANA = Item{
 	Name:      "Mana Pot",
+	Description: "+25 Mana",
 	X:         0,
 	Y:         0,
 	Uses:      1,
@@ -119,6 +122,7 @@ var ITEM_MANA = Item{
 }
 var ITEM_OFF_BOOST = Item{
 	Name:      "Pickaxe",
+	Description: "+5 Offense",
 	X:         0,
 	Y:         0,
 	Delta:     5,
@@ -129,6 +133,7 @@ var ITEM_OFF_BOOST = Item{
 }
 var ITEM_DEF_BOOST = Item{
 	Name:      "Hard Hat",
+	Description: "+5 Defense",
 	X:         0,
 	Y:         0,
 	Delta:     5,
@@ -139,6 +144,7 @@ var ITEM_DEF_BOOST = Item{
 }
 var ITEM_SPEED_BOOST = Item{
 	Name:      "Roller Blades",
+	Description: "+5 Speed",
 	X:         0,
 	Y:         0,
 	Uses:      UNLIMITED_USES,
@@ -149,6 +155,7 @@ var ITEM_SPEED_BOOST = Item{
 }
 var ITEM_SPELL_DMG = Item{
 	Name:      "Moose shot",
+	Description: "gives 30 damage",
 	X:         0,
 	Y:         0,
 	Uses:      UNLIMITED_USES,

@@ -19,36 +19,41 @@ func handleGlobalStateSwitching(input string, s *Session) bool{
 }
 func handleInputStateSwitching(input string, s *Session) bool{
 	previousState := s.State.Name
-	switch input {
-		case "i":
-			{
-				if s.State.Name != STATE_INVENTORY.Name{
-					s.State = STATE_INVENTORY
+	//HAAAACKS
+	if(s.State.Name != STATE_TITLE.Name && 
+	   s.State.Name != STATE_STORY.Name &&
+	   s.State.Name != STATE_MENU.Name ){
+		switch input {
+			case "i":
+				{
+					if s.State.Name != STATE_INVENTORY.Name{
+						s.State = STATE_INVENTORY
+					}
+				}
+			case "m":
+				{
+					if s.State.Name != STATE_MOVING.Name{
+						s.State = STATE_MOVING
+						s.Profile.SelectedItem = ""
+					}
+				}
+			case "p":{
+				if s.State.Name == STATE_MOVING.Name {
+					s.State = STATE_GETITEM
 				}
 			}
-		case "m":
-			{
-				if s.State.Name != STATE_MOVING.Name{
-					s.State = STATE_MOVING
-					s.Profile.SelectedItem = ""
+			case "r":{
+				//	DEBUG ONLY TO REVIVE MYSELF!
+				if s.State.Name == STATE_MOVING.Name {
+					s.Popup.Set("I am a debug message","with multiple lines!")
+					s.State = STATE_POPUP
 				}
 			}
-		case "p":{
-			if s.State.Name == STATE_MOVING.Name {
-				s.State = STATE_GETITEM
-			}
-		}
-		case "r":{
-			//	DEBUG ONLY TO REVIVE MYSELF!
-			if s.State.Name == STATE_MOVING.Name {
-				s.Popup.Set("I am a debug message","with multiple lines!")
-				s.State = STATE_POPUP
-			}
-		}
-		default: {
-			//For passthrough states like picking up an item
-			switch s.State.Name {
-				case STATE_GETITEM.Name: {s.State = STATE_MOVING}
+			default: {
+				//For passthrough states like picking up an item
+				switch s.State.Name {
+					case STATE_GETITEM.Name: {s.State = STATE_MOVING}
+				}
 			}
 		}
 	}
