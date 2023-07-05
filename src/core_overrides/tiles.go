@@ -53,6 +53,12 @@ var INFO_H = tile.Tile{
 	Attribute: tile.GenerateAttributes(ATTR_SOLID),
 }
 //
+var PLAYER_SPAWN = tile.Tile{
+	Name:  "Player Spawn",
+	Icon:  tile.Icons(ICON_LADDER),
+	Color: core.TermCodes(core.FgYellow),
+	Attribute: tile.GenerateAttributes(ATTR_CLIMBABLE),
+}
 var LADDER = tile.Tile{
 	Name:  "LADDER",
 	Icon:  tile.Icons(ICON_LADDER),

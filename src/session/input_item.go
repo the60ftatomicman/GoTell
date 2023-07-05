@@ -71,10 +71,10 @@ func handleInputItem(input string, s *Session) bool{
 			case "d":
 				{
 					if(!tile.CheckAttributes(item.Tile,overrides.ATTR_EQUIPTABLE)){
-						item.Delta *= -1
+						item.Delta *= -1 // switch to negative
 						item.Interaction(&s.Player.Stats)
+						item.Delta *= -1 // switch BACK to positive
 					}
-					item.Delta *= -1
 					item.X = s.Player.X
 					item.Y = s.Player.Y
 					//TODO -- buug! item display disappears

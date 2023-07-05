@@ -27,8 +27,8 @@ var MENU_OPTIONS_CLASS  = []object.PlayerClass{
 	object.CLASS_FOG,
 }
 var MENU_OPTIONS_LEVEL  = []string{
+	"itemstest",
 	"demolevel",
-	"Not Implemented",
 } //TODO -- obviously this is getting turned into a struct! 
 const MENU_CURSOR_MENU  = 0
 const MENU_CURSOR_CLASS = 1
@@ -39,7 +39,7 @@ const MENU_CURSOR_LEVEL = 2
 // Where we are going to setup our character
 // This area gives details on what the player is about to suggest.
 type Menu struct {
-	Player *object.Player
+	Player  *object.Player
 	Cursors []int
 	Buffer [][]tile.Tile
 }
@@ -49,7 +49,6 @@ func (p *Menu) Initialize(b [][]tile.Tile) {
 	// 1 == CLASS menu seletion
 	// 2 == LEVEL menu selection
 	p.Cursors = []int{0,0,0}
-
 	//haha yeah I am going to ignore B passed in.
 	b = p.compile()
 	p.Buffer = screen.InitializeBuffer(MENU_LINES, MENU_COLUMNS, b,tile.BLANK)

@@ -1,0 +1,43 @@
+#### METADATA ####
+name:Item Demo
+difficulty:Easy
+author:Andy Garber
+max_enemies:21
+max_items:6
+boss_message: Welp here we are.
+#### SUMMARY ####
+For Testing Items and Combat.
+This is a very small level
+#### LEVEL ####
+80w
+w,23b,w,24b,w,29b,w
+w,23b,w,24b,w,29b,w
+w,23b,w,10b,p,13b,w,29b,w
+w,23b,w,24b,w,29b,w
+w,23b,w,24b,w,29b,w
+w,23b,w,24b,w,29b,w
+w,23b,w,8b,si,2b,si,12b,w,29b,w
+w,23b,w,8b,si,2b,si,12b,w,29b,w
+w,23b,w,8b,si,2b,si,12b,w,29b,w
+w,23b,w,24b,w,29b,w
+w,23b,w,24b,w,29b,w
+w,23b,w,24b,w,29b,w
+w,23b,w,24b,w,29b,w
+w,23b,w,6b,11se,7b,w,29b,w
+w,23b,w,6b,11se,7b,w,29b,w
+w,23b,w,24b,w,29b,w
+w,23b,w,24b,w,29b,w
+80w
+#### ENEMY ####
+boss:ENEMY_BOSS_MELEE
+1,4,5,6,7,8,9:ENEMY_MELEE
+3,5:ENEMY_POISON
+2,4:ENEMY_MANABURN
+#### ITEM ####
+2:ITEM_HP
+1:ITEM_MANA
+1:ITEM_OFF_BOOST
+1:ITEM_DEF_BOOST
+1:ITEM_SPELL_DMG
+#### NOTES ####
+This is a level specifically for item testing.

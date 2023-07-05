@@ -53,6 +53,13 @@ func (s *Session) Initialize(c *net.Conn) {
 	
 	//---------- Generate Player tile
 	s.Player = object.GeneratePlayer()
+
+	// ---------- Generate Levels and level region
+	s.currLevel = 0
+	s.Level = []region.Level{
+		{Filename: "./utilities/data/levels/itemtest.txt"},
+		{Filename: "./utilities/data/levels/demolevel.txt"},
+	}
 	s.Menu = region.Menu{
 		Player: &s.Player,
 	}
@@ -65,14 +72,7 @@ func (s *Session) Initialize(c *net.Conn) {
 	// ---------- Generate Header region
 	s.Header = region.Header{}
 	s.Header.Initialize([][]tile.Tile{})
-	// ---------- Generate Level region
-	//s.Level = region.Level{Player: &s.Player}
-	//s.Level.Initialize(s.Level.ReadDataFromFile())
-	s.currLevel = 0
-	s.Level = []region.Level{
-		{Filename: "./utilities/data/levels/demolevel.txt"},
-		{Filename: "./utilities/data/levels/demolevel.txt"},
-	}
+
 	// ------------ Generate Profile region
 	s.Profile = region.Profile{}
 	s.Profile.Initialize(s.Profile.ReadDataFromPlayer(&s.Player))
