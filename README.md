@@ -88,6 +88,7 @@ level (aka map)
 profile (aka user info area)
 
 ### TODO ###
+1) Signpost which trigger popups.
 2) Enemy Drops
 3) map selection / main menu
 4) Add FOG wall detection (cannot see through walls)
@@ -95,9 +96,13 @@ profile (aka user info area)
 7) Multi-layered levels? Multi BOSS levels?
 8) End conditions for beating the level
 9) Gods or deities for interesting gameplay
-10) Refactor damage to be based on percent NOT on static amount!
-11) Finish story
-12) Finish how to play
-13) Test with multiple connections
-14) Save state
-15) Try finding a way to host this
+10) Finish story
+11) Finish how to play
+12) Test with multiple connections
+13) Save state
+14) Try finding a way to host this
+15) Allow characters to have diff. item limits (advantage for detective maybe?)
+16) CLEAN UP STATES! -- it's a mess!
+
+### BUGS ###
+- title on level doesn't load, just says "SOME TITLE"
