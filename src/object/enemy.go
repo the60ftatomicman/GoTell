@@ -18,14 +18,6 @@ type Enemy struct {
 func (e *Enemy) Interaction(s *Stats) bool {
 	removeEnemy := false
 	// Do dmg
-	/*
-	playerDmg := statCalc_Battle(
-					s.Offense,s.OffMod,s.Level,
-					e.Stats.Defense,e.Stats.DefMod,e.Stats.Level)
-	enemyDmg  := statCalc_Battle(
-					e.Stats.Offense,e.Stats.OffMod,e.Stats.Level,
-					s.Defense,s.DefMod,s.Level)
-	*/
 	playerDmg := statCalc_Battle(s,&e.Stats)
 	enemyDmg  := statCalc_Battle(&e.Stats,s)
 	if(s.GetSpeedWithMod() >= e.Stats.GetSpeedWithMod()){
@@ -68,14 +60,6 @@ func (e *Enemy) applyEffects(s *Stats) {
 } 
 
 func (e *Enemy) CalcDefeat(s *Stats) (int,int) {
-/*
-	playerDmg := statCalc_Battle(
-								s.Offense,s.OffMod,s.Level,
-								e.Stats.Defense,e.Stats.DefMod,e.Stats.Level)
-	enemyDmg := statCalc_Battle(
-								e.Stats.Offense,e.Stats.OffMod,e.Stats.Level,
-								s.Defense,s.DefMod,s.Level)
-*/
 	playerDmg := statCalc_Battle(s,&e.Stats)
 	enemyDmg  := statCalc_Battle(&e.Stats,s)
 	return playerDmg,enemyDmg
