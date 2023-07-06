@@ -106,3 +106,5 @@ profile (aka user info area)
 
 ### BUGS ###
 - title on level doesn't load, just says "SOME TITLE"
+- The "direction" cue for which enemies are nearby changes to your intended spot when you "attack" giving misinformation.
+- Enemy level generation is not so solididly ....distributed? may be because im less than 10 enemies.
