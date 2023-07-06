@@ -10,7 +10,9 @@ import (
 type Affects string
 const (
 	Health     Affects = "HEALTH"
+	MaxHealth          = "HEALTHCAP"
 	Mana               = "MANA"
+	MaxMana            = "MANACAP"
 	Offense            = "OFFENSE"
 	Defense            = "DEFENSE"
 	Speed              = "SPEED"
@@ -38,9 +40,11 @@ func (i *Item) Interaction(s *Stats) bool{
 				s.RemoveEffects(overrides.ATTR_MANABURN)
 				s.UpdateMana(i.Delta)  
 			}
-			case Affects(Offense):{s.Offense += i.Delta }
-			case Affects(Defense):{s.Defense += i.Delta }
-			case Affects(Speed)  :{s.Speed   += i.Delta }	
+			case Affects(MaxHealth):{s.HealthItemMod += i.Delta }
+			case Affects(MaxMana):{s.ManaItemMod     += i.Delta }
+			case Affects(Offense):{s.OffItemMod      += i.Delta }
+			case Affects(Defense):{s.DefItemMod      += i.Delta }
+			case Affects(Speed)  :{s.SpeedItemMod    += i.Delta }	
 		}
 		if i.Uses != UNLIMITED_USES{
 			i.Uses -= 1

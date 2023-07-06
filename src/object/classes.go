@@ -29,7 +29,8 @@ var CLASS_PHYSICAL = PlayerClass{
 		OffMod:    10,
 		Speed:     2,
 		FogRet:    25, // how much MANA and HEALTH we get back when uncovering FOG
-		Vision:    3,  // how FAR into fog we can see
+		Vision:    3,  // how FAR into fog we can see,
+		ItemSlots: 3,
 	},
 }
 var CLASS_MAGIC = PlayerClass{
@@ -55,7 +56,8 @@ var CLASS_MAGIC = PlayerClass{
 		OffMod:    7,
 		Speed:     1,
 		FogRet:    25, // how much MANA and HEALTH we get back when uncovering FOG
-		Vision:    3,  // how FAR into fog we can see
+		Vision:    3,  // how FAR into fog we can see,
+		ItemSlots: 6,
 	},
 }
 var CLASS_SPEED = PlayerClass{
@@ -81,6 +83,7 @@ var CLASS_SPEED = PlayerClass{
 		Speed:     3,
 		FogRet:    25, // how much MANA and HEALTH we get back when uncovering FOG
 		Vision:    3,  // how FAR into fog we can see
+		ItemSlots: 5,
 	},
 }
 //UNTESTED!
@@ -107,6 +110,7 @@ var CLASS_EXP = PlayerClass{
 		Speed:     1,
 		FogRet:    25, // how much MANA and HEALTH we get back when uncovering FOG
 		Vision:    3,  // how FAR into fog we can see
+		ItemSlots: 4,
 	},
 }
 var CLASS_FOG = PlayerClass{
@@ -133,5 +137,6 @@ var CLASS_FOG = PlayerClass{
 		Speed:     2,
 		FogRet:    50, // how much MANA and HEALTH we get back when uncovering FOG
 		Vision:    4,  // how FAR into fog we can see
+		ItemSlots: 5,
 	},
 }

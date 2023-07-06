@@ -10,7 +10,7 @@ import (
 //TODO -- make a MENU for this.
 func handleGetItem(input string, s *Session) bool{
 	msg := "you are NOT on an item."
-	if(len(s.Player.Items) < region.LINE_VAR_ITEM_COUNT){
+	if(len(s.Player.Items) < region.LINE_VAR_ITEM_COUNT(&s.Player)){
 		for idx,item := range s.Level[s.currLevel].Items {
 			if (item.X == s.Player.X && item.Y == s.Player.Y){
 				s.Player.Items = append(s.Player.Items,item)

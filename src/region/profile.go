@@ -32,7 +32,7 @@ const LINE_VAR_AILMENTS   = 14  // line for label to denote where ailments begin
 const LINE_VAR_AILMENT_COUNT = 2  // How many item lines we'll display
 const LINE_LBL_ITEMS      = 17 // Line for label to denote where items begin
 const LINE_VAR_ITEM       = 18 // Starting line for items
-const LINE_VAR_ITEM_COUNT = 5  // How many item lines we'll display
+var LINE_VAR_ITEM_COUNT   = func(p *object.Player)int{return p.Stats.ItemSlots} // How many item lines we'll display
 
 
 // Profile
@@ -90,16 +90,17 @@ func (p *Profile)compile()[][]tile.Tile{
 				t = append(t, p.getBaseRow(1,"   XP: "+strconv.Itoa(p.Player.Stats.XP)+"/"+strconv.Itoa(p.Player.Stats.LevelMod),core.FgYellow))
 			}
 			case LINE_VAR_OFFENSE:{
-				t = append(t, p.getBaseRow(1,"  OFF: "+strconv.Itoa(p.Player.Stats.GetOffenseWithMod()),core.FgWhite))
+				t = append(t, p.getBaseRow(1,"  OFF: "+strconv.Itoa(p.Player.Stats.GetOffenseWithMod())+" ["+strconv.Itoa(p.Player.Stats.OffItemMod)+"]",core.FgWhite))
 			}
 			case LINE_VAR_DEFENSE:{
-				t = append(t, p.getBaseRow(1,"  DEF: "+strconv.Itoa(p.Player.Stats.GetDefenseWithMod()),core.FgWhite))
+				t = append(t, p.getBaseRow(1,"  DEF: "+strconv.Itoa(p.Player.Stats.GetDefenseWithMod())+" ["+strconv.Itoa(p.Player.Stats.DefItemMod)+"]",core.FgWhite))
 			}
 			//case LINE_VAR_GOLD:{
 			//	t = append(t, p.getBaseRow(1,"GOLD: "+p.Gold,core.FgYellow))
 			//}
 			case LINE_LBL_ITEMS:{
-				t = append(t, p.getBaseRow(0," --- ITEMS --- ",core.FgCyan))
+				slotsLeft := strconv.Itoa(LINE_VAR_ITEM_COUNT(p.Player) - len(p.Player.Items))
+				t = append(t, p.getBaseRow(0," - ITEMS ["+slotsLeft+"] - ",core.FgCyan))
 			}
 			case LINE_LBL_AILMENTS:{
 				t = append(t, p.getBaseRow(0," - AILMENTS - ",core.FgMagenta))
@@ -118,7 +119,7 @@ func (p *Profile)compile()[][]tile.Tile{
 				//Assuume bottom is for items.
 				item_idx := (i - LINE_VAR_ITEM)
 				item_idx_str := strconv.Itoa(item_idx+1)
-				if (i >= LINE_VAR_ITEM && i < LINE_VAR_ITEM+LINE_VAR_ITEM_COUNT && item_idx < len(p.Player.Items)){
+				if (i >= LINE_VAR_ITEM && i < LINE_VAR_ITEM+LINE_VAR_ITEM_COUNT(p.Player) && item_idx < len(p.Player.Items)){
 					if(p.SelectedItem == item_idx_str){
 						t = append(t, p.getBaseRow(1,item_idx_str+") "+p.Player.Items[item_idx].Name,core.FgWhite,core.BgBlue))
 					}else{
