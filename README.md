@@ -101,8 +101,8 @@ profile (aka user info area)
 12) Test with multiple connections
 13) Save state
 14) Try finding a way to host this
-15) Allow characters to have diff. item limits (advantage for detective maybe?)
 16) CLEAN UP STATES! -- it's a mess!
+17) Refactor...again.
 
 ### BUGS ###
 - title on level doesn't load, just says "SOME TITLE"
