@@ -1,6 +1,8 @@
 package session
 
 import (
+	"example/gotell/src/core/tile"
+	overrides "example/gotell/src/core_overrides"
 	"example/gotell/src/object"
 	"example/gotell/src/region"
 	"strconv"
@@ -20,12 +22,17 @@ func MENU_SPELL(hasMana bool,attacked []string) []string {
 }
 
 func MENU_ITEM(item *object.Item)[]string{
+	line_use := "Press (u) to USE";
+	line_convert := "Press (c) to CONVERT for ["+strconv.Itoa(item.ConversionPoints)+"] XP"
+	line_drop := "Press (d) to DROP"
 	menu := []string{
-		"["+item.Name+"] selected.",
-		"Press (u) to USE",
-		"Press (c) to CONVERT",
-		"Press (d) to DROP",
+		"["+item.Name+"] selected. ["+item.Description+"]",
 	}
+	if !tile.CheckAttributes(item.Tile,overrides.ATTR_EQUIPTABLE) {
+		menu = append(menu, line_use)
+	}
+	menu = append(menu, line_convert)
+	menu = append(menu, line_drop)
 	return menu
 }
 

@@ -20,6 +20,11 @@ const MAP_TOP = 3
 const MAP_LINES = 20
 const MAP_COLUMNS = 80
 
+const LEVEL_DATA_META = 0
+const LEVEL_DATA_SUMMARY = 1
+const LEVEL_DATA_LEVEL = 2
+const LEVEL_DATA_ENEMY = 3
+const LEVEL_DATA_ITEM = 4
 
 // Level
 // Where the action takes place.
@@ -29,6 +34,7 @@ type Level struct {
 	Name        string        `default:"Training"`
 	Filename    string        `default:"map.txt"`
 	Player		*object.Player   // This is part of our remove from session refactor
+	playerSpawn []int
 	Buffer      [][]tile.Cell // Welcome to PAIN COUNTRY! you are trying to port in the foreground logic and object logic (rightfully so) here.
 	Enemies     []object.Enemy
 	enemySpawns [][]int
@@ -37,6 +43,7 @@ type Level struct {
 	itemSpawns  [][]int
 	maxItems    int
 	BossMessage string
+	Description []string
 }
 
 func (m *Level) Initialize(b [][]tile.Tile) {
@@ -97,7 +104,9 @@ func (m *Level) Get() (int, int, int, int, [][]tile.Tile) {
 	return MAP_LEFT, MAP_TOP, MAP_LINES, MAP_COLUMNS, bufferTop
 }
 
-func (m *Level) Refresh(){}
+func (m *Level) Refresh(){
+
+}
 //
 //
 //
@@ -113,7 +122,7 @@ func (m *Level) getFileRegions()[][]string {
 	// exPath        := filepath.Dir(ex)
 	// readFile,err  := os.Open(exPath+"/utilities/data/demolevel.txt") 
 	// -- LOCAL
-	readFile,err  := os.Open("./utilities/data/demolevel.txt")
+	readFile,err  := os.Open(m.Filename)
 	if(err != nil){
 		print(err)
 		panic(err)
@@ -125,7 +134,7 @@ func (m *Level) getFileRegions()[][]string {
 		fileLine := fileScanner.Text()
 		
 		//TODO make this a regex
-		if(fileLine == "#### METADATA ####" || fileLine == "#### LEVEL ####" || fileLine == "#### ENEMY ####" || fileLine == "#### ITEM ####"){
+		if(fileLine == "#### METADATA ####" || fileLine == "#### LEVEL ####" || fileLine == "#### ENEMY ####" || fileLine == "#### ITEM ####" || fileLine ==  "#### SUMMARY ####"){
 			skipLine = true
 			fileData = append(fileData, []string{})
 		}
@@ -150,7 +159,7 @@ func (m *Level) ReadDataFromFile() [][]tile.Tile {
 	//Open that data file
 	fileData := m.getFileRegions()
 	//Assign levels
-	for r,row := range fileData[1] {
+	for r,row := range fileData[LEVEL_DATA_LEVEL] {
 		var nextRow []tile.Tile = fileParser(row)
 		for c,nextCell := range nextRow{
 			if(nextCell.Name == overrides.ENEMY_SPAWN.Name){
@@ -159,14 +168,24 @@ func (m *Level) ReadDataFromFile() [][]tile.Tile {
 			if(nextCell.Name == overrides.ITEM_SPAWN.Name){
 				m.itemSpawns = append(m.itemSpawns, []int{r,c})
 			}
+			if(nextCell.Name == overrides.PLAYER_SPAWN.Name){
+				m.playerSpawn = []int{r,c};
+			}
 		}
 		tiles = append(tiles,nextRow)
 	}
 	//TODO -- write a parser class to make this cleaner. Think, we have to also parse player data
-	m.parseMetadata(fileData[0])
-	m.assignEnemies(object.GenerateEnemiesFromFile(fileData[2]))
-	m.assignItems(object.GenerateItemsFromFile(fileData[3]))
+	m.parseSummary(fileData[LEVEL_DATA_SUMMARY])
+	m.parseMetadata(fileData[LEVEL_DATA_META])
+	m.assignEnemies(object.GenerateEnemiesFromFile(fileData[LEVEL_DATA_ENEMY]))
+	m.assignItems(object.GenerateItemsFromFile(fileData[LEVEL_DATA_ITEM]))
+	m.movePlayerToSpawn()
 	return tiles
+}
+
+func(m *Level) movePlayerToSpawn(){
+	m.Player.Y = m.playerSpawn[0]
+	m.Player.X = m.playerSpawn[1]
 }
 //
 //
@@ -176,6 +195,7 @@ func (m *Level) ReadDataFromFile() [][]tile.Tile {
 var dataConverter = map[string]tile.Tile{
      "w": overrides.WALL,
      "b": tile.BLANK,
+	 "p": overrides.PLAYER_SPAWN,
      "l": overrides.LADDER,
 	"se": overrides.ENEMY_SPAWN,
 	"si": overrides.ITEM_SPAWN,
@@ -211,6 +231,9 @@ func fileParser(tileColVals string) []tile.Tile{
 //
 //
 //
+func (m *Level) parseSummary(summaryData []string) {
+	m.Description = summaryData
+}
 func (m *Level) parseMetadata(metaData []string) {
 	for _, md := range metaData {
 		keyVal := strings.Split(md, ":")
@@ -258,7 +281,8 @@ func (m *Level) assignEnemies(enemyList [10][]object.Enemy) {
 	}
 	currentCountAtLevel := 0
 	for sIdx,spawn := range m.enemySpawns {
-		if(sIdx > 0){
+		//Exclude bosses!
+		if(sIdx > 0 && sIdx < 10) {
 			enemy := enemyList[currentLevelPool][rand.Intn(len(enemyList[currentLevelPool]))]
 			//Assign enemy XY based on the enemy spawn
 			enemy.X = spawn[1]

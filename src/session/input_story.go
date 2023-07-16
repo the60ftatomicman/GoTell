@@ -18,10 +18,10 @@ func handleInputStory(input string, s *Session) bool{
 				s.currStory += 1
 				if(s.currStory >= len(s.Story)){
 					s.currStory = 0
-					s.State = STATE_MOVING
+					s.State = STATE_MENU
 				}
 			}
-		case "q":{s.State = STATE_MOVING}
+		case "q":{s.State = STATE_MENU}
 		default: {}
 	}
 	return previousState != s.State.Name

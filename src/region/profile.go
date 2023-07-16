@@ -27,10 +27,13 @@ const LINE_VAR_OFFENSE    = 7  // Line for player OFFENSE stat
 const LINE_VAR_DEFENSE    = 8  // Line for player DEFENSE stat
 const LINE_VAR_LEVEL      = 10 // Line for player DEFENSE stat
 const LINE_VAR_XP         = 11 // Line for player XP stat
-const LINE_LBL_ITEMS      = 13 // Line for label to denote where items begin
-const LINE_VAR_ITEM       = 14 // Starting line for items
-const LINE_VAR_ITEM_COUNT = 5  // How many item lines we'll display
-//const LINE_VAR_GOLD = 6
+const LINE_LBL_AILMENTS   = 13  // line for label to denote where ailments begin 
+const LINE_VAR_AILMENTS   = 14  // line for label to denote where ailments begin
+const LINE_VAR_AILMENT_COUNT = 2  // How many item lines we'll display
+const LINE_LBL_ITEMS      = 17 // Line for label to denote where items begin
+const LINE_VAR_ITEM       = 18 // Starting line for items
+var LINE_VAR_ITEM_COUNT   = func(p *object.Player)int{return p.Stats.ItemSlots} // How many item lines we'll display
+
 
 // Profile
 // Displays to the RIGHT of the level
@@ -75,34 +78,48 @@ func (p *Profile)compile()[][]tile.Tile{
 				t = append(t, p.getBaseRow(1,"CLASS: "+p.Player.Class,core.FgWhite))
 			}
 			case LINE_VAR_HEALTH:{
-				t = append(t, p.getBaseRow(1,"   HP: "+strconv.Itoa(p.Player.Stats.Health),core.FgRed))
+				t = append(t, p.getBaseRow(1,"   HP: "+strconv.Itoa(p.Player.Stats.Health)+"/"+strconv.Itoa(p.Player.Stats.GetHealthWithMod()),core.FgRed))
 			}
 			case LINE_VAR_MANA:{
-				t = append(t, p.getBaseRow(1," MANA: "+strconv.Itoa(p.Player.Stats.Mana),core.FgBlue))
+				t = append(t, p.getBaseRow(1," MANA: "+strconv.Itoa(p.Player.Stats.Mana)+"/"+strconv.Itoa(p.Player.Stats.GetManaWithMod()),core.FgBlue))
 			}
 			case LINE_VAR_LEVEL:{
 				t = append(t, p.getBaseRow(1,"LEVEL: "+strconv.Itoa(p.Player.Stats.Level),core.FgYellow))
 			}
 			case LINE_VAR_XP:{
-				t = append(t, p.getBaseRow(1,"   XP: "+strconv.Itoa(p.Player.Stats.XP),core.FgYellow))
+				t = append(t, p.getBaseRow(1,"   XP: "+strconv.Itoa(p.Player.Stats.XP)+"/"+strconv.Itoa(p.Player.Stats.LevelMod),core.FgYellow))
 			}
 			case LINE_VAR_OFFENSE:{
-				t = append(t, p.getBaseRow(1,"  OFF: "+strconv.Itoa(p.Player.Stats.Offense),core.FgWhite))
+				t = append(t, p.getBaseRow(1,"  OFF: "+strconv.Itoa(p.Player.Stats.GetOffenseWithMod())+" ["+strconv.Itoa(p.Player.Stats.OffItemMod)+"]",core.FgWhite))
 			}
 			case LINE_VAR_DEFENSE:{
-				t = append(t, p.getBaseRow(1,"  DEF: "+strconv.Itoa(p.Player.Stats.Defense),core.FgWhite))
+				t = append(t, p.getBaseRow(1,"  DEF: "+strconv.Itoa(p.Player.Stats.GetDefenseWithMod())+" ["+strconv.Itoa(p.Player.Stats.DefItemMod)+"]",core.FgWhite))
 			}
 			//case LINE_VAR_GOLD:{
 			//	t = append(t, p.getBaseRow(1,"GOLD: "+p.Gold,core.FgYellow))
 			//}
 			case LINE_LBL_ITEMS:{
-				t = append(t, p.getBaseRow(0," --- ITEMS --- ",core.FgCyan))
+				slotsLeft := strconv.Itoa(LINE_VAR_ITEM_COUNT(p.Player) - len(p.Player.Items))
+				t = append(t, p.getBaseRow(0," - ITEMS ["+slotsLeft+"] - ",core.FgCyan))
+			}
+			case LINE_LBL_AILMENTS:{
+				t = append(t, p.getBaseRow(0," - AILMENTS - ",core.FgMagenta))
+			}
+			case LINE_VAR_AILMENTS: {
+				if(p.Player.Stats.IsManaBurned()){
+					t = append(t, p.getBaseRow(0," o- ManaBurned ",core.FgBlue))
+				}
+			}
+			case LINE_VAR_AILMENTS+1: {
+				if(p.Player.Stats.IsPoisoned()){
+					t = append(t, p.getBaseRow(0," o- Poisoned ",core.FgGreen))
+				}
 			}
 			default:{
 				//Assuume bottom is for items.
 				item_idx := (i - LINE_VAR_ITEM)
 				item_idx_str := strconv.Itoa(item_idx+1)
-				if (i >= LINE_VAR_ITEM && i < LINE_VAR_ITEM+LINE_VAR_ITEM_COUNT && item_idx < len(p.Player.Items)){
+				if (i >= LINE_VAR_ITEM && i < LINE_VAR_ITEM+LINE_VAR_ITEM_COUNT(p.Player) && item_idx < len(p.Player.Items)){
 					if(p.SelectedItem == item_idx_str){
 						t = append(t, p.getBaseRow(1,item_idx_str+") "+p.Player.Items[item_idx].Name,core.FgWhite,core.BgBlue))
 					}else{

@@ -22,7 +22,7 @@ type Header struct {
 
 func (p *Header) Initialize(b [][]tile.Tile) {
 	//haha yeah I am going to ignore B passed in.
-	p.Set("Some title v0.0.8 - MENUS: (Q)uit (i)ventory (m)ove")
+	p.Set("Some title v0.0.9 - MENUS: (Q)uit (i)ventory (m)ove")
 	b = p.compile()
 
 	p.Buffer = screen.InitializeBuffer(HEADER_LINES, HEADER_COLUMNS, b,tile.BLANK)

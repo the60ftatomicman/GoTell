@@ -19,36 +19,41 @@ func handleGlobalStateSwitching(input string, s *Session) bool{
 }
 func handleInputStateSwitching(input string, s *Session) bool{
 	previousState := s.State.Name
-	switch input {
-		case "i":
-			{
-				if s.State.Name != STATE_INVENTORY.Name{
-					s.State = STATE_INVENTORY
+	//HAAAACKS
+	if(s.State.Name != STATE_TITLE.Name && 
+	   s.State.Name != STATE_STORY.Name &&
+	   s.State.Name != STATE_MENU.Name ){
+		switch input {
+			case "i":
+				{
+					if s.State.Name != STATE_INVENTORY.Name{
+						s.State = STATE_INVENTORY
+					}
+				}
+			case "m":
+				{
+					if s.State.Name != STATE_MOVING.Name{
+						s.State = STATE_MOVING
+						s.Profile.SelectedItem = ""
+					}
+				}
+			case "p":{
+				if s.State.Name == STATE_MOVING.Name {
+					s.State = STATE_GETITEM
 				}
 			}
-		case "m":
-			{
-				if s.State.Name != STATE_MOVING.Name{
-					s.State = STATE_MOVING
-					s.Profile.SelectedItem = ""
+			case "r":{
+				//	DEBUG ONLY TO REVIVE MYSELF!
+				if s.State.Name == STATE_MOVING.Name {
+					s.Popup.Set("I am a debug message","with multiple lines!")
+					s.State = STATE_POPUP
 				}
 			}
-		case "p":{
-			if s.State.Name == STATE_MOVING.Name {
-				s.State = STATE_GETITEM
-			}
-		}
-		case "r":{
-			//	DEBUG ONLY TO REVIVE MYSELF!
-			if s.State.Name == STATE_MOVING.Name {
-				s.Popup.Set("I am a debug message","with multiple lines!")
-				s.State = STATE_POPUP
-			}
-		}
-		default: {
-			//For passthrough states like picking up an item
-			switch s.State.Name {
-				case STATE_GETITEM.Name: {s.State = STATE_MOVING}
+			default: {
+				//For passthrough states like picking up an item
+				switch s.State.Name {
+					case STATE_GETITEM.Name: {s.State = STATE_MOVING}
+				}
 			}
 		}
 	}
@@ -74,19 +79,19 @@ func getTileXY(playerX int,playerY int,colDelta int,rowDelta int) (int,int) {
 func removeFog(s *Session,colDelta int,rowDelta int) string{
 	p := &s.Player
 	tileX,tileY := getTileXY(p.X,p.Y,colDelta,rowDelta)
-	s.Level.Buffer[tileY][tileX].Get()
+	s.Level[s.currLevel].Buffer[tileY][tileX].Get()
 	//TODO -- hate this is hard coded
-	if (s.Level.Buffer[tileY][tileX].Get().Name  == "FOG") {
-		s.Level.Buffer[tileY][tileX].Pop()
+	if (s.Level[s.currLevel].Buffer[tileY][tileX].Get().Name  == "FOG") {
+		s.Level[s.currLevel].Buffer[tileY][tileX].Pop()
 		p.Stats.UpdateHealth(p.Stats.FogRet)
 		p.Stats.UpdateMana(p.Stats.FogRet)
 		// Update all those enemies health (dun dun dun)
-		for idx := range s.Level.Enemies {
-			e := &s.Level.Enemies[idx]
+		for idx := range s.Level[s.currLevel].Enemies {
+			e := &s.Level[s.currLevel].Enemies[idx]
 			e.Stats.UpdateHealth(e.Stats.FogRet)
 			e.Stats.UpdateMana(e.Stats.FogRet)
 		}
 	}
 	//return the value of the current tile
-	return s.Level.Buffer[tileY][tileX].Get().Attribute
+	return s.Level[s.currLevel].Buffer[tileY][tileX].Get().Attribute
 }

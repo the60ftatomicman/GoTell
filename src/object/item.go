@@ -10,7 +10,9 @@ import (
 type Affects string
 const (
 	Health     Affects = "HEALTH"
+	MaxHealth          = "HEALTHCAP"
 	Mana               = "MANA"
+	MaxMana            = "MANACAP"
 	Offense            = "OFFENSE"
 	Defense            = "DEFENSE"
 	Speed              = "SPEED"
@@ -20,6 +22,7 @@ const UNLIMITED_USES = -1 //TODO -- do we use this anymore?
 type Item struct {
 	Tile             tile.Tile           `default:"Unknown Item"`
 	Name             string              `default:"OK"`
+	Description      string              `default:""`
 	X,Y,Cost,Delta,ConversionPoints int  `default:0`
 	Uses             int                 `default:1`
 	Affects          Affects
@@ -37,9 +40,11 @@ func (i *Item) Interaction(s *Stats) bool{
 				s.RemoveEffects(overrides.ATTR_MANABURN)
 				s.UpdateMana(i.Delta)  
 			}
-			case Affects(Offense):{s.Offense += i.Delta }
-			case Affects(Defense):{s.Defense += i.Delta }
-			case Affects(Speed)  :{s.Speed   += i.Delta }	
+			case Affects(MaxHealth):{s.HealthItemMod += i.Delta }
+			case Affects(MaxMana):{s.ManaItemMod     += i.Delta }
+			case Affects(Offense):{s.OffItemMod      += i.Delta }
+			case Affects(Defense):{s.DefItemMod      += i.Delta }
+			case Affects(Speed)  :{s.SpeedItemMod    += i.Delta }	
 		}
 		if i.Uses != UNLIMITED_USES{
 			i.Uses -= 1
@@ -99,61 +104,67 @@ func fileParserItem(itemVals string) ([]Item){
 //
 var ITEM_HP = Item{
 	Name:      "HP Pot",
+	Description: "+25 HP",
 	X:         0,
 	Y:         0,
 	Uses:      1,
 	Delta:     25,
-	ConversionPoints: 1,
+	ConversionPoints: 3,
 	Affects:   Affects(Health),
 	Tile: overrides.POTION_HEALTH,
 }
 var ITEM_MANA = Item{
 	Name:      "Mana Pot",
+	Description: "+25 Mana",
 	X:         0,
 	Y:         0,
 	Uses:      1,
-	Delta:     25,
+	Delta:     3,
 	ConversionPoints: 1,
 	Affects:  Affects(Mana),
 	Tile: overrides.POTION_MANA,
 }
 var ITEM_OFF_BOOST = Item{
 	Name:      "Pickaxe",
+	Description: "+5 Offense",
 	X:         0,
 	Y:         0,
-	Delta:     1,
-	Uses:      1,
-	ConversionPoints: 10,
+	Delta:     5,
+	Uses:      UNLIMITED_USES,
+	ConversionPoints: 5,
 	Affects:   Affects(Offense),
 	Tile: overrides.EQUIPTMENT,
 }
 var ITEM_DEF_BOOST = Item{
 	Name:      "Hard Hat",
+	Description: "+5 Defense",
 	X:         0,
 	Y:         0,
-	Delta:     1,
-	Uses:      1,
-	ConversionPoints: 10,
+	Delta:     5,
+	Uses:      UNLIMITED_USES,
+	ConversionPoints: 5,
 	Affects:   Affects(Defense),
 	Tile: overrides.EQUIPTMENT,
 }
 var ITEM_SPEED_BOOST = Item{
 	Name:      "Roller Blades",
+	Description: "+5 Speed",
 	X:         0,
 	Y:         0,
-	Uses:      1,
+	Uses:      UNLIMITED_USES,
 	Delta:     5,
-	ConversionPoints: 10,
+	ConversionPoints: 5,
 	Affects:   Affects(Speed),
 	Tile: overrides.EQUIPTMENT,
 }
 var ITEM_SPELL_DMG = Item{
 	Name:      "Moose shot",
+	Description: "gives 30 damage",
 	X:         0,
 	Y:         0,
 	Uses:      UNLIMITED_USES,
-	Cost:      -100,
-	Delta:     -5,
+	Cost:      -30,
+	Delta:     -30,
 	ConversionPoints: 10,
 	Affects:   Affects(Health),
 	Tile: overrides.SPELL,
